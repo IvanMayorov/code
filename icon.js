@@ -94,7 +94,7 @@ $(".s9-card-main-img").each(function () {
       // Переключаем панель
       tabPanes.forEach((pane) => (pane.style.display = "none"));
       tabPanes[index].style.display = "block";
-      // ScrollTrigger.refresh();
+      ScrollTrigger.refresh();
       // Реинициализируем Fotorama в текущем pane
       const fotoramaElements = tabPanes[index].querySelectorAll(".fotorama");
       fotoramaElements.forEach((fotorama) => {
@@ -612,7 +612,7 @@ mediaScreen.add("(max-width: 479px)", () => {
         start: "top top+=60%", // Срабатывает раньше на мобильных
         end: "bottom top+=60%",
         scrub: 1, // Увеличьте значение scrub для плавности
-        markers: true,
+        // markers: true,
       },
       ease: "power1.inOut" // Добавьте ease для плавности
     }
