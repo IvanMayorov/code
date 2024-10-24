@@ -584,17 +584,17 @@ mediaScreen.add("(max-width: 479px)", () => {
 
 });
 
-
-
-// Анимация увеличения прямоугольной маски видео блока по мере скролла
 gsap.set(".video-wrap", { clipPath: "inset(25% 15%)" });
+mediaScreen.add("(min-width: 480px)", () => {
+// Анимация увеличения прямоугольной маски видео блока по мере скролла
+
 gsap.to(
   ".video-wrap",
   {
     clipPath: "inset(0% 0%)",
     scrollTrigger: {
       trigger: ".s5-content-block",
-      start: "top top+=30%",
+      start: "top top+=30%", // Стандартное значение для десктопа
       end: "top+=40% top+=30%",
       scrub: 1, // Увеличьте значение scrub для плавности
       // markers: true,
@@ -602,6 +602,25 @@ gsap.to(
     ease: "power1.inOut" // Добавьте ease для плавности
   }
 );
+});
+
+// Код для мобилки
+mediaScreen.add("(max-width: 479px)", () => {
+  gsap.to(
+    ".video-wrap",
+    {
+      clipPath: "inset(0% 0%)",
+      scrollTrigger: {
+        trigger: ".s5-content-block",
+        start: "top top+=60%", // Срабатывает раньше на мобильных
+        end: "bottom top+=60%",
+        scrub: 1, // Увеличьте значение scrub для плавности
+        markers: true,
+      },
+      ease: "power1.inOut" // Добавьте ease для плавности
+    }
+  );
+});
 
 
 }); 
