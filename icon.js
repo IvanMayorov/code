@@ -597,7 +597,7 @@ gsap.to(
       start: "top top+=30%",
       end: "top+=40% top+=30%",
       scrub: 1, // Увеличьте значение scrub для плавности
-      markers: true,
+      // markers: true,
     },
     ease: "power1.inOut" // Добавьте ease для плавности
   }
