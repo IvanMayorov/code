@@ -1,6 +1,25 @@
 var Webflow = Webflow || [];
 Webflow.push(function(){
-//test
+
+  // const video = document.getElementById('myVideo');
+  // const options = {
+  //     root: null,
+  //     rootMargin: '0px',
+  //     threshold: 0.5
+  // };
+
+  // const callback = (entries) => {
+  //     entries.forEach(entry => {
+  //         if (entry.isIntersecting) {
+  //             video.play();
+  //         } else {
+  //             video.pause();
+  //         }
+  //     });
+  // };
+
+  // const observer = new IntersectionObserver(callback, options);
+  // observer.observe(video);
 
 //Fotorama _________________________________________
 
@@ -241,23 +260,7 @@ document.querySelectorAll(".s2-drop-toggle").forEach((toggle) => {
 const easing = "power2.out";
 const duration = 1;
 
-// Анимация увеличения видео блока
-gsap.fromTo(
-  ".video-wrap",
-  { scale: 0.7 },
-  {
-    scale: 1,
-    duration: duration,
-    ease: easing,
-    scrollTrigger: {
-      trigger: ".video-wrap", // Элемент, который нужно анимировать
-      start: "top 70%", // Начало анимации при появлении на 30%
-      toggleActions: "play none none none", // Анимация только один раз
-      once: true, // Запускаем только один раз
-    },
 
-  }
-);
 const s6SectionHeight = document.querySelector(".s6-section").offsetHeight; // Получаем высоту .s6-section
 //Код для десктопа
 let mediaScreen = gsap.matchMedia();
@@ -583,7 +586,22 @@ mediaScreen.add("(max-width: 479px)", () => {
 
 
 
-
+// Анимация увеличения прямоугольной маски видео блока по мере скролла
+gsap.set(".video-wrap", { clipPath: "inset(25% 15%)" });
+gsap.to(
+  ".video-wrap",
+  {
+    clipPath: "inset(0% 0%)",
+    scrollTrigger: {
+      trigger: ".s5-content-block",
+      start: "top top+=30%",
+      end: "top+=40% top+=30%",
+      scrub: 1, // Увеличьте значение scrub для плавности
+      markers: true,
+    },
+    ease: "power1.inOut" // Добавьте ease для плавности
+  }
+);
 
 
 }); 
