@@ -36,18 +36,15 @@ $(".s9-card-main-img").each(function () {
   
     const thumbWidthInPx = 60 * remSize; // Calculate 60 rem in pixels
     const thumbMarginInPx = 8 * remSize; // Calculate 60 rem in pixels
-    $fotoramaDiv.on("fotorama:ready", function (e, fotorama) {
-      fotorama.setOptions({
-        fit: "cover",
-        ratio: 400 / 240,
-        thumbwidth: thumbWidthInPx,
-        thumbheight: thumbWidthInPx,
-        thumbmargin: thumbMarginInPx,
-      });
-      
+    fotorama.setOptions({
+      fit: "cover",
+      ratio: 400 / 240,
+      thumbwidth: thumbWidthInPx,
+      thumbheight: thumbWidthInPx,
+      thumbmargin: thumbMarginInPx,
     });
     // 4. Set the thumbwidth option for each fotorama instance.
-    ScrollTrigger.refresh();
+    // ScrollTrigger.refresh();
   });
   
   $(".fotorama")
@@ -64,7 +61,7 @@ $(".s9-card-main-img").each(function () {
           fotorama.setOptions({
             fit: "cover",
           });
-          ScrollTrigger.refresh();
+          // ScrollTrigger.refresh();
         }
       }
     )
@@ -97,7 +94,7 @@ $(".s9-card-main-img").each(function () {
       // Переключаем панель
       tabPanes.forEach((pane) => (pane.style.display = "none"));
       tabPanes[index].style.display = "block";
-      ScrollTrigger.refresh();
+      // ScrollTrigger.refresh();
       // Реинициализируем Fotorama в текущем pane
       const fotoramaElements = tabPanes[index].querySelectorAll(".fotorama");
       fotoramaElements.forEach((fotorama) => {
