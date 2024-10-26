@@ -124,6 +124,7 @@ const swiper = new Swiper(".s7-slider-component", {
     slideChange: function () {
       updateActiveNavLink(swiper.activeIndex);
       resetProgressBar();
+      updateButtonText(swiper.activeIndex); // Добавляем вызов функции для обновления текста кнопки
     },
     autoplay: {
       run: function () {
@@ -176,6 +177,38 @@ function resetProgressBar() {
   setTimeout(() => {
     startProgressBar();
   }, 50); // Задержка для корректного сброса анимации
+}
+gsap.set(".s7-drop-list", { height: 0 });
+ScrollTrigger.refresh();
+// Функция для обновления текста кнопки на ширине максимум 479 пикселей
+function updateButtonText(activeIndex) {
+  if (window.innerWidth <= 479) {
+    const activeNavLink = navLinks[activeIndex];
+    const buttonText = document.querySelector(".s7-drop-toggle .button-text");
+    if (activeNavLink && buttonText) {
+      buttonText.textContent = activeNavLink.textContent;
+    }
+  }
+}
+
+// Добавляем обработчик клика на s7-drop-toggle
+const dropToggle = document.querySelector(".s7-drop-toggle");
+const dropIcon = dropToggle.querySelector(".s2-drop-icon"); // Select the icon element
+if (dropToggle) {
+  dropToggle.addEventListener("click", () => {
+    const dropList = document.querySelector(".s7-drop-list");
+    if (dropList) {
+      if (dropList.style.height === "auto" || dropList.style.height === "") {
+        gsap.to(dropList, { height: 0, duration: 0.5, ease: "power2.inOut" });
+        gsap.to(dropIcon, { rotation: 0, duration: 0.5, ease: "power2.inOut" }); // Rotate back to 0 degrees
+        ScrollTrigger.refresh();
+      } else {
+        gsap.to(dropList, { height: "auto", duration: 0.5, ease: "power2.inOut" });
+        gsap.to(dropIcon, { rotation: 90, duration: 0.5, ease: "power2.inOut" }); // Rotate to 90 degrees
+        ScrollTrigger.refresh();
+      }
+    }
+  });
 }
 
 // Запуск анимации при загрузке
