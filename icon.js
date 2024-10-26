@@ -646,7 +646,7 @@ mediaScreen.add("(max-width: 479px)", () => {
         start: "top-=30% top+=60%", // Срабатывает раньше на мобильных
         end: "center top+=60%",
         scrub: 1, // Увеличьте значение scrub для плавности
-        markers: true,
+        // markers: true,
       },
       ease: "power1.inOut" // Добавьте ease для плавности
     }
