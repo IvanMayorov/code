@@ -643,8 +643,8 @@ mediaScreen.add("(max-width: 479px)", () => {
       clipPath: "inset(0% 0%)",
       scrollTrigger: {
         trigger: ".s5-content-block",
-        start: "top-=30% top+=60%", // Срабатывает раньше на мобильных
-        end: "center top+=60%",
+        start: "top top+=60%", // Срабатывает раньше на мобильных
+        end: "top+=20% top+=60%",
         scrub: 1, // Увеличьте значение scrub для плавности
         // markers: true,
       },
