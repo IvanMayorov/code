@@ -548,26 +548,28 @@ mediaScreen.add("(max-width: 991px)", () => {
     //   markers: true,
     },
   });
-
+  
   s6SectionAnimation
-    .to(".s6-right-box1", { xPercent: "-100" })
-    .to(".s6-right-box2", { xPercent: "-200" })
-    .to(".s6-right-box3", { xPercent: "-300" });
-
-      // Анимация 10-ой секции
+  .to(".s6-right-box1", { xPercent: "-100" })
+  .to(".s6-right-box2", { xPercent: "-200" })
+  .to(".s6-right-box3", { xPercent: "-300" });
+  
+  // Анимация 10-ой секции
   let s10SectionAnimation = gsap.timeline({
     scrollTrigger: {
       trigger: ".section.s10-section",
       scrub: true,
-    //   pin: true,
-      start: `top top`,
+      //   pin: true,
+      start: `top 20%`,
       end: `bottom bottom`,
-    //   markers: true,
+      //   markers: true,
     },
   });
+  
+  const s10RightContentWidth = document.querySelector('.s10-right-content').offsetWidth - document.querySelector('.s10-content').offsetWidth - parseFloat(getComputedStyle(document.querySelector('.s10-right-content')).paddingLeft) - parseFloat(getComputedStyle(document.querySelector('.s10-right-content')).paddingRight);
 
   s10SectionAnimation
-    .to(".s10-right-box", { x: "-510rem" })
+    .to(".s10-right-box", { x: s10RightContentWidth*-1 })
     .fromTo(".s10-progress-bar", { width: "0%" }, { width: "100%" }, 0);
 
   // Анимация 7-ой секции
