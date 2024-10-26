@@ -255,13 +255,14 @@ document.querySelectorAll(".s2-drop-toggle").forEach((toggle) => {
 
 //Глобальные переменные
 const easing = "power2.out";
-const duration = 1;
+const duration = 0.7;
 
 
 const s6SectionHeight = document.querySelector(".s6-section").offsetHeight; // Получаем высоту .s6-section
 //Код для десктопа
 let mediaScreen = gsap.matchMedia();
 mediaScreen.add("(min-width: 992px)", () => {
+
   //Hero animation ______________________________________________________________________
 
   // Создаём таймлайн
@@ -277,22 +278,22 @@ mediaScreen.add("(min-width: 992px)", () => {
   tl.to(".hero-slider-component", {
     xPercent: "0",
     yPercent: "0",
-    duration: 1,
+    duration: 0.6,
   })
 
     .to(".hero-descriptor-box, .hero-nav-links", {
       yPercent: "0",
       opacity: 1,
-      duration: 1,
-    }) // Запуск одновременно с предыдущей анимацией с задержкой в 0.5 секунды
+      duration: 0.6,
+    }, '<+=0.3') // Запуск одновременно с предыдущей анимацией с задержкой в 0.5 секунды
 
     .to(
       ".hero-content-left > *, .hero-logo",
       {
         y: "0vh",
-        duration: 1,
+        duration: 0.6,
       },
-      "-=0.5"
+      "<"
     ); // Запуск также с небольшим перекрытием по времени
 
   // Анимация увеличения размера
@@ -344,14 +345,14 @@ mediaScreen.add("(min-width: 992px)", () => {
       trigger: ".section.s6-section",
       scrub: true,
     //   pin: true,
-      start: `top top`,
+      start: `top 50%`,
       end: `bottom bottom`, // Используем высоту .s6-section
-    //   markers: true,
+      // markers: true,
     },
   });
 
   s6SectionAnimation
-    .from(".s6-right-col", { y: "100%", stagger: 0.5 })
+    .from(".s6-right-col", { y: "100%", stagger: 0.3 })
     .to(".s6-right-box1", { width: "400%" })
     .to(".s6-right-box2", { width: "400%" })
     .to(".s6-right-box3", { width: "400%" });
@@ -404,9 +405,9 @@ mediaScreen.add("(min-width: 992px)", () => {
     scrollTrigger: {
       trigger: ".section.s10-section",
       scrub: true,
-    //   markers: true,
+      // markers: true,
     //   pin: true,
-      start: `top+=200rem top`,
+      start: `top+=200rem 40%`,
       end: `bottom+=200rem bottom`,
     },
   });
@@ -459,12 +460,12 @@ mediaScreen.add("(min-width: 992px)", () => {
     .from(
       ".s12-tab-pane-column1",
       { y: "100%", duration: duration, ease: easing },
-      0.3
+      0.2
     )
     .from(
       ".s12-tab-pane-column2",
       { y: "100%", duration: duration, ease: easing },
-      0.6
+      0.4
     );
 
   // Анимация для 13-ой секции
@@ -591,8 +592,8 @@ gsap.to(
     clipPath: "inset(0% 0%)",
     scrollTrigger: {
       trigger: ".s5-content-block",
-      start: "top top+=30%", // Стандартное значение для десктопа
-      end: "top+=40% top+=30%",
+      start: "top top+=60%", // Стандартное значение для десктопа
+      end: "top+=50% top+=60%",
       scrub: 1, // Увеличьте значение scrub для плавности
       // markers: true,
     },
@@ -609,10 +610,10 @@ mediaScreen.add("(max-width: 479px)", () => {
       clipPath: "inset(0% 0%)",
       scrollTrigger: {
         trigger: ".s5-content-block",
-        start: "top top+=60%", // Срабатывает раньше на мобильных
-        end: "bottom top+=60%",
+        start: "top-=30% top+=60%", // Срабатывает раньше на мобильных
+        end: "center top+=60%",
         scrub: 1, // Увеличьте значение scrub для плавности
-        // markers: true,
+        markers: true,
       },
       ease: "power1.inOut" // Добавьте ease для плавности
     }
