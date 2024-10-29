@@ -23,7 +23,8 @@ Webflow.push(function(){
 
 //Fotorama _________________________________________
 
-$(".s9-card-main-img").each(function () {
+function initializeFotorama() {
+  $(".s9-card-main-img").each(function () {
     // 1. Initialize fotorama manually for each element.
     const $fotoramaDiv = $(this).fotorama();
   
@@ -66,44 +67,48 @@ $(".s9-card-main-img").each(function () {
       }
     )
     .fotorama();
-  
-  // Tabs _________________________________________
-  
-  const tabLinks = document.querySelectorAll(".s9-tab-link");
-  const tabPanes = document.querySelectorAll(".s9_tab_wrap");
-  
-  // Начальная настройка
-  tabLinks[0].classList.add("is-current");
-  tabPanes[0].style.display = "block";
-  tabPanes.forEach((pane, index) => {
-    if (index !== 0) pane.style.display = "none";
+}
+
+initializeFotorama();
+window.addEventListener('resize', initializeFotorama);
+
+// Tabs _________________________________________
+
+const tabLinks = document.querySelectorAll(".s9-tab-link");
+const tabPanes = document.querySelectorAll(".s9_tab_wrap");
+
+// Начальная настройка
+tabLinks[0].classList.add("is-current");
+tabPanes[0].style.display = "block";
+tabPanes.forEach((pane, index) => {
+  if (index !== 0) pane.style.display = "none";
+  ScrollTrigger.refresh();
+});
+
+// Обработка кликов
+tabLinks.forEach((tab, index) => {
+  tab.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    // Переключаем таб
+    document
+      .querySelector(".s9-tab-link.is-current")
+      .classList.remove("is-current");
+    tab.classList.add("is-current");
+
+    // Переключаем панель
+    tabPanes.forEach((pane) => (pane.style.display = "none"));
+    tabPanes[index].style.display = "block";
     ScrollTrigger.refresh();
-  });
-  
-  // Обработка кликов
-  tabLinks.forEach((tab, index) => {
-    tab.addEventListener("click", (e) => {
-      e.preventDefault();
-  
-      // Переключаем таб
-      document
-        .querySelector(".s9-tab-link.is-current")
-        .classList.remove("is-current");
-      tab.classList.add("is-current");
-  
-      // Переключаем панель
-      tabPanes.forEach((pane) => (pane.style.display = "none"));
-      tabPanes[index].style.display = "block";
-      ScrollTrigger.refresh();
-      // Реинициализируем Fotorama в текущем pane
-      const fotoramaElements = tabPanes[index].querySelectorAll(".fotorama");
-      fotoramaElements.forEach((fotorama) => {
-        const fotoramaData = $(fotorama).data("fotorama");
-        $(fotorama).fotorama(); // Затем снова инициализируем Fotorama
-      });
-  
+    // Реинициализируем Fotorama в текущем pane
+    const fotoramaElements = tabPanes[index].querySelectorAll(".fotorama");
+    fotoramaElements.forEach((fotorama) => {
+      const fotoramaData = $(fotorama).data("fotorama");
+      $(fotorama).fotorama(); // Затем снова инициализируем Fotorama
     });
+
   });
+});
 
   
 
@@ -330,7 +335,7 @@ mediaScreen.add("(min-width: 992px)", () => {
     ); // Запуск также с небольшим перекрытием по времени
 
   // Анимация увеличения размера
-  gsap.to(".hero-slider-component", {
+  let heroSliderAnimation = gsap.to(".hero-slider-component", {
     scrollTrigger: {
       trigger: ".hero-section",
       start: "top top", // Начало анимации, когда верх hero-slider-component касается верха окна
@@ -344,14 +349,13 @@ mediaScreen.add("(min-width: 992px)", () => {
       onEnterBack: () => {
         // Анимация navbar при прокрутке назад
         gsap.to(".navbar", { yPercent: -100, duration: 0.3 });
-        console.log("onLeaveBack");
+        // console.log("onLeaveBack");
       },
       //   pinSpacing: false, // Отключаем дополнительное пространство после пина
     },
     width: "100vw",
     height: "100vh",
     ease: "none",
-
   });
 
   //_________________________________________
@@ -440,13 +444,14 @@ mediaScreen.add("(min-width: 992px)", () => {
       scrub: true,
       // markers: true,
     //   pin: true,
-      start: `top+=200rem 40%`,
-      end: `bottom+=200rem bottom`,
+      start: `top top`,
+      end: `bottom bottom`,
     },
   });
 
+  const s10RightBoxWidth = document.querySelector('.s10-right-box').offsetWidth; // Получаем ширину s10-right-box
   s10SectionAnimation
-    .to(".s10-right-box", { x: "-720rem" })
+    .to(".s10-right-box", { x: `-${s10RightBoxWidth * 2}px` }) // смещай на ширину s10-right-box умноженную на два
     .fromTo(".s10-progress-bar", { width: "0%" }, { width: "100%" }, 0);
 
   // Анимация 11-ой секции
