@@ -1,6 +1,6 @@
 if (window.matchMedia("(min-width: 479px)").matches) {
     const swiper = new Swiper(".s2_main_section", {
-      slidesPerView: 4,
+      slidesPerView: 'auto',
       centeredSlides: true,
       watchSlidesProgress: true,
       loop: true,
@@ -11,6 +11,15 @@ if (window.matchMedia("(min-width: 479px)").matches) {
         bulletActiveClass: "bullet-active",
         bulletClass: "pagination-bullet",
       },
+    //   effect: 'coverflow',
+    //   coverflowEffect: {
+    //     rotate: 0,
+    //     stretch: 50,
+    //     depth: 100,
+    //     modifier: 3,
+    //     scale: 1,
+    //     slideShadows: true,
+    // },
       on: {
         click(swiper) {
           console.log(swiper.activeIndex);
@@ -45,10 +54,8 @@ if (window.matchMedia("(min-width: 479px)").matches) {
               slideEl.style.opacity = 1;
             }
   
-            const opacityEls = slideEl.querySelectorAll(":scope > div");
-            opacityEls.forEach((opacityEl) => {
-              opacityEl.style.filter = `brightness(${1 - absProgress * 0.3})`;
-            });
+            const opacityEls = slideEl.querySelector(".overlay");
+            opacityEls.style.opacity = `${absProgress * 0.3}`;
           }
         },
         // eslint-disable-next-line
