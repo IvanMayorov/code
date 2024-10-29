@@ -1,10 +1,12 @@
 if (window.matchMedia("(min-width: 479px)").matches) {
     const swiper = new Swiper(".s2_main_section", {
-      slidesPerView: 'auto',
+      slidesPerView: 5,
       centeredSlides: true,
       watchSlidesProgress: true,
       loop: true,
-      // loopAdditionalSlides: 2,
+    //   observer: true,
+    //   longSwipesRatio: 10,
+    //   loopAdditionalSlides: 20,
       pagination: {
         el: ".swiper-pagination",
         clickable: true,
@@ -21,6 +23,9 @@ if (window.matchMedia("(min-width: 479px)").matches) {
     //     slideShadows: true,
     // },
       on: {
+        // touchEnd(swiper) {
+        //     swiper.update();
+        // },
         click(swiper) {
           console.log(swiper.activeIndex);
           if (swiper.clickedIndex < swiper.activeIndex) {
@@ -29,6 +34,7 @@ if (window.matchMedia("(min-width: 479px)").matches) {
             swiper.slideNext();
           }
         },
+
         // eslint-disable-next-line
         progress(swiper) {
           console.log("slideEl");
