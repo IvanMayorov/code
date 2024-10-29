@@ -307,20 +307,20 @@ mediaScreen.add("(min-width: 992px)", () => {
   let tl = gsap.timeline();
 
   // Устанавливаем начальные позиции элементов
-  gsap.set(".navbar, .hero-descriptor-box", { yPercent: "-100" });
-  gsap.set(".hero-nav-links", { yPercent: "100", opacity: 0 });
-  gsap.set(".hero-content-left > *, .hero-logo", { y: "100vh" });
-  gsap.set(".hero-slider-component", { xPercent: "100", yPercent: "100" });
+  // gsap.set(".navbar, .hero-descriptor-box", { yPercent: "-100" });
+  // gsap.set(".hero-nav-links", { yPercent: "100", opacity: 0 });
+  // gsap.set(".hero-content-left > *, .hero-logo", { y: "100vh" });
+  // gsap.set(".hero-slider-component", { x: "100%", y: "100%" });
 
   // Добавляем анимации в таймлайн
   tl.to(".hero-slider-component", {
-    xPercent: "0",
-    yPercent: "0",
+    x: "0%",
+    y: "0%",
     duration: 0.6,
   })
 
     .to(".hero-descriptor-box, .hero-nav-links", {
-      yPercent: "0",
+      y: "0%",
       opacity: 1,
       duration: 0.6,
     }, '<+=0.3') // Запуск одновременно с предыдущей анимацией с задержкой в 0.5 секунды
@@ -344,11 +344,11 @@ mediaScreen.add("(min-width: 992px)", () => {
       pin: true, // Закрепляем элемент
       onLeave: () => {
         // Анимация navbar при прокрутке вниз
-        gsap.to(".navbar", { yPercent: 0, duration: 0.3 });
+        gsap.to(".navbar", { y: '0%', duration: 0.3 });
       },
       onEnterBack: () => {
         // Анимация navbar при прокрутке назад
-        gsap.to(".navbar", { yPercent: -100, duration: 0.3 });
+        gsap.to(".navbar", { y: '-100%', duration: 0.3 });
         // console.log("onLeaveBack");
       },
       //   pinSpacing: false, // Отключаем дополнительное пространство после пина
