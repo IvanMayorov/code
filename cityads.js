@@ -37,8 +37,8 @@ if (window.matchMedia("(min-width: 479px)").matches) {
 
         // eslint-disable-next-line
         progress(swiper) {
-          console.log("slideEl");
-          const scaleStep = 0.2;
+        //   console.log("slideEl");
+          const scaleStep = 0.15;
           const zIndexMax = swiper.slides.length;
           for (let i = 0; i < swiper.slides.length; i += 1) {
             const slideEl = swiper.slides[i];
