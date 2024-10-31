@@ -1,3 +1,11 @@
+Draggable.create(".wrp-ribbons-offers", {
+    bounds: document.querySelector(".logos_wrap"),
+    edgeResistance: 0.9,
+    inertia: true,
+    type: "x",
+  });
+
+
 // Найти все элементы с классом g_tabs_menu_wrap_____________________________
 
 var tabsMenuWraps = document.querySelectorAll(".g_tabs_menu_wrap");
@@ -333,7 +341,7 @@ let mm = gsap.matchMedia();
 //Cases tabs______________________________________________________________________
 if (window.matchMedia("(min-width: 992px)").matches) {
   const casesContents = document.querySelectorAll(".cases_content");
-  const casesTabTexts = document.querySelectorAll(".cases_tab_text");
+  const casesTabTexts = document.querySelectorAll(".cases_list li");
   const casesTitle = document.querySelector(".cases_title");
 
   if (casesContents.length > 0) {
@@ -697,12 +705,6 @@ if (boxLeftSlider) {
   //   slidesPerView: "auto",
   //   freeScroll: true,
   // });
-  Draggable.create(".wrp-ribbons-offers", {
-    bounds: document.querySelector(".logos_wrap"),
-    edgeResistance: 0.9,
-    inertia: true,
-    type: "x",
-  });
 
   document.querySelectorAll(".income_list-item").forEach((item) => {
     item.addEventListener("mouseover", () => {
@@ -730,22 +732,16 @@ if (boxLeftSlider) {
 }
 
 if (window.matchMedia("(min-width: 768px)").matches) {
-  ["monetize", "integration"].forEach((type) => {
-    document
-      .querySelectorAll(`[data-${type}-list] [data-list-item]`)
-      .forEach((item) => {
-        console.log("enter");
-        item.addEventListener("mouseover", () => {
-          // Удаляем класс is-current только у элементов внутри текущего списка
+  document.querySelectorAll("[data-list] [data-list-item]").forEach((item) => {
+    console.log("enter");
+    item.addEventListener("mouseover", () => {
+      // Удаляем класс is-current только у элементов внутри текущего списка
+      const parentList = item.closest("[data-list]");
+      parentList.querySelectorAll("[data-list-item]").forEach((el) => el.classList.remove("is-current"));
 
-          document
-            .querySelectorAll(`[data-${type}-list] [data-list-item]`)
-            .forEach((el) => el.classList.remove("is-current"));
-
-          // Добавляем класс is-current к текущему элементу
-          item.classList.add("is-current");
-        });
-      });
+      // Добавляем класс is-current к текущему элементу
+      item.classList.add("is-current");
+    });
   });
 } else {
   document
@@ -952,3 +948,269 @@ document.querySelectorAll('input[name="Page"]').forEach(function (input) {
 // $(document).on("opening", "[data-remodal-id]", function (e) {
 //   document.body.style.position = "fixed";
 // });
+
+const quizContainer = document.querySelector(".quiz_container");
+const answersContainer = document.querySelector(".answers");
+const quizProgress = document.querySelector(".quiz-progress");
+const slideOffset = 30;
+let currentSlideIndex = 0;
+let isAnimating = false;
+
+const slides = Array.from(document.querySelectorAll(".quiz-slide"));
+
+const updateNextButtonState = () => {
+  const selectedValues = getSelectedValues(slides[currentSlideIndex]);
+  const nextButton = document.querySelector(".quiz-next");
+  selectedValues.length > 0
+    ? nextButton.classList.remove("inactive")
+    : nextButton.classList.add("inactive");
+};
+
+const addInputListeners = (slide) => {
+  const inputs = slide.querySelectorAll(
+    'input[type="radio"], input[type="checkbox"], input[type="text"], input[type="number"]'
+  );
+  inputs.forEach((input) => {
+    input.addEventListener("change", updateNextButtonState);
+    if (input.type === "text" || input.type === "number") {
+      input.addEventListener("input", updateNextButtonState);
+    }
+  });
+};
+
+slides.forEach(addInputListeners);
+
+const initSlides = () => {
+  slides.forEach((slide, index) => {
+    gsap.set(slide, {
+      autoAlpha: index === 0 ? 1 : 0,
+      y: index === 0 ? 0 : slideOffset,
+    });
+    if (index === 0) updateNextButtonState();
+  });
+  updateQuizProgress();
+  setContainerHeight();
+};
+
+const setContainerHeight = () => {
+  quizContainer.style.height = `${slides[currentSlideIndex].offsetHeight}px`;
+};
+
+const updateQuizProgress = () => {
+  quizProgress.innerHTML = "";
+  slides.forEach((_, index) => {
+    const dot = document.createElement("div");
+    dot.classList.add("quiz_progress_dot");
+    if (index === currentSlideIndex) dot.classList.add("is-active");
+    if (hasSelectedValues(index)) dot.classList.add("is-green");
+    dot.addEventListener("click", () => handleProgressClick(index));
+    quizProgress.appendChild(dot);
+  });
+};
+
+const handleProgressClick = (targetIndex) => {
+  if (areAllPreviousAnswersSelected(targetIndex)) switchToSlide(targetIndex);
+};
+
+const areAllPreviousAnswersSelected = (targetIndex) =>
+  slides.slice(0, targetIndex).every((_, i) => hasSelectedValues(i));
+
+const hasSelectedValues = (slideIndex) =>
+  getSelectedValues(slides[slideIndex]).length > 0;
+
+const getSelectedValues = (slide) => {
+  const selectedValues = [];
+  slide
+    .querySelectorAll(
+      'input[type="radio"]:checked, input[type="checkbox"]:checked'
+    )
+    .forEach((input) => {
+      const label = input.closest("label");
+      selectedValues.push(
+        label ? label.textContent || input.value : input.value
+      );
+    });
+  slide
+    .querySelectorAll('input[type="text"], input[type="number"]')
+    .forEach((input) => {
+      if (input.value.trim()) selectedValues.push(input.value);
+    });
+  return selectedValues;
+};
+
+const cloneAndFillAnswerBox = (
+  template,
+  questionText,
+  inputValues,
+  slideIndex
+) => {
+  const answerBox = template.cloneNode(true);
+  answerBox.style.display = "flex";
+  answerBox.querySelector(".answer_box_text1").textContent = questionText;
+  answerBox
+    .querySelectorAll(".answer_box_text2")
+    .forEach((text2) => text2.remove());
+  inputValues.forEach((value) => {
+    const answerBoxText2 = document.createElement("div");
+    answerBoxText2.classList.add("answer_box_text2");
+    answerBoxText2.textContent = value;
+    answerBox.appendChild(answerBoxText2);
+  });
+  answerBox
+    .querySelector(".edit_icon")
+    ?.addEventListener("click", () => switchToSlide(slideIndex));
+  return answerBox;
+};
+
+const checkboxText = document.querySelector(
+  ".quiz_question_top_text :first-child"
+).textContent;
+const radioText = document.querySelector(
+  ".quiz_question_top_text :nth-child(2)"
+).textContent;
+const inputText = document.querySelector(
+  ".quiz_question_top_text :nth-child(3)"
+).textContent;
+
+const switchToSlide = (index) => {
+  if (index < 0 || index >= slides.length || isAnimating) return;
+
+  const currentSlide = slides[currentSlideIndex];
+  const nextSlide = slides[index];
+  const emptyAnswerText = document.querySelector(".quiz_answer_text_empty");
+  const buttonsRow = document.querySelector(".quiz_buttons_row");
+  const topText = document.querySelector(".quiz_question_top_text");
+
+  console.log(`Current Slide Index: ${index}, Total Slides: ${slides.length}`);
+  console.log(buttonsRow);
+  if (emptyAnswerText) emptyAnswerText.style.display = "none";
+  if (buttonsRow)
+    buttonsRow.style.display = index === slides.length - 1 ? "none" : "";
+
+  if (topText) {
+    topText.style.display = index === slides.length - 1 ? "none" : "";
+    const checkboxes = nextSlide.querySelectorAll('input[type="checkbox"]');
+    const radioButtons = nextSlide.querySelectorAll('input[type="radio"]');
+    const textInputs = nextSlide.querySelectorAll('input[type="text"]');
+    const numberInputs = nextSlide.querySelectorAll('input[type="number"]');
+    if (checkboxes.length > 0) {
+      topText.textContent = radioText;
+    } else if (radioButtons.length > 0) {
+      topText.textContent = checkboxText;
+    } else if (textInputs.length > 0 || numberInputs.length > 0) {
+      topText.textContent = inputText;
+    } else {
+      topText.textContent = "";
+    }
+  }
+
+  isAnimating = true;
+
+  gsap
+    .timeline({
+      onComplete: () => {
+        isAnimating = false;
+        updateNextButtonState();
+      },
+    })
+    .to(currentSlide, { duration: 0.3, y: slideOffset, autoAlpha: 0 })
+    .to(nextSlide, { duration: 0.3, y: 0, autoAlpha: 1 });
+
+  currentSlideIndex = index;
+  setContainerHeight();
+  updateQuizProgress();
+  updateTextareaWithAnswers();
+};
+
+const switchSlide = (direction) => {
+  const selectedValues = getSelectedValues(slides[currentSlideIndex]);
+  if (direction === "next" && selectedValues.length === 0) return;
+
+  let nextSlideIndex = currentSlideIndex + (direction === "next" ? 1 : -1);
+  if (nextSlideIndex < 0 || nextSlideIndex >= slides.length) return;
+
+  const questionText =
+    slides[currentSlideIndex].querySelector(".quiz_question_text")
+      ?.textContent || "";
+  const existingAnswerBox = Array.from(
+    answersContainer.querySelectorAll(".answer_box")
+  ).find(
+    (box) => box.querySelector(".answer_box_text1").textContent === questionText
+  );
+
+  if (existingAnswerBox) {
+    existingAnswerBox
+      .querySelectorAll(".answer_box_text2")
+      .forEach((text2) => text2.remove());
+    selectedValues.forEach((value) => {
+      const answerBoxText2 = document.createElement("div");
+      answerBoxText2.classList.add("answer_box_text2");
+      answerBoxText2.textContent = value;
+      existingAnswerBox.appendChild(answerBoxText2);
+    });
+  } else if (selectedValues.length > 0) {
+    const answerBoxTemplate = document.querySelector(".answer_box");
+    const newAnswerBox = cloneAndFillAnswerBox(
+      answerBoxTemplate,
+      questionText,
+      selectedValues,
+      currentSlideIndex
+    );
+    answersContainer.appendChild(newAnswerBox);
+  }
+
+  switchToSlide(nextSlideIndex);
+};
+
+const updateTextareaWithAnswers = () => {
+  const textarea = document.querySelector(".quiz_answers");
+  textarea.value = "";
+
+  slides.forEach((slide, index) => {
+    const questionText =
+      slide.querySelector(".quiz_question_text")?.textContent || "";
+    const selectedValues = getSelectedValues(slide);
+
+    if (selectedValues.length > 0) {
+      textarea.value += `Вопрос: ${questionText}\nОтветы: ${selectedValues.join(
+        ", "
+      )}\n\n`;
+    }
+  });
+};
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    const nextButton = document.querySelector(".quiz-next");
+    if (!nextButton.classList.contains("inactive")) {
+      switchSlide("next");
+    }
+  }
+});
+
+initSlides();
+document
+  .querySelector(".quiz-next")
+  .addEventListener("click", () => switchSlide("next"));
+document
+  .querySelector(".quiz-prev")
+  .addEventListener("click", () => switchSlide("prev"));
+
+gsap.set(".quiz_title_row, .quiz_body", { display: "none" });
+document
+  .querySelector(".quiz_start_box .button")
+  .addEventListener("click", function () {
+    const quizStartBox = document.querySelector(".quiz_start_box");
+    gsap.to(quizStartBox, {
+      duration: 0.5,
+      opacity: 0,
+      onComplete: function () {
+        quizStartBox.style.display = "none";
+        gsap.fromTo(
+          ".quiz-wrap > *:not(:first-child)",
+          { y: 100, opacity: 0, display: "none" },
+          { y: 0, opacity: 1, display: "flex", duration: 0.5, stagger: 0.2 }
+        );
+      },
+    });
+  });
