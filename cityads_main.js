@@ -1,3 +1,107 @@
+//Navbar________________________________________________________________________
+
+const dropdowns = document.querySelectorAll(".navbar_dropdown_box");
+const dropdownButtons = document.querySelectorAll(".navbar_dropdown_button");
+
+// Устанавливаем начальное состояние для всех dropdown
+dropdowns.forEach(dropdown => {
+  gsap.set(dropdown, { autoAlpha: 0, y: 20 }); // Начальное смещение на 20 пикселей вниз
+});
+
+// Функция для закрытия всех dropdown
+const closeDropdowns = () => {
+  dropdowns.forEach(dropdown => {
+    gsap.to(dropdown, {
+      autoAlpha: 0,
+      y: 20, // Сохраняем смещение при скрытии
+      duration: 0.3,
+      onComplete: () => {
+        dropdown.style.display = "none"; // Скрываем элемент после анимации
+      },
+    });
+  });
+  document.removeEventListener("click", handleClickOutside); // Удаляем обработчик при закрытии
+};
+
+// Обработчик клика вне элемента
+const handleClickOutside = (event) => {
+  dropdowns.forEach(dropdown => {
+    const button = dropdownButtons[Array.from(dropdowns).indexOf(dropdown)];
+    if (!dropdown.contains(event.target) && !button.contains(event.target)) {
+      closeDropdowns();
+    }
+  });
+};
+
+// Добавляем обработчик события клика на каждую кнопку
+dropdownButtons.forEach((button, index) => {
+  button.addEventListener("click", (event) => {
+    event.preventDefault(); // Предотвращаем скролл страницы
+    event.stopPropagation(); // Останавливаем всплытие события
+    event.stopImmediatePropagation(); // Останавливаем выполнение других обработчиков
+
+    const dropdown = dropdowns[index];
+    const isVisible = dropdown.style.display === "block";
+
+    if (isVisible) {
+      closeDropdowns();
+    } else {
+      // Закрываем все другие dropdown перед открытием нового
+      closeDropdowns();
+      
+      // Если скрыто, показываем
+      dropdown.style.display = "block"; // Сначала показываем элемент
+      gsap.to(dropdown, {
+        autoAlpha: 1,
+        y: 0, // При открытии смещение к нулю
+        duration: 0.3,
+        onComplete: () => {
+          dropdown.style.display = "block"; // Убедимся, что элемент остается видимым после анимации
+        }
+      });
+      // Удаляем обработчик клика вне элемента после открытия
+      document.removeEventListener("click", handleClickOutside);
+      document.addEventListener("click", handleClickOutside); // Создаем обработчик при открытии
+    }
+  });
+});
+
+// Добавляем обработчик события для мобильных устройств
+dropdownButtons.forEach((button, index) => {
+  button.addEventListener("touchstart", (event) => {
+    event.preventDefault(); // Предотвращаем скролл страницы
+    event.stopPropagation(); // Останавливаем всплытие события
+    event.stopImmediatePropagation(); // Останавливаем выполнение других обработчиков
+
+    const dropdown = dropdowns[index];
+    const isVisible = dropdown.style.display === "block";
+
+    if (isVisible) {
+      closeDropdowns();
+    } else {
+      // Закрываем все другие dropdown перед открытием нового
+      closeDropdowns();
+      
+      // Если скрыто, показываем
+      dropdown.style.display = "block"; // Сначала показываем элемент
+      gsap.to(dropdown, {
+        autoAlpha: 1,
+        y: 0, // При открытии смещение к нулю
+        duration: 0.3,
+        onComplete: () => {
+          dropdown.style.display = "block"; // Убедимся, что элемент остается видимым после анимации
+        }
+      });
+      // Удаляем обработчик клика вне элемента после открытия
+      document.removeEventListener("click", handleClickOutside);
+      document.addEventListener("click", handleClickOutside); // Создаем обработчик при открытии
+    }
+  });
+});
+
+//________________________________________________________________________________
+//Ribbons______________________________________________________________________
+
 Draggable.create(".wrp-ribbons-offers", {
     bounds: document.querySelector(".logos_wrap"),
     edgeResistance: 0.9,
@@ -602,9 +706,13 @@ rewardsRows.forEach((row, index) => {
 //   },
 // });
 
+//Color switcher________________________________________________________
 document.addEventListener("DOMContentLoaded", function () {
   const body = document.body;
   const savedTheme = localStorage.getItem("theme");
+
+
+  document.querySelectorAll("[data-color-switcher]").forEach(btn => btn.classList.remove("is-current"));
 
   if (savedTheme) {
     body.setAttribute("data-theme", savedTheme);
@@ -612,22 +720,38 @@ document.addEventListener("DOMContentLoaded", function () {
     const prefersDarkScheme = window.matchMedia(
       "(prefers-color-scheme: dark)"
     ).matches;
-    if (prefersDarkScheme) {
-      body.setAttribute("data-theme", "dark");
-    } else {
-      body.setAttribute("data-theme", "light");
-    }
+    body.setAttribute("data-theme", prefersDarkScheme ? "dark" : "light");
   }
 
-  document.querySelectorAll("[data-color-switcher]").forEach(function (button) {
+  const buttons = document.querySelectorAll("[data-color-switcher]");
+  buttons.forEach(function (button) {
+    const themeType = button.getAttribute("data-color-switcher");
+    
+    // Устанавливаем класс is-current на нужной кнопке
+    if (themeType === body.getAttribute("data-theme")) {
+      button.classList.add("is-current");
+    }
+
     button.addEventListener("click", function () {
-      const currentTheme = body.getAttribute("data-theme");
-      if (currentTheme === "light") {
-        body.setAttribute("data-theme", "dark");
-        localStorage.setItem("theme", "dark");
-      } else {
+      // Удаляем класс is-current у всех кнопок перед добавлением
+      buttons.forEach(btn => btn.classList.remove("is-current"));
+      
+      // Добавляем класс is-current к нажатой кнопке
+      button.classList.add("is-current");
+
+      if (themeType === "light") {
         body.setAttribute("data-theme", "light");
         localStorage.setItem("theme", "light");
+      } else if (themeType === "dark") {
+        body.setAttribute("data-theme", "dark");
+        localStorage.setItem("theme", "dark");
+      } else if (themeType === "system") {
+        const prefersDarkScheme = window.matchMedia(
+          "(prefers-color-scheme: dark)"
+        ).matches;
+        const newTheme = prefersDarkScheme ? "dark" : "light";
+        body.setAttribute("data-theme", newTheme);
+        localStorage.removeItem("theme"); // Remove saved theme to revert to system preference
       }
     });
   });
