@@ -1,3 +1,4 @@
+//3D Swiper________________________________________________________________________________________
 
 const swiper3d = new Swiper(".s2_main_section", {
   slidesPerView: 5,
@@ -1134,6 +1135,8 @@ document.querySelectorAll('input[name="Page"]').forEach(function (input) {
 //   document.body.style.position = "fixed";
 // });
 
+//Quiz________________________________________________________________________________________
+if (document.querySelector(".quiz_container")) {
 const quizContainer = document.querySelector(".quiz_container");
 const answersContainer = document.querySelector(".answers");
 const quizProgress = document.querySelector(".quiz-progress");
@@ -1399,3 +1402,5 @@ document
       },
     });
   });
+
+}
