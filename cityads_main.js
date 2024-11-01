@@ -80,17 +80,18 @@ const swiper3d = new Swiper(".s2_main_section", {
     });
 
 
-  gsap.to(".main_hero_section", {
-    scrollTrigger: {
-      trigger: ".hero-sticky_wrap",
-      start: "top top",
-      end: "bottom top",
-      scrub: true,
-    },
-    filter: "blur(24px)",
-    opacity: 0,
-  });
-
+  if (window.innerWidth > 991) {
+    gsap.to(".main_hero_section", {
+      scrollTrigger: {
+        trigger: ".hero-sticky_wrap",
+        start: "top top",
+        end: "bottom top",
+        scrub: true,
+      },
+      filter: "blur(24px)",
+      opacity: 0,
+    });
+  }
 
 
 //Navbar________________________________________________________________________
