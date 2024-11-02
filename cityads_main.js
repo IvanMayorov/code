@@ -13,7 +13,13 @@ const swiper3d = new Swiper(".s2_main_section", {
         clickable: true,
         bulletActiveClass: "bullet-active",
         bulletClass: "pagination-bullet",
+        // dynamicBullets: true,
+        // dynamicMainBullets: 1,
       },
+    //   virtual: {
+    //     enabled: true,
+    //     addSlidesAfter: 6
+    //   },
     //   effect: 'coverflow',
     //   coverflowEffect: {
     //     rotate: 0,
