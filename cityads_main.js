@@ -102,8 +102,8 @@ const swiper3d = new Swiper(".s2_main_section", {
 
 //Navbar________________________________________________________________________
 
-const dropdowns = document.querySelectorAll(".navbar_dropdown_box");
-const dropdownButtons = document.querySelectorAll(".navbar_dropdown_button");
+const dropdowns = document.querySelectorAll("[data-drop-box]");
+const dropdownButtons = document.querySelectorAll("[data-drop-button]");
 
 // Устанавливаем начальное состояние для всех dropdown
 dropdowns.forEach(dropdown => {
@@ -122,17 +122,6 @@ const closeDropdowns = () => {
       },
     });
   });
-  document.removeEventListener("click", handleClickOutside); // Удаляем обработчик при закрытии
-};
-
-// Обработчик клика вне элемента
-const handleClickOutside = (event) => {
-  dropdowns.forEach(dropdown => {
-    const button = dropdownButtons[Array.from(dropdowns).indexOf(dropdown)];
-    if (!dropdown.contains(event.target) && !button.contains(event.target)) {
-      closeDropdowns();
-    }
-  });
 };
 
 // Добавляем обработчик события клика на каждую кнопку
@@ -143,7 +132,7 @@ dropdownButtons.forEach((button, index) => {
     event.stopImmediatePropagation(); // Останавливаем выполнение других обработчиков
 
     const dropdown = dropdowns[index];
-    const isVisible = dropdown.style.display === "block";
+    const isVisible = dropdown.style.display === "flex";
 
     if (isVisible) {
       closeDropdowns();
@@ -152,21 +141,84 @@ dropdownButtons.forEach((button, index) => {
       closeDropdowns();
       
       // Если скрыто, показываем
-      dropdown.style.display = "block"; // Сначала показываем элемент
+      dropdown.style.display = "flex"; // Сначала показываем элемент
       gsap.to(dropdown, {
         autoAlpha: 1,
         y: 0, // При открытии смещение к нулю
         duration: 0.3,
         onComplete: () => {
-          dropdown.style.display = "block"; // Убедимся, что элемент остается видимым после анимации
+          dropdown.style.display = "flex"; // Убедимся, что элемент остается видимым после анимации
         }
       });
-      // Удаляем обработчик клика вне элемента после открытия
-      document.removeEventListener("click", handleClickOutside);
-      document.addEventListener("click", handleClickOutside); // Создаем обработчик при открытии
     }
   });
 });
+
+// const dropdowns = document.querySelectorAll("[data-drop-box]");
+// const dropdownButtons = document.querySelectorAll("[data-drop-button]");
+
+// // Устанавливаем начальное состояние для всех dropdown
+// dropdowns.forEach(dropdown => {
+//   gsap.set(dropdown, { autoAlpha: 0, y: 20 }); // Начальное смещение на 20 пикселей вниз
+// });
+
+// // Функция для закрытия всех dropdown
+// const closeDropdowns = () => {
+//   dropdowns.forEach(dropdown => {
+//     gsap.to(dropdown, {
+//       autoAlpha: 0,
+//       y: 20, // Сохраняем смещение при скрытии
+//       duration: 0.3,
+//       onComplete: () => {
+//         dropdown.style.display = "none"; // Скрываем элемент после анимации
+//       },
+//     });
+//   });
+//   document.removeEventListener("click", handleClickOutside); // Удаляем обработчик при закрытии
+// };
+
+// // Обработчик клика вне элемента
+// const handleClickOutside = (event) => {
+//   dropdowns.forEach(dropdown => {
+//     const button = dropdownButtons[Array.from(dropdowns).indexOf(dropdown)];
+//     if (!dropdown.contains(event.target) && !button.contains(event.target)) {
+//       closeDropdowns();
+//     }
+//   });
+// };
+
+// // Добавляем обработчик события клика на каждую кнопку
+// dropdownButtons.forEach((button, index) => {
+//   button.addEventListener("click", (event) => {
+//     event.preventDefault(); // Предотвращаем скролл страницы
+//     event.stopPropagation(); // Останавливаем всплытие события
+//     event.stopImmediatePropagation(); // Останавливаем выполнение других обработчиков
+
+//     const dropdown = dropdowns[index];
+//     const isVisible = dropdown.style.display === "block";
+
+//     if (isVisible) {
+//       closeDropdowns();
+//     } else {
+//       // Закрываем все другие dropdown перед открытием нового
+//       closeDropdowns();
+      
+//       // Если скрыто, показываем
+//       dropdown.style.display = "block"; // Сначала показываем элемент
+//       gsap.to(dropdown, {
+//         autoAlpha: 1,
+//         y: 0, // При открытии смещение к нулю
+//         duration: 0.3,
+//         onComplete: () => {
+//           dropdown.style.display = "block"; // Убедимся, что элемент остается видимым после анимации
+//         }
+//       });
+//       // Удаляем обработчик клика вне элемента после открытия
+//       document.removeEventListener("click", handleClickOutside);
+//       document.addEventListener("click", handleClickOutside); // Создаем обработчик при открытии
+//     }
+//   });
+// });
 
 //________________________________________________________________________________
 //Ribbons______________________________________________________________________
@@ -512,8 +564,9 @@ function updateCasesContentHeight(content) {
 let mm = gsap.matchMedia();
 
 //Cases tabs______________________________________________________________________
-if (window.matchMedia("(min-width: 992px)").matches) {
-  const casesContents = document.querySelectorAll(".cases_content");
+if (document.querySelector("[data-cases]")) {
+  if (window.matchMedia("(min-width: 992px)").matches) {
+    const casesContents = document.querySelectorAll(".cases_content");
   const casesTabTexts = document.querySelectorAll(".cases_list li");
   const casesTitle = document.querySelector(".cases_title");
 
@@ -610,11 +663,12 @@ if (window.matchMedia("(min-width: 992px)").matches) {
     }
   }
 } else {
+  document.querySelectorAll(".cases_list li")[0].classList.add("is-active");
   // Обрабатываем клик по .cases_tab_text
-  document.querySelectorAll(".cases_tab_text").forEach(function (tab, index) {
+  document.querySelectorAll(".cases_list li").forEach(function (tab, index) {
     tab.addEventListener("click", function () {
       // Убираем класс is-active у всех табов
-      document.querySelectorAll(".cases_tab_text").forEach(function (tab) {
+      document.querySelectorAll(".cases_list li").forEach(function (tab) {
         tab.classList.remove("is-active");
       });
 
@@ -632,7 +686,7 @@ if (window.matchMedia("(min-width: 992px)").matches) {
     });
   });
 }
-
+}
 //________________________________________________________________________________
 
 //Rewards tabs___________________________________
@@ -926,7 +980,7 @@ if (boxLeftSlider) {
 
 if (window.matchMedia("(min-width: 768px)").matches) {
   document.querySelectorAll("[data-list] [data-list-item]").forEach((item) => {
-    console.log("enter");
+
     item.addEventListener("mouseover", () => {
       // Удаляем класс is-current только у элементов внутри текущего списка
       const parentList = item.closest("[data-list]");
@@ -938,27 +992,26 @@ if (window.matchMedia("(min-width: 768px)").matches) {
   });
 } else {
   document
-    .querySelectorAll("[data-monetize-list], [data-integration-list]")
+    .querySelectorAll("[data-list]")
     .forEach((parentList) => {
       parentList
         .querySelectorAll(".instruments_list_text-box")
         .forEach((box, index) => {
+            gsap.set(box, { height: 0, opacity: 0, overflow: "hidden" });
           if (index === 0) {
             gsap.set(box, { height: "auto", opacity: 1 });
-          } else {
-            gsap.set(box, { height: 0, opacity: 0, overflow: "hidden" });
-          }
+          } 
         });
     });
 
   document
     .querySelectorAll(
-      "[data-monetize-list] [data-list-item], [data-integration-list] [data-list-item]"
+      "[data-list] [data-list-item]"
     )
     .forEach((item) => {
       item.addEventListener("click", () => {
         const parentList = item.closest(
-          "[data-monetize-list], [data-integration-list]"
+          "[data-list]"
         );
         const textBox = item.querySelector(".instruments_list_text-box");
         const isOpen = parseInt(window.getComputedStyle(textBox).height) > 0;
@@ -990,12 +1043,12 @@ if (window.matchMedia("(min-width: 768px)").matches) {
               }
             });
 
-          const fullHeight = textBox.scrollHeight;
+        //   const fullHeight = textBox.scrollHeight;
           gsap.fromTo(
             textBox,
             { height: 0, opacity: 0 },
             {
-              height: fullHeight,
+              height: 'auto',
               opacity: 1,
               duration: 0.5,
               ease: "power2.out",
