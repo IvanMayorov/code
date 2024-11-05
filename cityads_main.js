@@ -858,6 +858,7 @@ document.addEventListener("DOMContentLoaded", function () {
     button.addEventListener("click", function () {
       // Удаляем класс is-current у всех кнопок перед добавлением
       buttons.forEach(btn => btn.classList.remove("is-current"));
+      alert(themeType);
       
       // Добавляем класс is-current к нажатой кнопке
       button.classList.add("is-current");
@@ -872,7 +873,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const prefersDarkScheme = window.matchMedia(
           "(prefers-color-scheme: dark)"
         ).matches;
-        const newTheme = prefersDarkScheme ? "dark" : "light";
+        const newTheme = prefersDarkScheme ? "dark" : "light"; 
         body.setAttribute("data-theme", newTheme);
         localStorage.removeItem("theme"); // Remove saved theme to revert to system preference
       }
