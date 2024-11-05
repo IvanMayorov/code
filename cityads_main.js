@@ -858,7 +858,7 @@ document.addEventListener("DOMContentLoaded", function () {
     button.addEventListener("click", function () {
       // Удаляем класс is-current у всех кнопок перед добавлением
       buttons.forEach(btn => btn.classList.remove("is-current"));
-      alert(themeType);
+      // alert(themeType);
       
       // Добавляем класс is-current к нажатой кнопке
       button.classList.add("is-current");
