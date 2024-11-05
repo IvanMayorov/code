@@ -1,3 +1,57 @@
+
+//Color switcher________________________________________________________
+
+  const body = document.body;
+  const savedTheme = localStorage.getItem("theme");
+console.log(savedTheme);
+
+  document.querySelectorAll("[data-color-switcher]").forEach(btn => btn.classList.remove("is-current"));
+
+  if (savedTheme) {
+    body.setAttribute("data-theme", savedTheme);
+  } else {
+    const prefersDarkScheme = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    body.setAttribute("data-theme", prefersDarkScheme ? "dark" : "light");
+  }
+
+  const colorSwitcherButtons = document.querySelectorAll("[data-color-switcher]");
+  colorSwitcherButtons.forEach(function (button) {
+    const themeType = button.getAttribute("data-color-switcher");
+    
+    // Устанавливаем класс is-current на нужной кнопке
+    if (themeType === body.getAttribute("data-theme")) {
+      button.classList.add("is-current");
+    }
+   
+
+    button.addEventListener("click", function () {
+      // Удаляем класс is-current у всех кнопок перед добавлением
+      colorSwitcherButtons.forEach(btn => btn.classList.remove("is-current"));
+      // alert(themeType);
+      console.log(themeType);
+      // Добавляем класс is-current к нажатой кнопке
+      button.classList.add("is-current");
+
+      if (themeType === "light") {
+        body.setAttribute("data-theme", "light");
+        localStorage.setItem("theme", "light");
+      } else if (themeType === "dark") {
+        body.setAttribute("data-theme", "dark");
+        localStorage.setItem("theme", "dark");
+      } else if (themeType === "system") {
+        const prefersDarkScheme = window.matchMedia(
+          "(prefers-color-scheme: dark)"
+        ).matches;
+        const newTheme = prefersDarkScheme ? "dark" : "light"; 
+        body.setAttribute("data-theme", newTheme);
+        localStorage.removeItem("theme"); // Remove saved theme to revert to system preference
+      }
+    });
+  });
+
+
 //3D Swiper________________________________________________________________________________________
 
 const swiper3d = new Swiper(".s2_main_section", {
@@ -829,57 +883,6 @@ rewardsRows.forEach((row, index) => {
 //   },
 // });
 
-//Color switcher________________________________________________________
-document.addEventListener("DOMContentLoaded", function () {
-  const body = document.body;
-  const savedTheme = localStorage.getItem("theme");
-
-
-  document.querySelectorAll("[data-color-switcher]").forEach(btn => btn.classList.remove("is-current"));
-
-  if (savedTheme) {
-    body.setAttribute("data-theme", savedTheme);
-  } else {
-    const prefersDarkScheme = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-    body.setAttribute("data-theme", prefersDarkScheme ? "dark" : "light");
-  }
-
-  const buttons = document.querySelectorAll("[data-color-switcher]");
-  buttons.forEach(function (button) {
-    const themeType = button.getAttribute("data-color-switcher");
-    
-    // Устанавливаем класс is-current на нужной кнопке
-    if (themeType === body.getAttribute("data-theme")) {
-      button.classList.add("is-current");
-    }
-
-    button.addEventListener("click", function () {
-      // Удаляем класс is-current у всех кнопок перед добавлением
-      buttons.forEach(btn => btn.classList.remove("is-current"));
-      // alert(themeType);
-      
-      // Добавляем класс is-current к нажатой кнопке
-      button.classList.add("is-current");
-
-      if (themeType === "light") {
-        body.setAttribute("data-theme", "light");
-        localStorage.setItem("theme", "light");
-      } else if (themeType === "dark") {
-        body.setAttribute("data-theme", "dark");
-        localStorage.setItem("theme", "dark");
-      } else if (themeType === "system") {
-        const prefersDarkScheme = window.matchMedia(
-          "(prefers-color-scheme: dark)"
-        ).matches;
-        const newTheme = prefersDarkScheme ? "dark" : "light"; 
-        body.setAttribute("data-theme", newTheme);
-        localStorage.removeItem("theme"); // Remove saved theme to revert to system preference
-      }
-    });
-  });
-});
 
 //Horizontal scroll________________________________________________
 
@@ -894,7 +897,7 @@ if (container) {
 
   // Рассчитываем общую ширину движения
   const totalScrollWidth = (cards.length - 1) * cards[0].offsetWidth;
-  console.log(totalScrollWidth);
+  // console.log(totalScrollWidth);
   gsap.to("[data-simple-horizontal] .swiper-wrapper", {
     x: -totalScrollWidth, // Двигаем карточки влево
     ease: "none",
@@ -1168,7 +1171,7 @@ document.querySelectorAll('input[name="Language"]').forEach(function (input) {
 document.querySelectorAll('input[name="Page"]').forEach(function (input) {
   // Получаем текущий URL
   var currentUrl = window.location.pathname;
-  console.log(currentUrl);
+  // console.log(currentUrl);
   // Разделяем URL на части по символу "/"
   var slug = currentUrl.split("/").filter(Boolean).pop(); // Последняя часть URL после "/"
 
