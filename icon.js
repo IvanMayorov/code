@@ -450,9 +450,10 @@ mediaScreen.add("(min-width: 992px)", () => {
   });
 
   const s10RightBoxWidth = document.querySelector('.s10-right-box').offsetWidth; // Получаем ширину s10-right-box
+  const s10RightContentWidth = document.querySelector('.s10-right').offsetWidth; 
   const s10RightBoxCount = document.querySelectorAll('.s10-right-box').length; // Получаем количество s10-right-box
   s10SectionAnimation
-    .to(".s10-right-box", { x: `-${s10RightBoxWidth * (s10RightBoxCount - 1)}px`, ease: "none" }) // смещай на количество s10-right-box минус один
+    .to(".s10-right-box", { x: `-${s10RightBoxWidth * (s10RightBoxCount - 1) - (s10RightContentWidth - s10RightBoxWidth)}px`, ease: "none" }) // смещай на количество s10-right-box минус один
     .fromTo(".s10-progress-bar", { width: "0%" }, { width: "100%" }, 0);
 
   // Анимация 11-ой секции
