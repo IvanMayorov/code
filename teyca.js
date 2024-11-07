@@ -1,3 +1,23 @@
+let lastSelectedTariff = '';
+function updateSelectedTariff(clientsValue) {
+  let selectedTariff = 'start';
+  if (lastSelectedTariff !== 'off') {
+    if (clientsValue <= 1000) {
+        selectedTariff = 'start';
+      } else if (clientsValue <= 5000) {
+        selectedTariff = 'standard';
+        lastSelectedTariff = 'standard';
+      } else if (clientsValue > 5000) {
+        selectedTariff = 'prof';
+        lastSelectedTariff = 'prof';
+      }
+      document.querySelector(`input[name="tariff"][value="${selectedTariff}"]`).checked = true;
+      if (lastSelectedTariff == 'prof') {
+        lastSelectedTariff = 'off';
+      }
+  }
+}
+
 // DOM Elements
 const rangeInputClients = document.querySelector('input[name="clients"]');
 const rangeInputKass = document.querySelector('input[name="kass"]');
@@ -7,7 +27,7 @@ const resultBox = document.querySelector('[data-final-result]');
 const resultBoxes = Array.from(document.querySelectorAll('input[name="result"]')).map(input => input.closest('label'));
 const tariffRadioButtons = document.querySelectorAll('input[name="tariff"]');
 const priceLabel = document.querySelector('[data-price-label]');
-// console.log(resultBoxes);
+
 const tariffPrices = {
   start: 2990,
   standard: 5490,
@@ -48,10 +68,11 @@ const calculateTotalCost = () => {
       finalCost = totalCost * 0.8; // 20% discount
     }
 
-    box.querySelector('[data-result]').textContent = `${formatNumberWithSpaces(finalCost.toFixed())} ₽`;
+    box.querySelector('[data-result]').textContent = `${formatNumberWithSpaces(finalCost.toFixed())} ₽ / мес`;
 
     if (box.querySelector('input[name="result"]').checked) {  
         resultBox.textContent = `${formatNumberWithSpaces(finalCost.toFixed())} ₽`;
+        priceLabel.textContent = `${additionalPointPrices[selectedTariff]} ₽`; // Update price label based on selected tariff
     }
   });
 };
@@ -62,27 +83,14 @@ if (rangeInputClients) {
     if (clientsTargetDiv) {
       clientsTargetDiv.textContent = clientsValue;
     }
-
-    let selectedTariff = 'start';
-    if (clientsValue <= 1000) {
-      selectedTariff = 'start';
-    } else if (clientsValue <= 5000) {
-      selectedTariff = 'standard';
-    } else {
-      selectedTariff = 'prof';
-    }
-    document.querySelector(`input[name="tariff"][value="${selectedTariff}"]`).checked = true;
-
-    // Update data-price-label with additional point price
-    if (priceLabel) {
-      priceLabel.textContent = `${formatNumberWithSpaces(additionalPointPrices[selectedTariff])} ₽`;
-    }
-
+    updateSelectedTariff(clientsValue);
     calculateTotalCost();
     updateSliderBackground(rangeInputClients);
   });
-  
 }
+
+let tariffChanged = false; // Flag to track if tariff has been changed
+
 
 if (rangeInputKass) {
   rangeInputKass.addEventListener('input', (e) => {
@@ -90,11 +98,19 @@ if (rangeInputKass) {
     if (kassTargetDiv) {
       kassTargetDiv.textContent = kassValue;
     }
+    if (!tariffChanged) {  
+      if (kassValue > 8) {
+        document.querySelector('input[name="tariff"][value="prof"]').checked = true;
+        tariffChanged = true;
+      } else if (kassValue > 7) {
+        document.querySelector('input[name="tariff"][value="standard"]').checked = true;
+
+      }
+    }
 
     calculateTotalCost();
     updateSliderBackground(rangeInputKass);
   });
-  
 }
 
 // Update slider backgrounds on page load
