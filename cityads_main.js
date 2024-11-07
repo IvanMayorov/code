@@ -159,9 +159,9 @@ const swiper3d = new Swiper(".s2_main_section", {
 const dropdowns = document.querySelectorAll("[data-drop-box]");
 const dropdownButtons = document.querySelectorAll("[data-drop-button]");
 
-// Устанавливаем начальное состояние для всех dropdown
+// Начальное состояние для всех dropdown
 dropdowns.forEach(dropdown => {
-  gsap.set(dropdown, { autoAlpha: 0, y: 20 }); // Начальное смещение на 20 пикселей вниз
+  gsap.set(dropdown, { autoAlpha: 0, y: 20 });
 });
 
 // Функция для закрытия всех dropdown
@@ -169,21 +169,33 @@ const closeDropdowns = () => {
   dropdowns.forEach(dropdown => {
     gsap.to(dropdown, {
       autoAlpha: 0,
-      y: 20, // Сохраняем смещение при скрытии
+      y: 20,
       duration: 0.3,
       onComplete: () => {
-        dropdown.style.display = "none"; // Скрываем элемент после анимации
+        dropdown.style.display = "none";
       },
     });
   });
+  document.removeEventListener("click", handleOutsideClick);
 };
 
-// Добавляем обработчик события клика на каждую кнопку
+// Обработчик для клика вне dropdown
+const handleOutsideClick = (event) => {
+  const path = event.composedPath();
+  const isClickInsideDropdownOrButton = Array.from(dropdownButtons).some(button => path.includes(button)) ||
+                                        Array.from(dropdowns).some(dropdown => path.includes(dropdown));
+
+  if (!isClickInsideDropdownOrButton) {
+    closeDropdowns();
+  }
+};
+
+// Обработчики события клика на кнопки
 dropdownButtons.forEach((button, index) => {
   button.addEventListener("click", (event) => {
-    event.preventDefault(); // Предотвращаем скролл страницы
-    event.stopPropagation(); // Останавливаем всплытие события
-    event.stopImmediatePropagation(); // Останавливаем выполнение других обработчиков
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
 
     const dropdown = dropdowns[index];
     const isVisible = dropdown.style.display === "flex";
@@ -191,19 +203,20 @@ dropdownButtons.forEach((button, index) => {
     if (isVisible) {
       closeDropdowns();
     } else {
-      // Закрываем все другие dropdown перед открытием нового
       closeDropdowns();
       
-      // Если скрыто, показываем
-      dropdown.style.display = "flex"; // Сначала показываем элемент
+      dropdown.style.display = "flex";
       gsap.to(dropdown, {
         autoAlpha: 1,
-        y: 0, // При открытии смещение к нулю
+        y: 0,
         duration: 0.3,
         onComplete: () => {
-          dropdown.style.display = "flex"; // Убедимся, что элемент остается видимым после анимации
+          dropdown.style.display = "flex";
         }
       });
+      
+      // Добавляем слушатель для закрытия при клике вне
+      document.addEventListener("click", handleOutsideClick);
     }
   });
 });
