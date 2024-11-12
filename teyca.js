@@ -9,6 +9,16 @@ const resultBoxes = Array.from(document.querySelectorAll('input[name="result"]')
 const tariffRadioButtons = document.querySelectorAll('input[name="tariff"]');
 const priceLabel = document.querySelector('[data-price-label]');
 const tariffButton = document.querySelectorAll('[data-tariff-button]');
+const checkboxTg = document.querySelectorAll('input[data-name="Checkbox Tg"]');
+
+checkboxTg.forEach(checkbox => {
+    checkbox.addEventListener('change', () => {
+        setTariff('prof', 'Профессионал');
+        calculateTotalCost();
+    });
+});
+
+
 
 tariffButton.forEach(button => {
     button.addEventListener('click', (e) => {
