@@ -188,6 +188,7 @@ const handleOutsideClick = (event) => {
   if (!isClickInsideDropdownOrButton) {
     closeDropdowns();
   }
+
 };
 
 // Обработчики события клика на кнопки
@@ -1173,13 +1174,32 @@ buttons.forEach((button) => {
   });
 });
 
+
+
 document.querySelectorAll('input[name="Region"]').forEach(function (input) {
-  input.value = "РФ";
+  input.value = window.location.pathname
 });
 
-document.querySelectorAll('input[name="Language"]').forEach(function (input) {
-  input.value = "RU";
+const utmParams = [
+  'utm_referrer',
+  'utm_content',
+  'utm_term',
+  'utm_campaign',
+  'utm_medium',
+  'utm_source'
+];
+
+utmParams.forEach(param => {
+  const input = document.createElement('input');
+  input.type = 'hidden';
+  input.name = param;
+  input.value = new URLSearchParams(window.location.search).get(param) || ''; // Get the value from the URL or set to empty
+  document.querySelectorAll('form').forEach(form => {
+    form.appendChild(input.cloneNode()); // Append a clone of the input to each form
+  });
 });
+
+
 
 document.querySelectorAll('input[name="Page"]').forEach(function (input) {
   // Получаем текущий URL
