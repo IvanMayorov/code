@@ -10,15 +10,16 @@ const tariffRadioButtons = document.querySelectorAll('input[name="tariff"]');
 const priceLabel = document.querySelector('[data-price-label]');
 const tariffButton = document.querySelectorAll('[data-tariff-button]');
 const checkboxTg = document.querySelectorAll('input[data-name="Checkbox Tg"]');
+const customCheckboxes = document.querySelectorAll('.custom_checkbox');
 
-checkboxTg.forEach(checkbox => {
-    checkbox.addEventListener('change', () => {
-        setTariff('prof', 'Профессионал');
-        calculateTotalCost();
-    });
-});
+// checkboxTg.forEach(checkbox => {
+//     checkbox.addEventListener('change', () => {
+//         setTariff('prof', 'Профессионал');
+//         calculateTotalCost();
+//     });
+// });
 
-
+let kassValueGlobal = 1;
 
 tariffButton.forEach(button => {
     button.addEventListener('click', (e) => {
@@ -26,6 +27,9 @@ tariffButton.forEach(button => {
         // console.log(tariffValue); // You can replace this with any action you want to perform with the tariffValue
         document.querySelector(`input[name="tariff"][value="${tariffValue}"]`).checked = true;
         calculateTotalCost();
+        if(tariffValue === 'prof'){
+            toggleCustomCheckboxes()
+        }
     });
 });
 
@@ -41,12 +45,22 @@ function updateSelectedTariff(clientsValue) {
     const selectedTariffValue = Array.from(tariffRadioButtons).find(radio => radio.checked)?.value || '';
 
 
-    if (clientsValue <= 5000 && clientsValue > 1000 && selectedTariffValue !== 'prof') {
+    if (clientsValue <= 5000 && clientsValue > 1000 && kassValueGlobal < 8) {
         setTariff('standard', 'Стандарт');
         previousTariff = 'start';
-    } else if (clientsValue > 5000) {
+        customCheckboxes.forEach((cb) => cb.classList.remove('is-active'));
+    } else if (clientsValue > 5000 ) {
+     
         setTariff('prof', 'Профессионал');
+        toggleCustomCheckboxes()
         previousTariff = 'standard';
+        customCheckboxes.forEach((cb) => cb.classList.add('is-active'));
+        
+        
+    }
+    else if (kassValueGlobal < 7 ) {
+        setTariff('start', 'Старт');
+        customCheckboxes.forEach((cb) => cb.classList.remove('is-active'));
     }
 
 
@@ -155,13 +169,20 @@ if (rangeInputClients) {
 if (rangeInputKass) {
     rangeInputKass.addEventListener('input', (e) => {
         const kassValue = e.target.value;
+        kassValueGlobal = kassValue;
         const selectedTariffValue = Array.from(tariffRadioButtons).find(radio => radio.checked)?.value || '';
         if (kassTargetDiv) {
             kassTargetDiv.textContent = kassValue;
         }
         if (kassValue > 8 && selectedTariffValue !== 'prof') {
             document.querySelector('input[name="tariff"][value="prof"]').checked = true;
+            
             setTariff('prof', 'Профессионал');
+            $('.w-checkbox.check.price.telegram').each(function() {
+                if (!$(this).hasClass('is-checked')) {
+                    $(this).addClass('is-checked');
+                }
+            });
         } else if (kassValue > 7 && selectedTariffValue !== 'standard' && selectedTariffValue !== 'prof') {
             document.querySelector('input[name="tariff"][value="standard"]').checked = true;
         }
@@ -222,3 +243,27 @@ editableElements.forEach((element) => {
 });
 
 
+customCheckboxes.forEach((cb) => cb.classList.remove('is-active'));
+
+function toggleCustomCheckboxes() {
+
+    const isActive = Array.from(customCheckboxes).some(cb => cb.classList.contains('is-active'));
+            
+              // Remove 'is-active' class from all custom checkboxes
+    customCheckboxes.forEach((cb) => cb.classList.add('is-active'));
+    
+    // If it was not active, add 'is-active' class to the clicked checkbox
+    if (isActive) {
+        customCheckboxes.forEach((cb) => cb.classList.remove('is-active'));
+    }
+
+}
+
+
+
+customCheckboxes.forEach((checkbox) => {
+    checkbox.addEventListener('click', () => {
+        toggleCustomCheckboxes();
+        setTariff('prof', 'Профессионал');
+    });
+});
