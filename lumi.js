@@ -1,5 +1,4 @@
-// script.js
-document.addEventListener('DOMContentLoaded', function() {
+
     const canvas = document.getElementById('starCanvas');
     const ctx = canvas.getContext('2d');
 
@@ -127,4 +126,4 @@ document.addEventListener('DOMContentLoaded', function() {
     addInitialStars();
     
     update();
-});
+
