@@ -67,7 +67,7 @@
         lastMouseY = e.clientY;
     
         // Создаем несколько звёзд за раз
-        const starsPerMove = 3; // Количество звёзд за одно движение
+        const starsPerMove = 2; // Количество звёзд за одно движение
         for (let i = 0; i < starsPerMove; i++) {
             // Random offset for mouse velocity
             let randomOffsetX = (Math.random() - 0.5) * 100;
