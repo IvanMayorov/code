@@ -1,5 +1,5 @@
 
-//Color switcher  test________________________________________________________
+//Color switcher ________________________________________________________
 
   const body = document.body;
   const savedTheme = localStorage.getItem("theme");
