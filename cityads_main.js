@@ -1591,6 +1591,9 @@ document.addEventListener("DOMContentLoaded", () => {
 document.querySelector('[data-name="Subscribe"]').addEventListener('submit', function(event) {
   event.preventDefault();
 
+  const emailInput = document.querySelector('[data-name="Subscribe"] input[type="email"]');
+  const email = emailInput ? emailInput.value.trim() : '';
+
   const urlParams = new URLSearchParams(window.location.search);
   const utmSource = urlParams.get('utm_source') || '';
   const utmMedium = urlParams.get('utm_medium') || '';
@@ -1604,7 +1607,7 @@ document.querySelector('[data-name="Subscribe"]').addEventListener('submit', fun
     operation: "footersubscribe",
     data: {
       customer: {
-        email: "<Email>",
+        email: email,
         subscriptions: [
           {
             pointOfContact: "Email",
