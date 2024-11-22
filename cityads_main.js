@@ -1202,16 +1202,15 @@ utmParams.forEach(param => {
 
 
 document.querySelectorAll('input[name="Page"]').forEach(function (input) {
-  // Получаем текущий URL
-  var currentUrl = window.location.pathname;
-  // console.log(currentUrl);
-  // Разделяем URL на части по символу "/"
-  var slug = currentUrl.split("/").filter(Boolean).pop(); // Последняя часть URL после "/"
+  // Проверяем наличие div с классом webmaster_identifier или bloggers_identifier
+  const isWebmaster = document.querySelector('.webmaster_identifier') || document.querySelector('.bloggers_identifier');
 
-  if (!slug) {
-    input.value = "Вебмастер"; // Если слага нет, устанавливаем "Вебмастер"
+  if (isWebmaster) {
+    input.value = "Вебмастер"; // Если есть div с классом webmaster_identifier или bloggers_identifier, устанавливаем "Вебмастер"
+    console.log("Input value set to 'Вебмастер' for", input);
   } else {
-    input.value = "Рекламодатель"; // Если есть slug, устанавливаем "Рекламодатель"
+    input.value = "Рекламодатель"; // В противном случае устанавливаем "Рекламодатель"
+    console.log("Input value set to 'Рекламодатель' for", input);
   }
 });
 
