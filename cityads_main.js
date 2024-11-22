@@ -1501,3 +1501,139 @@ document
   });
 
 }
+
+const visibleLangBlocks = document.querySelectorAll('.navbar [data-lang]:not([style*="display: none"])');
+visibleLangBlocks.forEach(block => {
+  console.log(block.getAttribute('data-lang'));
+});
+function generateSchemaMarkup(
+  context, 
+  type, 
+  name, 
+  url, 
+  logo, 
+  mainHeroTitle, 
+  telephone, 
+  contactType, 
+  availableLanguages, 
+  streetAddress, 
+  addressLocality, 
+  postalCode, 
+  addressCountry, 
+  sameAs, 
+  email
+) {
+  const schema = {
+      "@context": context,
+      "@type": type,
+      "name": name,
+      "url": url,
+      "logo": logo,
+      "description": mainHeroTitle,
+      "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": contactType,
+          "availableLanguage": availableLanguages
+      },
+      "address": {
+          "@type": "PostalAddress",
+          "streetAddress": streetAddress,
+          "addressLocality": addressLocality,
+          "postalCode": postalCode,
+          "addressCountry": addressCountry
+      },
+      "sameAs": sameAs,
+      "email": email
+  };
+
+  if (telephone) {
+      schema.contactPoint.telephone = telephone;
+  }
+
+  return JSON.stringify(schema, null, 2);
+}
+
+// Get the text from the div with class .main_hero_title, phone number from [data-json-phone], and social media links
+document.addEventListener("DOMContentLoaded", () => {
+  const mainHeroTitle = document.querySelector(".main_hero_title")?.textContent.trim() || "";
+  const telephone = document.querySelector("[data-json-phone]")?.textContent.trim() || "";
+  const socialLinks = Array.from(document.querySelectorAll(".footer-section .square-link"))
+      .filter(link => link.offsetParent !== null && link.href) // Проверяем, что href существует
+      .map(link => link.href.trim());
+
+  // Get available languages from the navbar
+  const availableLanguages = Array.from(document.querySelectorAll('.navbar [data-lang]:not([style*="display: none"])'))
+      .map(block => block.getAttribute('data-lang'));
+
+  // Example usage
+  const schemaMarkup = generateSchemaMarkup(
+      "https://schema.org",
+      "Organization",
+      "Cityads",
+      "https://cityads.com",
+      "https://cityads.com/logo.svg",
+      mainHeroTitle,
+      telephone,
+      "customer service",
+      availableLanguages,
+      "2-я Звенигородская улица, 13с42",
+      "Москва",
+      "123022",
+      "RU",
+      socialLinks,
+      "russia@cityads.com"
+  );
+
+  console.log(schemaMarkup);
+});
+
+
+document.querySelector('[data-name="Subscribe"]').addEventListener('submit', function(event) {
+  event.preventDefault();
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const utmSource = urlParams.get('utm_source') || '';
+  const utmMedium = urlParams.get('utm_medium') || '';
+  const utmContent = urlParams.get('utm_content') || '';
+  const utmCampaign = urlParams.get('utm_campaign') || '';
+  const utmReferrer = urlParams.get('utm_referrer') || '';
+  const utmSearch = urlParams.get('utm_term') || '';
+  const subscriptionUrl = window.location.href;
+
+  mindbox("async", {
+    operation: "footersubscribe",
+    data: {
+      customer: {
+        email: "<Email>",
+        subscriptions: [
+          {
+            pointOfContact: "Email",
+            topic: "news"
+          }
+        ]
+      },
+      customerAction: {
+        customFields: {
+          utmSource: utmSource,
+          utmMedium: utmMedium,
+          utmContent: utmContent,
+          utmCampaign: utmCampaign,
+          utmReferrer: utmReferrer,
+          utmSearch: utmSearch,
+          subscriptionUrl: subscriptionUrl
+        }
+      }
+    },
+    onSuccess: function() { 
+      console.log("Subscription successful");
+    },
+    onError: function(error) { 
+      console.error("Subscription error:", error);
+    }
+  });
+});
+
+
+
+
+
