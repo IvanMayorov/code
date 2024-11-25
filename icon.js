@@ -36,10 +36,15 @@ function initializeFotorama() {
     ); // Get the size of 1 rem in pixels
   
     const thumbWidthInPx = 60 * remSize; // Calculate 60 rem in pixels
-    const thumbMarginInPx = 8 * remSize; // Calculate 60 rem in pixels
+    const thumbMarginInPx = 8 * remSize; // Calculate 8 rem in pixels
+
+    // Check if the device is mobile
+    const isMobile = window.matchMedia("(max-width: 479px)").matches;
+    const ratio = isMobile ? 292 / 212 : 400 / 240; // Set ratio based on device
+
     fotorama.setOptions({
       fit: "cover",
-      ratio: 400 / 240,
+      ratio: ratio,
       thumbwidth: thumbWidthInPx,
       thumbheight: thumbWidthInPx,
       thumbmargin: thumbMarginInPx,
