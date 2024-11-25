@@ -11,6 +11,7 @@ const priceLabel = document.querySelector('[data-price-label]');
 const tariffButton = document.querySelectorAll('[data-tariff-button]');
 const checkboxTg = document.querySelectorAll('input[data-name="Checkbox Tg"]');
 const customCheckboxes = document.querySelectorAll('.custom_checkbox');
+const tariffLabels = document.querySelectorAll('.tariff-label');
 
 // checkboxTg.forEach(checkbox => {
 //     checkbox.addEventListener('change', () => {
@@ -19,6 +20,7 @@ const customCheckboxes = document.querySelectorAll('.custom_checkbox');
 //     });
 // });
 
+tariffLabels.forEach(label => label.classList.remove('is-disabled'));
 let kassValueGlobal = 1;
 
 tariffButton.forEach(button => {
@@ -46,11 +48,13 @@ function updateSelectedTariff(clientsValue) {
 
 
     if (clientsValue <= 5000 && clientsValue > 1000 && kassValueGlobal < 8) {
+        tariffLabels.forEach(label => label.classList.remove('is-disabled'));
         setTariff('standard', 'Стандарт');
         previousTariff = 'start';
         customCheckboxes.forEach((cb) => cb.classList.remove('is-active'));
     } else if (clientsValue > 5000 ) {
-     
+        tariffLabels[0].classList.add('is-disabled');
+        tariffLabels[1].classList.add('is-disabled');
         setTariff('prof', 'Профессионал');
         toggleCustomCheckboxes()
         previousTariff = 'standard';
@@ -120,10 +124,20 @@ const calculateTotalCost = () => {
     const additionalPoints = kassValue - 1;
     const totalCost = tariffPrices[selectedTariff] + (additionalPoints * additionalPointPrices[selectedTariff]);
 
+    if(selectedTariff === 'prof'){
+        addActiveClassToCheckboxes()
+    }
     resultBoxes.forEach((box) => {
         const resultValue = box.querySelector('input[name="result"]').value;
         let finalCost = totalCost;
 
+        if(kassValue > 100){
+            document.querySelector('[data-final-result]').textContent = 'по запросу';
+            box.querySelector('[data-result]').textContent = 'по запросу';
+            document.querySelector('[data-month]').style.display = 'none';
+        }
+        else {
+            document.querySelector('[data-month]').style.display = 'block';
         if (resultValue === '3') {
             finalCost = totalCost * 0.9; // 10% discount
         } else if (resultValue === '6') {
@@ -134,10 +148,11 @@ const calculateTotalCost = () => {
 
         box.querySelector('[data-result]').textContent = `${formatNumberWithSpaces(finalCost.toFixed())} ₽ / мес`;
 
-        if (box.querySelector('input[name="result"]').checked) {  
+        if (box.querySelector('input[name="result"]').checked) { 
             resultBox.textContent = `${formatNumberWithSpaces(finalCost.toFixed())} ₽`;
             priceLabel.textContent = `${additionalPointPrices[selectedTariff]} ₽`; // Update price label based on selected tariff
         }
+    }
     });
 };
 
@@ -246,17 +261,20 @@ editableElements.forEach((element) => {
 customCheckboxes.forEach((cb) => cb.classList.remove('is-active'));
 
 function toggleCustomCheckboxes() {
-
     const isActive = Array.from(customCheckboxes).some(cb => cb.classList.contains('is-active'));
-            
-              // Remove 'is-active' class from all custom checkboxes
-    customCheckboxes.forEach((cb) => cb.classList.add('is-active'));
     
-    // If it was not active, add 'is-active' class to the clicked checkbox
     if (isActive) {
         customCheckboxes.forEach((cb) => cb.classList.remove('is-active'));
+        tariffLabels.forEach(label => label.classList.remove('is-disabled'));
+    } else {
+        addActiveClassToCheckboxes();
     }
+}
 
+function addActiveClassToCheckboxes() {
+    customCheckboxes.forEach((cb) => cb.classList.add('is-active'));
+    tariffLabels[0].classList.add('is-disabled');
+    tariffLabels[1].classList.add('is-disabled');
 }
 
 
