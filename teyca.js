@@ -31,6 +31,7 @@ tariffButton.forEach(button => {
         calculateTotalCost();
         if(tariffValue === 'prof'){
             toggleCustomCheckboxes()
+            addActiveClassToCheckboxes() 
         }
     });
 });
