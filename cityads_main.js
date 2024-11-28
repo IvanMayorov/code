@@ -144,12 +144,23 @@ const swiper3d = new Swiper(".s2_main_section", {
     gsap.to(".main_hero_section", {
       scrollTrigger: {
         trigger: ".hero-sticky_wrap",
-        start: "top top",
+        start: "25% top",
         end: "bottom top",
         scrub: true,
+        // markers: true,
       },
       filter: "blur(24px)",
       opacity: 0,
+    });
+    gsap.to(".main_hero_section > *", {
+      scrollTrigger: {
+        trigger: ".hero-sticky_wrap",
+        start: "top top",
+        end: "bottom top",
+        scrub: true,
+
+      },
+      y: "-80vh",
     });
   }
 
