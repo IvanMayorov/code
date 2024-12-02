@@ -66,7 +66,7 @@ console.log(savedTheme);
       stretch: 0,
       // depth: 100,
       modifier: 0.5,
-      slideShadows: true,
+      // slideShadows: true,
     },
       //   observer: true,
       //   longSwipesRatio: 10,
