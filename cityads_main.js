@@ -53,42 +53,43 @@ console.log(savedTheme);
 
 
   //Home slider______________________________________________________________________________________ 
-
   const swiper3d = new Swiper(".s2_main_section", {
-    // effect: "coverflow",
-    // grabCursor: true,
     loop: true,
-    centeredSlides: true,
-    slidesPerView: 4,
-    loopAddBlankSlides: true,
-    // loopAdditionalSlides: 0,
-    // allowTouchMove: false,
-    slideToClickedSlide: true,
+    // centeredSlides: true,
+    slidesPerView: 5,
     spaceBetween: 24,
- 
-    // coverflowEffect: {
-    //   rotate: 0,
-    //   stretch: 0,
-    //   // depth: 100,
-    //   modifier: 0.5,
-    //   // slideShadows: true,
+    // slideToClickedSlide: true,
+    pagination: {
+      el: ".swiper-pagination",
+      clickable: true,
+      bulletActiveClass: "bullet-active",
+      bulletClass: "pagination-bullet",
+    },
+    on: {
+      click: (swiper) => {
+        const adjustedActiveIndex = swiper.activeIndex + 2;
+        if (swiper.clickedIndex !== adjustedActiveIndex) {
+          if (swiper.clickedIndex > adjustedActiveIndex) {
+            swiper.slideNext();
+          } else {
+            swiper.slidePrev();
+          }
+        }
+      }
+    },
+    // on: {
+    //   click(swiper) {
+    //     if (swiper.clickedIndex !== undefined) {
+    //       swiper.slideTo(swiper.clickedIndex);
+    //       swiper.update(); // Refresh after changing slides
+    //     }
+    //   },
     // },
-      //   observer: true,
-      //   longSwipesRatio: 10,
-      //   loopAdditionalSlides: 20,
-        pagination: {
-          el: ".swiper-pagination",
-          clickable: true,
-          bulletActiveClass: "bullet-active",
-          bulletClass: "pagination-bullet",
-          // dynamicBullets: true,
-          // dynamicMainBullets: 1,
-        },
-
-      
-      });
+  });
 
   /*
+
+  
 //3D Swiper________________________________________________________________________________________
 
 
