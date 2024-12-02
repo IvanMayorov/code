@@ -55,19 +55,24 @@ console.log(savedTheme);
   //Home slider______________________________________________________________________________________ 
 
   const swiper3d = new Swiper(".s2_main_section", {
-    effect: "coverflow",
-    grabCursor: true,
-    centeredSlides: true,
-    slidesPerView: 'auto',
+    // effect: "coverflow",
+    // grabCursor: true,
     loop: true,
+    centeredSlides: true,
+    slidesPerView: 4,
+    loopAddBlankSlides: true,
+    // loopAdditionalSlides: 0,
+    // allowTouchMove: false,
+    slideToClickedSlide: true,
     spaceBetween: 24,
-    coverflowEffect: {
-      rotate: 0,
-      stretch: 0,
-      // depth: 100,
-      modifier: 0.5,
-      // slideShadows: true,
-    },
+ 
+    // coverflowEffect: {
+    //   rotate: 0,
+    //   stretch: 0,
+    //   // depth: 100,
+    //   modifier: 0.5,
+    //   // slideShadows: true,
+    // },
       //   observer: true,
       //   longSwipesRatio: 10,
       //   loopAdditionalSlides: 20,
@@ -340,6 +345,7 @@ Draggable.create(".wrp-ribbons-offers", {
     edgeResistance: 0.9,
     inertia: true,
     type: "x",
+    zIndexBoost: false,
   });
 
 
