@@ -52,7 +52,40 @@ console.log(savedTheme);
   });
 
 
+  //Home slider______________________________________________________________________________________ 
+
+  const swiper3d = new Swiper(".s2_main_section", {
+    effect: "coverflow",
+    grabCursor: true,
+    centeredSlides: true,
+    slidesPerView: 'auto',
+    loop: true,
+    spaceBetween: 24,
+    coverflowEffect: {
+      rotate: 0,
+      stretch: 0,
+      // depth: 100,
+      modifier: 0.5,
+      slideShadows: true,
+    },
+      //   observer: true,
+      //   longSwipesRatio: 10,
+      //   loopAdditionalSlides: 20,
+        pagination: {
+          el: ".swiper-pagination",
+          clickable: true,
+          bulletActiveClass: "bullet-active",
+          bulletClass: "pagination-bullet",
+          // dynamicBullets: true,
+          // dynamicMainBullets: 1,
+        },
+
+      
+      });
+
+  /*
 //3D Swiper________________________________________________________________________________________
+
 
 const swiper3d = new Swiper(".s2_main_section", {
   slidesPerView: 5,
@@ -138,7 +171,7 @@ const swiper3d = new Swiper(".s2_main_section", {
         },
       },
     });
-
+*/
 
   if (window.innerWidth > 991) {
     gsap.to(".main_hero_section", {
@@ -1647,6 +1680,13 @@ document.querySelector('[data-name="Subscribe"]').addEventListener('submit', fun
 });
 
 
-
-
-
+const phoneInputs = document.querySelectorAll('input[type="tel"]');
+phoneInputs.forEach(input => {
+  window.intlTelInput(input, {
+    autoPlaceholder: "aggressive",
+    strictMode: true,
+    // separateDialCode: true,
+    initialCountry: "us",
+    loadUtilsOnInit: "https://cdn.jsdelivr.net/npm/intl-tel-input@24.7.0/build/js/utils.js",
+  });
+});
