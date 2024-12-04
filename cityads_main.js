@@ -55,15 +55,26 @@ console.log(savedTheme);
   //Home slider______________________________________________________________________________________ 
   const swiper3d = new Swiper(".s2_main_section", {
     loop: true,
-    // centeredSlides: true,
-    slidesPerView: 5,
+    centeredSlides: true,
+    slidesPerView: 1.5,
     spaceBetween: 24,
+    // loopAdditionalSlides: 2,
     // slideToClickedSlide: true,
     pagination: {
       el: ".swiper-pagination",
       clickable: true,
       bulletActiveClass: "bullet-active",
       bulletClass: "pagination-bullet",
+    },
+    breakpoints: {
+      1200: {
+        slidesPerView: 5,
+        centeredSlides: false,
+      },
+      768: {
+        slidesPerView: 3,
+        centeredSlides: false,
+      },
     },
     on: {
       click: (swiper) => {
