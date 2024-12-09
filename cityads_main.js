@@ -1,3 +1,37 @@
+document.querySelectorAll(".footer_drop_box select").forEach(select => {
+  const options = {
+    "Russia": "/ru-ru/",
+    "Poland": "/pl-pl/",
+    "Spain": "/es-es/",
+    "Global": "/",
+    "Brasil": "/br-br/",
+    "Vietnam": "/vn-vn/"
+  };
+  const firstOption = select.firstChild;
+
+  // Remove all options except the first one
+  while (select.childNodes.length > 1) {
+    select.removeChild(select.lastChild);
+  }
+
+  // Add the required options, excluding the first one if it's already in the list
+  Object.keys(options).forEach(optionText => {
+    if (!firstOption || firstOption.textContent !== optionText) {
+      const option = document.createElement("option");
+      option.textContent = optionText;
+      select.appendChild(option);
+    }
+  });
+
+  // Add event listener for redirect on change
+  select.addEventListener("change", (event) => {
+    const selectedOption = event.target.value;
+    if (options[selectedOption]) {
+      window.location.href = options[selectedOption];
+    }
+  });
+});
+
 
 //Color switcher ________________________________________________________
 
