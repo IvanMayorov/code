@@ -4,7 +4,7 @@ const rangeInputClients = document.querySelector('input[name="clients"]');
 const rangeInputKass = document.querySelector('input[name="kass"]');
 const clientsTargetDiv = document.querySelector('[data-clients]');
 const kassTargetDiv = document.querySelector('[data-kass]');
-const resultBox = document.querySelector('[data-final-result]');
+const resultBox = document.querySelectorAll('[data-final-result]');
 const resultBoxes = Array.from(document.querySelectorAll('input[name="result"]')).map(input => input.closest('label'));
 const tariffRadioButtons = document.querySelectorAll('input[name="tariff"]');
 const priceLabel = document.querySelector('[data-price-label]');
@@ -136,8 +136,10 @@ const calculateTotalCost = () => {
         const resultValue = box.querySelector('input[name="result"]').value;
         let finalCost = totalCost;
 
-        if(kassValue > 100){
-            document.querySelector('[data-final-result]').textContent = 'по запросу';
+        if(kassValue >= 100){
+            resultBox.forEach(element => {
+                element.textContent = 'по запросу';
+            });
             box.querySelector('[data-result]').textContent = 'по запросу';
             document.querySelector('[data-month]').style.display = 'none';
         }
@@ -154,7 +156,7 @@ const calculateTotalCost = () => {
         box.querySelector('[data-result]').textContent = `${formatNumberWithSpaces(finalCost.toFixed())} ₽ / мес`;
 
         if (box.querySelector('input[name="result"]').checked) { 
-            resultBox.textContent = `${formatNumberWithSpaces(finalCost.toFixed())} ₽`;
+            resultBox.forEach(box => box.textContent = `${formatNumberWithSpaces(finalCost.toFixed())} ₽`);
             priceLabel.textContent = `${additionalPointPrices[selectedTariff]} ₽`; // Update price label based on selected tariff
         }
     }
@@ -194,17 +196,22 @@ if (rangeInputKass) {
         if (kassTargetDiv) {
             kassTargetDiv.textContent = kassValue;
         }
-        if (kassValue > 8 && selectedTariffValue !== 'prof') {
+        if (kassValue > 8) {
             document.querySelector('input[name="tariff"][value="prof"]').checked = true;
             
             setTariff('prof', 'Профессионал');
-            $('.w-checkbox.check.price.telegram').each(function() {
-                if (!$(this).hasClass('is-checked')) {
-                    $(this).addClass('is-checked');
-                }
-            });
-        } else if (kassValue > 7 && selectedTariffValue !== 'standard' && selectedTariffValue !== 'prof') {
+            customCheckboxes.forEach((cb) => cb.classList.add('is-active'));
+
+
+        } else if (kassValue > 7 ) {
             document.querySelector('input[name="tariff"][value="standard"]').checked = true;
+            tariffLabels.forEach(label => label.classList.remove('is-disabled'));
+            customCheckboxes.forEach((cb) => cb.classList.remove('is-active'));
+        }
+        else {
+            document.querySelector('input[name="tariff"][value="start"]').checked = true;
+            tariffLabels.forEach(label => label.classList.remove('is-disabled'));
+            customCheckboxes.forEach((cb) => cb.classList.remove('is-active'));
         }
 
         calculateTotalCost();
@@ -271,6 +278,8 @@ function toggleCustomCheckboxes() {
     if (isActive) {
         customCheckboxes.forEach((cb) => cb.classList.remove('is-active'));
         tariffLabels.forEach(label => label.classList.remove('is-disabled'));
+        document.querySelector(`input[name="tariff"][value="standard"]`).checked = true;
+        console.log('standard');
     } else {
         addActiveClassToCheckboxes();
     }
@@ -286,7 +295,7 @@ function addActiveClassToCheckboxes() {
 
 customCheckboxes.forEach((checkbox) => {
     checkbox.addEventListener('click', () => {
-        toggleCustomCheckboxes();
         setTariff('prof', 'Профессионал');
+        toggleCustomCheckboxes();
     });
 });
