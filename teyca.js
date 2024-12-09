@@ -74,8 +74,12 @@ function updateSelectedTariff(clientsValue) {
 revertCalcButton.addEventListener('click', () => {
     if (previousTariff === 'start') {
         document.querySelector(`input[name="tariff"][value="start"]`).checked = true;
+        tariffLabels.forEach(label => label.classList.remove('is-disabled'));
+        customCheckboxes.forEach((cb) => cb.classList.remove('is-active'));
     } else if (previousTariff === 'standard') {
         document.querySelector(`input[name="tariff"][value="standard"]`).checked = true;
+        tariffLabels.forEach(label => label.classList.remove('is-disabled'));
+        customCheckboxes.forEach((cb) => cb.classList.remove('is-active'));
     }
     tooltip.style.display = 'none';
 });
