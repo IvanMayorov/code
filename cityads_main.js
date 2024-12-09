@@ -102,8 +102,8 @@ console.log(savedTheme);
     },
     breakpoints: {
       1200: {
-        slidesPerView: 5,
-        centeredSlides: false,
+        slidesPerView: 4.5,
+        centeredSlides: true,
       },
       768: {
         slidesPerView: 3,
