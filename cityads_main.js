@@ -90,7 +90,7 @@ console.log(savedTheme);
   const swiper3d = new Swiper("[data-wf--3d-carousel--variant='base'] .s2_main_section", {
     loop: true,
     centeredSlides: true,
-    slidesPerView: 1.5,
+    slidesPerView: 1.3,
     spaceBetween: 24,
     // loopAdditionalSlides: 2,
     slideToClickedSlide: true,
@@ -136,7 +136,7 @@ console.log(savedTheme);
     const swiperMobile = new Swiper("[data-wf--3d-carousel--variant='shrink'] .s2_main_section", {
       loop: true,
       centeredSlides: true,
-      slidesPerView: 1.5,
+      slidesPerView: 1.3,
       spaceBetween: 24,
       slideToClickedSlide: true,
       pagination: {
