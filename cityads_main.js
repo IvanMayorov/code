@@ -87,13 +87,13 @@ console.log(savedTheme);
 
 
   //Home slider______________________________________________________________________________________ 
-  const swiper3d = new Swiper(".s2_main_section", {
+  const swiper3d = new Swiper("[data-wf--3d-carousel--variant='base'] .s2_main_section", {
     loop: true,
     centeredSlides: true,
     slidesPerView: 1.5,
     spaceBetween: 24,
     // loopAdditionalSlides: 2,
-    // slideToClickedSlide: true,
+    slideToClickedSlide: true,
     pagination: {
       el: ".swiper-pagination",
       clickable: true,
@@ -102,26 +102,27 @@ console.log(savedTheme);
     },
     breakpoints: {
       1200: {
-        slidesPerView: 4.5,
+        slidesPerView: 5,
         centeredSlides: true,
+        watchOverflow: true,
       },
       768: {
         slidesPerView: 3,
         centeredSlides: false,
       },
     },
-    on: {
-      click: (swiper) => {
-        const adjustedActiveIndex = swiper.activeIndex + 2;
-        if (swiper.clickedIndex !== adjustedActiveIndex) {
-          if (swiper.clickedIndex > adjustedActiveIndex) {
-            swiper.slideNext();
-          } else {
-            swiper.slidePrev();
-          }
-        }
-      }
-    },
+    // on: {
+    //   click: (swiper) => {
+    //     const adjustedActiveIndex = swiper.activeIndex + 2;
+    //     if (swiper.clickedIndex !== adjustedActiveIndex) {
+    //       if (swiper.clickedIndex > adjustedActiveIndex) {
+    //         swiper.slideNext();
+    //       } else {
+    //         swiper.slidePrev();
+    //       }
+    //     }
+    //   }
+    // },
     // on: {
     //   click(swiper) {
     //     if (swiper.clickedIndex !== undefined) {
@@ -131,6 +132,26 @@ console.log(savedTheme);
     //   },
     // },
   });
+  if (window.innerWidth < 480) {
+    const swiperMobile = new Swiper("[data-wf--3d-carousel--variant='shrink'] .s2_main_section", {
+      loop: true,
+      centeredSlides: true,
+      slidesPerView: 1.5,
+      spaceBetween: 24,
+      slideToClickedSlide: true,
+      pagination: {
+        el: ".swiper-pagination",
+        clickable: true,
+        bulletActiveClass: "bullet-active",
+        bulletClass: "pagination-bullet",
+      },
+
+    });
+  }
+
+
+
+
 
   /*
 
