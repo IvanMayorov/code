@@ -46,6 +46,11 @@
 [data-wf--3d-carousel--variant="shrink"] .s2_carousel_card:hover {
     scale: 1.1;
 }
+
+[data-wf--3d-carousel--variant="shrink"] .home-card {
+    width: 100%;
+    max-width: 34rem;
+}
 /* .s2_carousel_button, .s2_carousel_card  {
     transition: all 0.3s ease-in-out;
 }
