@@ -297,5 +297,6 @@ customCheckboxes.forEach((checkbox) => {
     checkbox.addEventListener('click', () => {
         setTariff('prof', 'Профессионал');
         toggleCustomCheckboxes();
+        calculateTotalCost();
     });
 });
