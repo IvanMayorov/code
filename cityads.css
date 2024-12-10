@@ -34,7 +34,18 @@
       scale: 1.1;
   }
 }
+.swiper-slide-active {
+    z-index: 1;
+}
 
+[data-wf--3d-carousel--variant="shrink"] .swiper-slide:hover .s2_carousel_button {
+    opacity: 1;
+    pointer-events: all;
+}
+
+[data-wf--3d-carousel--variant="shrink"] .s2_carousel_card:hover {
+    scale: 1.1;
+}
 /* .s2_carousel_button, .s2_carousel_card  {
     transition: all 0.3s ease-in-out;
 }
