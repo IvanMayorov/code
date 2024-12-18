@@ -37,7 +37,7 @@ tariffButton.forEach(button => {
 });
 
 
-const revertCalcButton = document.querySelector('[data-revert-calc]');
+const revertCalcButton = document.querySelectorAll('[data-revert-calc]');
 let tooltipVisible = true;
 
 let previousTariff = 'start';
@@ -71,17 +71,19 @@ function updateSelectedTariff(clientsValue) {
 
 }
 
-revertCalcButton.addEventListener('click', () => {
-    if (previousTariff === 'start') {
-        document.querySelector(`input[name="tariff"][value="start"]`).checked = true;
-        tariffLabels.forEach(label => label.classList.remove('is-disabled'));
-        customCheckboxes.forEach((cb) => cb.classList.remove('is-active'));
-    } else if (previousTariff === 'standard') {
-        document.querySelector(`input[name="tariff"][value="standard"]`).checked = true;
-        tariffLabels.forEach(label => label.classList.remove('is-disabled'));
-        customCheckboxes.forEach((cb) => cb.classList.remove('is-active'));
-    }
-    tooltip.style.display = 'none';
+revertCalcButton.forEach(button => {
+    button.addEventListener('click', () => {
+        if (previousTariff === 'start') {
+            document.querySelector(`input[name="tariff"][value="start"]`).checked = true;
+            tariffLabels.forEach(label => label.classList.remove('is-disabled'));
+            customCheckboxes.forEach((cb) => cb.classList.remove('is-active'));
+        } else if (previousTariff === 'standard') {
+            document.querySelector(`input[name="tariff"][value="standard"]`).checked = true;
+            tariffLabels.forEach(label => label.classList.remove('is-disabled'));
+            customCheckboxes.forEach((cb) => cb.classList.remove('is-active'));
+        }
+        tooltip.style.display = 'none';
+    });
 });
 
 function setTariff(tariff, name) {
@@ -141,10 +143,14 @@ const calculateTotalCost = () => {
                 element.textContent = 'по запросу';
             });
             box.querySelector('[data-result]').textContent = 'по запросу';
-            document.querySelector('[data-month]').style.display = 'none';
+            document.querySelectorAll('[data-month]').forEach(element => {
+                element.style.display = 'none';
+            });
         }
         else {
-            document.querySelector('[data-month]').style.display = 'block';
+            document.querySelectorAll('[data-month]').forEach(element => {
+                element.style.display = 'block';
+            });
         if (resultValue === '3') {
             finalCost = totalCost * 0.9; // 10% discount
         } else if (resultValue === '6') {
@@ -296,6 +302,7 @@ function addActiveClassToCheckboxes() {
 customCheckboxes.forEach((checkbox) => {
     checkbox.addEventListener('click', () => {
         setTariff('prof', 'Профессионал');
+        customCheckboxes.forEach((cb) => cb.classList.add('is-clicked'));
         toggleCustomCheckboxes();
         calculateTotalCost();
     });
