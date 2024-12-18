@@ -280,14 +280,23 @@ customCheckboxes.forEach((cb) => cb.classList.remove('is-active'));
 
 function toggleCustomCheckboxes() {
     const isActive = Array.from(customCheckboxes).some(cb => cb.classList.contains('is-active'));
+    const isClicked = Array.from(customCheckboxes).some(cb => cb.classList.contains('is-clicked'));
     
     if (isActive) {
         customCheckboxes.forEach((cb) => cb.classList.remove('is-active'));
         tariffLabels.forEach(label => label.classList.remove('is-disabled'));
         document.querySelector(`input[name="tariff"][value="standard"]`).checked = true;
+        customCheckboxes.forEach((cb) => cb.classList.remove('is-clicked'));
         console.log('standard');
     } else {
         addActiveClassToCheckboxes();
+        customCheckboxes.forEach((cb) => cb.classList.add('is-clicked'));
+    }
+    if (isClicked) {
+        customCheckboxes.forEach((cb) => cb.classList.remove('is-clicked'));
+ 
+    } else {
+        customCheckboxes.forEach((cb) => cb.classList.add('is-clicked'));
     }
 }
 
@@ -302,7 +311,7 @@ function addActiveClassToCheckboxes() {
 customCheckboxes.forEach((checkbox) => {
     checkbox.addEventListener('click', () => {
         setTariff('prof', 'Профессионал');
-        customCheckboxes.forEach((cb) => cb.classList.add('is-clicked'));
+       
         toggleCustomCheckboxes();
         calculateTotalCost();
     });
