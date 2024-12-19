@@ -12,6 +12,7 @@ const tariffButton = document.querySelectorAll('[data-tariff-button]');
 const checkboxTg = document.querySelectorAll('input[data-name="Checkbox Tg"]');
 const customCheckboxes = document.querySelectorAll('.custom_checkbox');
 const tariffLabels = document.querySelectorAll('.tariff-label');
+let clickedCheker = false;
 
 // checkboxTg.forEach(checkbox => {
 //     checkbox.addEventListener('change', () => {
@@ -212,10 +213,12 @@ if (rangeInputKass) {
         } else if (kassValue > 7 ) {
             document.querySelector('input[name="tariff"][value="standard"]').checked = true;
             tariffLabels.forEach(label => label.classList.remove('is-disabled'));
+            setTariff('standard', 'Стандарт');
             customCheckboxes.forEach((cb) => cb.classList.remove('is-active'));
         }
         else {
             document.querySelector('input[name="tariff"][value="start"]').checked = true;
+            setTariff('start', 'Старт');
             tariffLabels.forEach(label => label.classList.remove('is-disabled'));
             customCheckboxes.forEach((cb) => cb.classList.remove('is-active'));
         }
@@ -280,24 +283,18 @@ customCheckboxes.forEach((cb) => cb.classList.remove('is-active'));
 
 function toggleCustomCheckboxes() {
     const isActive = Array.from(customCheckboxes).some(cb => cb.classList.contains('is-active'));
-    const isClicked = Array.from(customCheckboxes).some(cb => cb.classList.contains('is-clicked'));
-    
     if (isActive) {
         customCheckboxes.forEach((cb) => cb.classList.remove('is-active'));
         tariffLabels.forEach(label => label.classList.remove('is-disabled'));
-        document.querySelector(`input[name="tariff"][value="standard"]`).checked = true;
-        customCheckboxes.forEach((cb) => cb.classList.remove('is-clicked'));
+        // document.querySelector(`input[name="tariff"][value="standard"]`).checked = true;
+
         console.log('standard');
     } else {
         addActiveClassToCheckboxes();
-        customCheckboxes.forEach((cb) => cb.classList.add('is-clicked'));
     }
-    if (isClicked) {
-        customCheckboxes.forEach((cb) => cb.classList.remove('is-clicked'));
- 
-    } else {
-        customCheckboxes.forEach((cb) => cb.classList.add('is-clicked'));
-    }
+
+
+
 }
 
 function addActiveClassToCheckboxes() {
@@ -310,9 +307,21 @@ function addActiveClassToCheckboxes() {
 
 customCheckboxes.forEach((checkbox) => {
     checkbox.addEventListener('click', () => {
+        clickedCheker = true;
         setTariff('prof', 'Профессионал');
        
         toggleCustomCheckboxes();
+        clickedCustomCheckboxes()
         calculateTotalCost();
     });
 });
+
+function clickedCustomCheckboxes() {
+    const isClicked = Array.from(customCheckboxes).some(cb => cb.classList.contains('is-clicked'));
+        if (isClicked) {
+            customCheckboxes.forEach((cb) => cb.classList.remove('is-clicked'));
+    
+        } else {
+            customCheckboxes.forEach((cb) => cb.classList.add('is-clicked'));
+        }
+}
