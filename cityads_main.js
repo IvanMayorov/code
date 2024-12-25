@@ -1,11 +1,23 @@
+// Footer______________________________________________________________________________________
+
+// document.querySelectorAll(".languages_row > *").forEach(lang => {
+//   console.log(lang.getAttribute('data-lang'));
+//   if (lang.getAttribute('data-lang') !== 'English') {
+//     lang.style.display = "none";
+//   }
+// });
+
+//Footer dropdown______________________________________________________________________________________
+
+const langEn = document.querySelector('.footer_drop_box [data-lang = English]');
 document.querySelectorAll(".footer_drop_box select").forEach(select => {
   const options = {
-    "Russia": "/ru-ru/",
-    "Poland": "/pl-pl/",
-    "Spain": "/es-es/",
+    "Russia": "/en-ru/",
+    "Poland": "/en-pl/",
+    "Spain": "/en-es/",
     "Global": "/",
-    "Brasil": "/br-br/",
-    "Vietnam": "/vn-vn/"
+    "Brasil": "/en-br/",
+    "Vietnam": "/en-vn/"
   };
   const firstOption = select.firstChild;
 
@@ -23,13 +35,28 @@ document.querySelectorAll(".footer_drop_box select").forEach(select => {
     }
   });
 
-  // Add event listener for redirect on change
-  select.addEventListener("change", (event) => {
-    const selectedOption = event.target.value;
+  function updateLanguageDisplay(selectedOption) {
     if (options[selectedOption]) {
-      window.location.href = options[selectedOption];
+      document.querySelectorAll(".footer_drop_right [data-lang]").forEach(lang => {
+        if (lang.getAttribute('data-lang') === selectedOption && lang.getAttribute('data-lang') !== 'English') {
+          lang.style.display = "flex";
+        } else {
+          lang.style.display = "none";
+        }
+      });
+      langEn.style.display = "flex";
+      langEn.href = options[selectedOption]; // добавь для langEn ссылку из options
     }
+  }
+
+  select.addEventListener("change", (event) => {
+    const selectedOption = event.target.options[event.target.selectedIndex].text;
+    updateLanguageDisplay(selectedOption);
   });
+
+  // Call the function on page load with the default selected option
+  const defaultSelectedOption = select.options[select.selectedIndex].text;
+  updateLanguageDisplay(defaultSelectedOption);
 });
 
 
