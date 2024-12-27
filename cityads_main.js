@@ -1786,7 +1786,7 @@ phoneInputs.forEach(input => {
     autoPlaceholder: "aggressive",
     strictMode: true,
     // separateDialCode: true,
-    initialCountry: "us",
+    // initialCountry: "us",
     loadUtilsOnInit: "https://cdn.jsdelivr.net/npm/intl-tel-input@24.7.0/build/js/utils.js",
   });
 });
