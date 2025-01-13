@@ -1,36 +1,7 @@
 gsap.registerPlugin(ScrollTrigger);
 
-// gsap.to(".section", {
-//   scrollTrigger: {
-//     trigger: ".section",
-//     pin: true,
-//     start: "top top",
-//     end: "+=500",
-//     scrub: true
-//   }
-// });
 
 function initGsap() {
-
-
-
-
-
-
-//   let totalWidth = 0;
-//   let current = servicesSection?.previousElementSibling;
-  
-//   while (current && current.tagName === 'DIV') {
-//       totalWidth += current.offsetWidth;
-//       current = current.previousElementSibling;
-//   }
-
-
-
-
-
-
-
 
 const firstSection = document.querySelector('.main_section');
 const benefitsSection = document.querySelector('.benefits_section');
@@ -229,47 +200,6 @@ const swiper = new Swiper('.news_slider_wrap', {
 
 });
 
-  // gsap.to('.benefits_section', {
-  //   backgroundColor: 'red',
-  //   ease: "none",
-  //   scrollTrigger: {
-  //     trigger: '.benefits_section',
-  //     containerAnimation: tl,
-  //     // scrub: true,
-  //     start: '0% center',
-  //     end: '100% center',
-  //     toggleActions: 'play reverse play reverse',
-  //     markers: true
-  //   }
-  // })
-// gsap.to('.benefits_label', {
-//   yPercent: 0,
-//   duration: 0.2,
-//   scrollTrigger: {
-//     containerAnimation: tl,
-//     trigger: '.mnfst_section',
-//     // scrub: true,
-//     start: 'left center',
-//     end: 'right center',
-//     toggleActions: 'play reverse play reverse',
-//     markers: true
-//   }
-// })
-
-// gsap.to('.manifest_label', {
-//   yPercent: 0,
-//   duration: 0.2,
-//   scrollTrigger: {
-//     containerAnimation: tl,
-//     trigger: '.mnfst_section',
-//     // scrub: true,
-//     start: 'left center',
-//     end: 'right center',
-//     toggleActions: 'play reverse play reverse',
-//     markers: true
-//   }
-// })
-
 // Intersection Observer________________________________________________________________________________________
 
 
@@ -311,7 +241,12 @@ window.addEventListener('resize', () => {
   initGsap();
 });
 
-initGsap();
+
+var Webflow = Webflow || [];
+Webflow.push(function(){
+  initGsap();
+}); 
+
 
 let pricePeriod = 'quarterly';
 const initialTrial = parseInt(document.querySelectorAll('[data-price]')[0].textContent.replace(',', ''));
