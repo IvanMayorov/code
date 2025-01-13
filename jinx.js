@@ -112,7 +112,7 @@ let tl = gsap.timeline({
     pin: true,
     scrub: 1,
     end: getSectionPosition(5),
-    markers: true
+    // markers: true
   }
 });
 
