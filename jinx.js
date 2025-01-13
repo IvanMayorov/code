@@ -152,7 +152,7 @@ tl.to('.track', {
 .to('.services_section', {
   y: -calculatedServicesHeight,
   ease: "none",
-  duration: 2,
+  duration: 3,
   onUpdate() {
     const p = this.progress();
     updateBigtitleRows(p, bigtitleRowsServices, activeRowsServices, bigtitleWrapsServices);
@@ -172,7 +172,7 @@ tl.to('.track', {
 .to('.projects_section', {
   y: -calculatedProjectsHeight,
   ease: "none",
-  duration: 2,
+  duration: 3,
   onUpdate() {
     const p = this.progress();
     updateBigtitleRows(p, bigtitleRowsProjects, activeRowsProjects, bigtitleWrapsProjects);
@@ -183,7 +183,7 @@ tl.to('.track', {
 .to('.track', {
   x: -getSectionPosition(6),
   ease: "none",
-  duration: 1.5,
+  duration: 2,
   onUpdate() {
     const p = this.progress();
     updateTitle('.label:nth-of-type(5)', p, 'out', 0.1);
@@ -203,7 +203,7 @@ tl.to('.track', {
 .to('.track', {
   x: -(getSectionPosition(9) - firstSection.offsetWidth),
   ease: "none",
-  duration: 1.5,
+  duration: 2,
   onUpdate() {
     const p = this.progress();
     updateTitle('.label:nth-of-type(7)', p, 'out', 0.1);
@@ -312,6 +312,86 @@ window.addEventListener('resize', () => {
 });
 
 initGsap();
+
+let pricePeriod = 'quarterly';
+const initialTrial = parseInt(document.querySelectorAll('[data-price]')[0].textContent.replace(',', ''));
+const initialSingle = parseInt(document.querySelectorAll('[data-price]')[1].textContent.replace(',', ''));
+const initialDouble= parseInt(document.querySelectorAll('[data-price]')[2].textContent.replace(',', ''));
+const initialTrouble= parseInt(document.querySelectorAll('[data-price]')[3].textContent.replace(',', ''));
+
+const prices = [initialTrial, initialSingle, initialDouble, initialTrouble];
+
+
+
+const activeElement = document.querySelector('.plans_swither_active');
+document.querySelector('.plans_swither_box').children[0].addEventListener('click', () => {
+  activeElement.style.transform = 'translateX(-100%)';
+  
+ 
+    pricePeriod = 'monthly';
+    countPrice(); 
+  
+});
+document.querySelector('.plans_swither_box').children[1].addEventListener('click', () => {
+  activeElement.style.transform = 'translateX(0%)';
+
+  pricePeriod = 'quarterly';
+  countPrice();
+  
+});
+
+
+document.querySelectorAll('.switcher').forEach(switcher => {
+  switcher.addEventListener('click', () => {
+    switcher.querySelector('.head-switcher').classList.toggle('is-active');
+    countPrice();
+  });
+});
+
+function countPrice() {
+  const isActive = document.querySelector('[data-cat] .is-active') !== null;
+  const isLabelActive = document.querySelector('[data-label] .is-active') !== null;
+  const priceMultipliers = {
+    monthly: 1.15,
+    quarterly: 1,
+    inactive: 1.2,
+    label: 1.1
+  };
+
+  document.querySelectorAll('[data-price]').forEach((element, index) => {
+    let finalPrice = prices[index];
+    
+    finalPrice *= pricePeriod === 'monthly' ? priceMultipliers.monthly : priceMultipliers.quarterly;
+    finalPrice *= !isActive ? priceMultipliers.inactive : 1;
+    finalPrice *= isLabelActive ? priceMultipliers.label : 1;
+
+    const formattedPrice = finalPrice.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    element.textContent = formattedPrice;
+  });
+}
+
+document.querySelectorAll('.answer_item').forEach(item => {
+  item.addEventListener('click', () => {
+    // Close all other dropdowns first
+    document.querySelectorAll('.answer_drop.is-active').forEach(drop => {
+      if (drop !== item.querySelector('.answer_drop')) {
+        drop.classList.remove('is-active');
+        gsap.to(drop, {
+          height: 0,
+          duration: 0.3
+        });
+      }
+    });
+
+    // Toggle clicked dropdown
+    const dropElement = item.querySelector('.answer_drop');
+    dropElement.classList.toggle('is-active');
+    gsap.to(dropElement, {
+      height: dropElement.classList.contains('is-active') ? 'auto' : 0,
+      duration: 0.3
+    });
+  });
+});
 
 
 
