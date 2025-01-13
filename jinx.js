@@ -96,7 +96,7 @@ tl.to('.track', {
   }
 })
 .to('.flames', {
-  yPercent: -40,
+  y: '-40%',
   ease: "none",
   duration: 0.5
 }, 0)
@@ -329,7 +329,25 @@ document.querySelectorAll('.answer_item').forEach(item => {
 });
 
 
+const burger = document.querySelector('.burger_button');
+const mask = document.querySelector('.main_mask');
+const burgerLine = document.querySelectorAll('.burger_line');
+let isOpen = false; // Track the state of the menu
 
+burger.addEventListener('click', () => {
+  
+  const newWidth = isOpen ? '100%' : 'calc(100% - 28.5rem)';
+  const newRotation0 = isOpen ? 0 : 45;
+  const newRotation1 = isOpen ? 0 : -45;
+  const newY0 = isOpen ? '0rem' : '0.8rem';
+  const newY1 = isOpen ? '0rem' : '-0.8rem';
+
+  gsap.to(mask, { width: newWidth, duration: 0.3 });
+  gsap.to(burgerLine[0], { rotation: newRotation0, duration: 0.3, y: newY0 });
+  gsap.to(burgerLine[1], { rotation: newRotation1, duration: 0.3, y: newY1 });
+
+  isOpen = !isOpen; // Toggle the state
+});
     // onUpdate: function() {
     //   const bigtitleRows = document.querySelectorAll('.bigtitle_row');
     //   const progress = this.progress();
