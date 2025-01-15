@@ -13,6 +13,10 @@ const boardSection = document.querySelector('.board_section');
 const footerHeight = document.querySelector('.footer').offsetHeight ;
 const servicesSectionHeight = document.querySelector('.services_section .bigtitle_row')?.offsetHeight || 0;
 const projectsSectionHeight = document.querySelector('.projects_section .bigtitle_row')?.offsetHeight || 0;
+
+const navLinksBox = document.querySelector('.nav_links_box');
+const navLinks = document.querySelectorAll('.nav_links_box a');
+
 const navLogo = document.querySelector('.nav_logo');
 const calculateTotalHeight = (section, bigtitleRow) => {
   if (!section) return 0;
@@ -41,11 +45,29 @@ const activeRowsServices = new Array(bigtitleRowsServices.length).fill(false);
 const activeRowsProjects = new Array(bigtitleRowsProjects.length).fill(false);
 
 const animateLabelIn = selector => {
-  gsap.to(selector, { yPercent: 0, duration: 0.3 });
+  const label = document.querySelector(`.label:nth-of-type(${selector})`);
+  const navLink = document.querySelector(`.nav_links_box a:nth-of-type(${selector})`);
+  
+  if (label) {
+    gsap.to(label, { yPercent: 0, duration: 0.3 });
+  }
+  
+  if (navLink) {
+    navLink.classList.add('is-active');
+  }
 };
 
 const animateLabelOut = selector => {
-  gsap.to(selector, { yPercent: -150, duration: 0.3 });
+  const label = document.querySelector(`.label:nth-of-type(${selector})`);
+  const navLink = document.querySelector(`.nav_links_box a:nth-of-type(${selector})`);
+  
+  if (label) {
+    gsap.to(label, { yPercent: -150, duration: 0.3 });
+  }
+  
+  if (navLink) {
+    navLink.classList.remove('is-active');
+  }
 };
 
 function updateTitle(selector, progress, direction, threshold = 0.5) {
@@ -82,7 +104,7 @@ let tl = gsap.timeline({
     trigger: ".section",
     pin: true,
     scrub: 1,
-    end: getSectionPosition(5),
+    end: getSectionPosition(9),
     // markers: true
   }
 });
@@ -92,34 +114,38 @@ tl.to('.track', {
   ease: "none",
   duration: 1,
   onUpdate() {
-    updateTitle('.label:nth-of-type(1)', this.progress(), 'in');
+    updateTitle('1', this.progress(), 'in');
   }
 })
+
 .to('.flames', {
   y: '-40%',
   ease: "none",
   duration: 0.5
 }, 0)
+.addLabel('benefits')
 .to('.track', {
   x: -getSectionPosition(2),
   ease: "none",
   duration: 1,
   onUpdate() {
     const p = this.progress();
-    updateTitle('.label:nth-of-type(1)', p, 'out');
-    updateTitle('.label:nth-of-type(2)', p, 'in');
+    updateTitle('1', p, 'out');
+    updateTitle('2', p, 'in');
   }
 })
+.addLabel('manifest')
 .to('.track', {
   x: -getSectionPosition(3),
   ease: "none",
   duration: 3,
   onUpdate() {
     const p = this.progress();
-    updateTitle('.label:nth-of-type(2)', p, 'out', 0.8);
-    updateTitle('.label:nth-of-type(3)', p, 'in', 0.9);
+    updateTitle('2', p, 'out', 0.8);
+    updateTitle('3', p, 'in', 0.9);
   }
 })
+.addLabel('services')
 .to('.services_section', {
   y: -calculatedServicesHeight,
   ease: "none",
@@ -130,16 +156,29 @@ tl.to('.track', {
   }
 })
 .to('.track', {
-  x: -getSectionPosition(5),
+  x: -getSectionPosition(4),
   ease: "none",
-  duration: 3,
+  duration: 1,
   onUpdate() {
     const p = this.progress();
-    updateTitle('.label:nth-of-type(3)', p, 'out', 0.1);
-    updateTitle('.label:nth-of-type(4)', p, 'in', 0.15);
+    updateTitle('3', p, 'out');
+    updateTitle('4', p, 'in');
 
   }
 })
+.addLabel('process')
+.to('.track', {
+  x: -getSectionPosition(5),
+  ease: "none",
+  duration: 2,
+  onUpdate() {
+    const p = this.progress();
+    updateTitle('4', p, 'out', 0.8);
+    updateTitle('5', p, 'in', 0.9);
+  }
+})
+
+.addLabel('projects')
 .to('.projects_section', {
   y: -calculatedProjectsHeight,
   ease: "none",
@@ -147,46 +186,64 @@ tl.to('.track', {
   onUpdate() {
     const p = this.progress();
     updateBigtitleRows(p, bigtitleRowsProjects, activeRowsProjects, bigtitleWrapsProjects);
-    updateTitle('.label:nth-of-type(4)', p, 'out', 0);
-    updateTitle('.label:nth-of-type(5)', p, 'in', 0);
   }
 })
+
 .to('.track', {
   x: -getSectionPosition(6),
-  ease: "none",
-  duration: 2,
-  onUpdate() {
-    const p = this.progress();
-    updateTitle('.label:nth-of-type(5)', p, 'out', 0.1);
-    updateTitle('.label:nth-of-type(6)', p, 'in', 0.15);
-  }
-})
-.to('.track', {
-  x: -getSectionPosition(7),
   ease: "none",
   duration: 1,
   onUpdate() {
     const p = this.progress();
-    updateTitle('.label:nth-of-type(6)', p, 'out', 0.7);
-    updateTitle('.label:nth-of-type(7)', p, 'in', 0.7);
+    updateTitle('5', p, 'out', 0.5);
+    updateTitle('6', p, 'in', 0.5);
   }
+
 })
+.addLabel('plans')
+.to('.track', {
+  x: -getSectionPosition(7),
+  ease: "none",
+  duration: 2,
+  onUpdate() {
+    const p = this.progress();
+    updateTitle('6', p, 'out', 0.7);
+    updateTitle('7', p, 'in', 0.75);
+  }
+
+})
+.addLabel('answers')
+.to('.track', {
+  x: -getSectionPosition(8),
+  ease: "none",
+  duration: 1,
+  onUpdate() {
+    const p = this.progress();
+    updateTitle('7', p, 'out', 0.5);
+    updateTitle('8', p, 'in', 0.55);
+  }
+
+})
+.addLabel('board')
+
 .to('.track', {
   x: -(getSectionPosition(9) - firstSection.offsetWidth),
   ease: "none",
   duration: 2,
   onUpdate() {
     const p = this.progress();
-    updateTitle('.label:nth-of-type(7)', p, 'out', 0.1);
-    updateTitle('.label:nth-of-type(8)', p, 'in', 0.15);
+    updateTitle('8', p, 'out', 0.5);
+    updateTitle('9', p, 'in', 0.55);
   }
+
 })
-.to('.navbar, .footer, .main_mask', {
+.to('.navbar, .footer, .main_mask, .nav_links_box', {
   y: - footerHeight,
   ease: "none",
   duration: 0.5,
 
 })
+.addLabel('contacts')
 .to(navLogo, { opacity: 1, duration: 0.3 }, "<0.1");
 
 
@@ -229,6 +286,49 @@ const swiper = new Swiper('.news_slider_wrap', {
 // if (manifestSection) {
 //   observer.observe(manifestSection);
 // }
+
+
+const burger = document.querySelector('.burger_button');
+const mask = document.querySelector('.main_mask');
+const burgerLine = document.querySelectorAll('.burger_line');
+let isOpen = false; // Track the state of the menu
+
+gsap.set(navLinksBox, {autoAlpha: 0});
+gsap.set(navLinks, {x: '50%', opacity: 0});
+
+burger.addEventListener('click', () => {
+  
+  const newWidth = isOpen ? '100%' : `calc(100% - ${navLinksBox.offsetWidth}px)`;
+  const newRotation0 = isOpen ? 0 : 45;
+  const newRotation1 = isOpen ? 0 : -45;
+  const newY0 = isOpen ? '0rem' : '0.8rem';
+  const newY1 = isOpen ? '0rem' : '-0.8rem';
+  const newOpacity = isOpen ? 0 : 1;
+  // const newX = isOpen ? '50%' : '0%';
+  gsap.to(mask, { width: newWidth, duration: 0.5 });
+  gsap.to(burgerLine[0], { rotation: newRotation0, duration: 0.3, y: newY0 });
+  gsap.to(burgerLine[1], { rotation: newRotation1, duration: 0.3, y: newY1 });
+  gsap.to(navLinksBox, {autoAlpha: newOpacity, duration: 0.3});
+  if (!isOpen) {
+    gsap.to(navLinks, {x: '0%', delay: 0.2, duration: 0.3, stagger: 0.04, opacity: 1, ease: 'power1.inOut'});
+  }
+  else {
+    gsap.to(navLinks, {x: '50%', duration: 0.3, opacity: 0, ease: 'power1.inOut'});
+  }
+
+  isOpen = !isOpen; // Toggle the state
+});
+
+
+navLinks.forEach((link, index) => {
+  const sections = ["benefits", "manifest", "services", "process", "projects", "plans", "answers", "board", "contacts"];
+  link.addEventListener('click', () => {
+    gsap.to(window, {scrollTo: tl.scrollTrigger.labelToScroll(sections[index]), duration: 0.5});
+  });
+});
+
+
+
 
 }
 
@@ -329,25 +429,7 @@ document.querySelectorAll('.answer_item').forEach(item => {
 });
 
 
-const burger = document.querySelector('.burger_button');
-const mask = document.querySelector('.main_mask');
-const burgerLine = document.querySelectorAll('.burger_line');
-let isOpen = false; // Track the state of the menu
 
-burger.addEventListener('click', () => {
-  
-  const newWidth = isOpen ? '100%' : 'calc(100% - 28.5rem)';
-  const newRotation0 = isOpen ? 0 : 45;
-  const newRotation1 = isOpen ? 0 : -45;
-  const newY0 = isOpen ? '0rem' : '0.8rem';
-  const newY1 = isOpen ? '0rem' : '-0.8rem';
-
-  gsap.to(mask, { width: newWidth, duration: 0.3 });
-  gsap.to(burgerLine[0], { rotation: newRotation0, duration: 0.3, y: newY0 });
-  gsap.to(burgerLine[1], { rotation: newRotation1, duration: 0.3, y: newY1 });
-
-  isOpen = !isOpen; // Toggle the state
-});
     // onUpdate: function() {
     //   const bigtitleRows = document.querySelectorAll('.bigtitle_row');
     //   const progress = this.progress();
