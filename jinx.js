@@ -232,8 +232,8 @@ tl.to('.track', {
   duration: 2,
   onUpdate() {
     const p = this.progress();
-    updateTitle('8', p, 'out', 0.5);
-    updateTitle('9', p, 'in', 0.55);
+    updateTitle('8', p, 'out', 0.9);
+    updateTitle('9', p, 'in', 0.9);
   }
 
 })
@@ -295,6 +295,35 @@ let isOpen = false; // Track the state of the menu
 
 gsap.set(navLinksBox, {autoAlpha: 0});
 gsap.set(navLinks, {x: '50%', opacity: 0});
+const cookieTextWrap = document.querySelector('.cookie_text_wrap');
+
+const navMenuBackground = document.querySelector('.nav_menu_background');
+const navMenuButton = document.querySelector('.nav_menu_button');
+const navMenuButtonWidth = navMenuButton.offsetWidth;
+
+const cookieTextWrapWidth = cookieTextWrap.offsetWidth;
+
+gsap.set(cookieTextWrap, {width: '0', opacity: 0});
+
+const cookieIcon = document.querySelector('.cookie_wrap');
+
+cookieIcon.addEventListener('mouseenter', () => {
+  gsap.to('.cookie_text_wrap', { width: 'auto', duration: 0.3, opacity: 1, overwrite: true });
+  gsap.to('.red_back', { width: `calc(7rem + ${cookieTextWrapWidth}px)`, transform: 'translateX(7rem)', duration: 0.3, overwrite: true });
+});
+cookieIcon.addEventListener('mouseleave', () => {
+  gsap.to('.cookie_text_wrap', { width: '0', duration: 0.3, opacity: 0, overwrite: true });
+  gsap.to('.red_back', { width: '7rem', transform: 'translateX(0)', duration: 0.3, overwrite: true });
+});
+
+burger.addEventListener('mouseenter', () => {
+  
+  gsap.to(navMenuBackground, { width: `7rem`, transform: `translateX(${navMenuButtonWidth}px)`, duration: 0.3, overwrite: true });
+});
+burger.addEventListener('mouseleave', () => {
+ 
+  gsap.to(navMenuBackground, { width: navMenuButtonWidth, transform: 'translateX(0)', duration: 0.3, overwrite: true });
+});
 
 burger.addEventListener('click', () => {
   
