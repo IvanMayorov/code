@@ -107,7 +107,7 @@ document.querySelectorAll('[data-tooltip-close]').forEach(element => {
 const tariffPrices = {
     start: 2990,
     standard: 5490,
-    prof: 7990
+    prof: 8990
 };
 
 const additionalPointPrices = {
