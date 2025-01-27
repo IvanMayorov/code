@@ -10,7 +10,7 @@ const increase = document.querySelector('.chart_increase span');
 
 trumpHead.classList.remove('is-opened');
 gsap.to(trumpBubble, { opacity: 0, scale: 0.5 });
-gsap.set('.mask_border', { opacity: 0, scale: 0.5 });
+gsap.set('.mask_wrap', { opacity: 0, scale: 0.5 });
 
 const bigButton = document.querySelector('[data-candle-button]');
 const section2 = document.querySelector('.section_2');
@@ -21,11 +21,28 @@ bigButton.addEventListener('click', () => {
     trumpHead.classList.add('is-opened');
 
     gsap.to(trumpBubble, { opacity: 1, scale: 1, duration: 0.2 });
-    gsap.to('.mask_border', { opacity: 1, scale: 1, duration: 0.2 });
-    setTimeout(() => {
+    gsap.to('.mask_wrap', { opacity: 1, scale: 1, duration: 0.2 });
+
+    // Clear any existing timeout to reset the timer
+    clearTimeout(window.trumpTimeout);
+
+    window.trumpTimeout = setTimeout(() => {
         trumpHead.classList.remove('is-opened');
         gsap.to(trumpBubble, { opacity: 0, scale: 0.5, duration: 0.2 });
-        gsap.to('.mask_border', { opacity: 0, scale: 0.5, duration: 0.2 });
+        gsap.to('.mask_wrap', { opacity: 0, scale: 0.5, duration: 0.2 });
+        
+        // Use a counter to keep track of the current index
+        if (!window.newsIndex) {
+            window.newsIndex = 0; // Initialize if it doesn't exist
+        }
+
+        document.querySelector('[data-user]').textContent = news[window.newsIndex].user;
+        document.querySelector('[data-action]').textContent = news[window.newsIndex].action;
+        document.querySelector('[data-date]').textContent = news[window.newsIndex].date;
+        document.querySelector('[data-img]').src = news[window.newsIndex].img;
+
+        // Increment the index and reset if it exceeds the length of the news array
+        window.newsIndex = (window.newsIndex + 1) % news.length;
     }, 1000);
     const candlestickClone = candlestickWrap.cloneNode(true);
     const candlestickWidth = candlestickWrap.offsetWidth;
@@ -63,4 +80,96 @@ dropLink.forEach(link => {
 
 document.querySelectorAll('img').forEach(img => {
     img.addEventListener('dragstart', event => event.preventDefault());
+});
+
+
+        // Получаем элемент с классом copy
+        const copyElement = document.querySelector('.copy');
+
+        // Добавляем обработчик события на клик
+        copyElement.addEventListener('click', () => {
+            // Текст, который нужно скопировать
+            const textToCopy = document.querySelector('.address').textContent
+
+            // Создаем временный элемент для копирования текста
+            const tempInput = document.createElement('input');
+            tempInput.value = textToCopy;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            const element = document.querySelector('.copied');
+
+// Удаляем класс is-hidden
+element.classList.remove('is-hidden');
+
+// Через секунду добавляем класс обратно
+setTimeout(() => {
+    element.classList.add('is-hidden');
+}, 1000);
+
+        });
+
+
+let news = [
+    {
+        "user": "@Melania",
+        "action": "I recently bought $MELANIA",
+        "date": "20/01/2025",
+        "img": "https://cdn.prod.website-files.com/679104bf5daa4d6b4e8ca972/6797b5122f19acfbef8eddc2_ava_6.avif"
+    },
+    {
+        "user": "@GaryGensler",
+        "action": "I recently bought $BTC",
+        "date": "20/01/2025",
+        "img": "https://cdn.prod.website-files.com/679104bf5daa4d6b4e8ca972/6797b51182aa06e6412bf6c1_ava_3.avif"
+    },
+    {
+        "user": "@BlackRock",
+        "action": "I recently bought $SOL",
+        "date": "20/01/2025",
+        "img": "https://cdn.prod.website-files.com/679104bf5daa4d6b4e8ca972/6797b511eaeabdbe9499a351_ava_1.avif"
+    },
+    {
+        "user": "@VitalikButerin",
+        "action": "I recently bought $ETH",
+        "date": "20/01/2025",
+        "img": "https://cdn.prod.website-files.com/679104bf5daa4d6b4e8ca972/6797b5117b081e4bf5ac5c73_ava_4.avif"
+    },
+    {
+        "user": "@ChangpengZhao",
+        "action": "I recently bought $BNB",
+        "date": "20/01/2025",
+        "img": "https://cdn.prod.website-files.com/679104bf5daa4d6b4e8ca972/6797b511a3f13d7cbcd4336c_ava_2.avif"
+    },
+    {
+        "user": "@SamBankman",
+        "action": "I recently bought $ETX",
+        "date": "20/01/2025",
+        "img": "https://cdn.prod.website-files.com/679104bf5daa4d6b4e8ca972/6797b5118807df4d17389a3e_ava_5.avif"
+    },
+    {
+        "user": "@Elon",
+        "action": "I recently bought $DOGE",
+        "date": "20/01/2025",
+        "img": "https://cdn.prod.website-files.com/679104bf5daa4d6b4e8ca972/67913a0c885c65d16552a5d3_mask.avif"
+    }
+]
+
+
+let isPlaying = false;
+const audio = new Audio('https://file-examples.com/storage/fead9e46fa6797977976df6/2017/11/file_example_MP3_700KB.mp3');
+
+document.querySelector('.bt-sound').addEventListener('click', () => {
+    const soundButton = document.querySelector('.icon-bt-sound.on');
+    
+    if (isPlaying) {
+        soundButton.style.opacity = '0.5'; // Change opacity to indicate sound is off
+        audio.pause(); // Pause the audio
+    } else {
+        soundButton.style.opacity = '1'; // Change opacity to indicate sound is on
+        audio.play(); // Play the audio
+    }
+    
+    isPlaying = !isPlaying; // Toggle the playing state
 });
