@@ -158,7 +158,7 @@ let news = [
 
 
 let isPlaying = false;
-const audio = new Audio('https://file-examples.com/storage/fead9e46fa6797977976df6/2017/11/file_example_MP3_700KB.mp3');
+const audio = new Audio('https://clicker-images.pixelverse.xyz/rich/movie.mp3');
 
 document.querySelector('.bt-sound').addEventListener('click', () => {
     const soundButton = document.querySelector('.icon-bt-sound.on');
