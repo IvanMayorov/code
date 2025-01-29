@@ -29,7 +29,7 @@ let verticalOffset = 0;
 let prevCandlestickHeight = 100;
 
 let candlestickBoldHeight = document.querySelector('.candlestick_bold').height;
-
+let increaseValue = 0;
 bigButton.addEventListener('click', () => {
     // sequence.stop();
     sequence.progress = 0
@@ -45,7 +45,9 @@ bigButton.addEventListener('click', () => {
     const candlestickWidth = candlestickWrap.offsetWidth;
     cloneOffset += candlestickWidth + 0.6 * parseFloat(getComputedStyle(document.documentElement).fontSize);
     chartPercentText = parseFloat((chartPercentText + (Math.random() * 5 + 1)).toFixed(1));
-    increase.textContent = (Math.random() * 5 + 1).toFixed(1);
+    // increaseValue += +((Math.random() * 100 + 1));
+    // increase.textContent = increaseValue.toFixed(1);
+    increase.textContent = ((chartPercentText/0.77)*100).toFixed(1);
     chartPercent.textContent = chartPercentText;
     // Randomly change the height of candlestick_bold within the cloned element
     const candlestickBold = candlestickClone.querySelector('.candlestick_bold');
