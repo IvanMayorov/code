@@ -1,18 +1,22 @@
 
 const options = {
-    frames: 110,
+    frames: 111,
     src:    {
       tarURL:   'https://clicker-images.pixelverse.xyz/rich/sup.tar',
       imageURL: (index) => `sup_${index}.png`,
     },
     clearCanvas: true,
+    // showDebugInfo: true,
   
-    // loop: true,  
+    loop: true,  
     objectFit: 'cover',
   };
   
   const sequence = new FastImageSequence(document.querySelector('.gif-sec-pump'), options);
 
+// sequence.onLoadProgress(()=> {
+//     console.log(sequence.progress);
+// })
 
 const bigButton = document.querySelector('[data-candle-button]');
 const candlestickWrap = document.querySelector('.candlestick_wrap');
@@ -23,11 +27,20 @@ const increase = document.querySelector('.chart_increase span');
 let cloneOffset = 0; // Initialize offset for each clone
 let verticalOffset = 0;
 let prevCandlestickHeight = 100;
+
+let candlestickBoldHeight = document.querySelector('.candlestick_bold').height;
+
 bigButton.addEventListener('click', () => {
-    sequence.stop();
+    // sequence.stop();
     sequence.progress = 0
+    // sequence.progress = 0.1
     sequence.play();
-    // console.log(sequence.progress);
+    sequence.tick(function(){
+        if(sequence.progress === 1){
+            // sequence.progress = 0
+            sequence.stop();
+        }
+    })
     const candlestickClone = candlestickWrap.cloneNode(true);
     const candlestickWidth = candlestickWrap.offsetWidth;
     cloneOffset += candlestickWidth + 0.6 * parseFloat(getComputedStyle(document.documentElement).fontSize);
@@ -38,8 +51,8 @@ bigButton.addEventListener('click', () => {
     const candlestickBold = candlestickClone.querySelector('.candlestick_bold');
     const randomHeight = Math.random() * (100 - 15) + 15; // Random height between 15 and 100
     candlestickBold.style.height = `${randomHeight}px`;
-    
-    verticalOffset += prevCandlestickHeight - randomHeight * 0.1;
+    candlestickBoldHeight = randomHeight;
+    verticalOffset += candlestickBoldHeight;
     candlestickClone.style.transform = `translateX(${cloneOffset}px) translateY(-${verticalOffset}px)`; // Use the updated offset
     section2.appendChild(candlestickClone); // Append the cloned candlestick to section_2
     prevCandlestickHeight = randomHeight;
