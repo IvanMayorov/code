@@ -78,7 +78,8 @@ document.querySelectorAll('img').forEach(img => {
 
         // Получаем элемент с классом copy
         const copyElement = document.querySelector('.copy');
-
+        const copyText = document.querySelector('.copy_text');
+        gsap.set(copyText, { autoAlpha: 0 });
         // Добавляем обработчик события на клик
         copyElement.addEventListener('click', () => {
             // Текст, который нужно скопировать
@@ -91,15 +92,18 @@ document.querySelectorAll('img').forEach(img => {
             tempInput.select();
             document.execCommand('copy');
             document.body.removeChild(tempInput);
-            const element = document.querySelector('.copied');
+            clearTimeout(window.selectorTimeout); // Clear any existing timeout
+            const selectorTextCopy = document.querySelector('.selectopr-text-copy');
+            if (selectorTextCopy) {
+                gsap.to(selectorTextCopy, { width: 'auto',  duration: 0.3 });
+                gsap.to(copyText, { autoAlpha: 1, duration: 0.3 });
+            }
+            window.selectorTimeout = setTimeout(() => {
+                gsap.to(selectorTextCopy, { width: '0', duration: 0.3 });
+                gsap.to(copyText, { autoAlpha: 0, duration: 0.3 });
+            }, 1000);
 
-// Удаляем класс is-hidden
-element.classList.remove('is-hidden');
 
-// Через секунду добавляем класс обратно
-setTimeout(() => {
-    element.classList.add('is-hidden');
-}, 1000);
 
         });
 
@@ -142,3 +146,44 @@ setTimeout(() => {
                 },
             });
         }
+
+
+        // // const secContractAddress = document.querySelector('.sec-contract-address');
+        // const image3Elements = document.querySelectorAll('.image-3');
+
+        // document.addEventListener('mousemove', (event) => {
+        //     const { clientX, clientY } = event;
+        //     const xOffset = (clientX / window.innerWidth) * 4; // Scale to 0 to 4 rem
+        //     const yOffset = ((clientY / window.innerHeight) * 4) - 2; // Scale to -2 to 2
+
+        //     image3Elements.forEach((image) => {
+        //         gsap.to(image, {
+        //             x: xOffset * 16, // Convert rem to pixels (assuming 1 rem = 16px)
+        //             y: yOffset * 16,
+        //             duration: 0.2,
+        //             ease: "power1.out"
+        //         });
+        //     });
+        // });
+
+        const imgSecMain = document.querySelector('.img-sec-main');
+        const mainCats = document.querySelectorAll('.main_cat');
+
+  
+
+        imgSecMain.addEventListener('click', () => {
+            // Show the next main_cat in the sequence
+            for (let i = 0; i < mainCats.length; i++) {
+                if (mainCats[i].style.display !== 'none') {
+                    mainCats[i].style.display = 'none'; // Hide the current one
+                    const nextIndex = (i + 1) % mainCats.length; // Get the next index
+                    if (nextIndex === 0) {
+                        mainCats[mainCats.length - 1].style.display = 'block'; // Keep the last element visible
+                        imgSecMain.removeEventListener('click', arguments.callee); // Disable further listening
+                    } else {
+                        mainCats[nextIndex].style.display = 'block'; // Show the next one
+                    }
+                    break;
+                }
+            }
+        });
