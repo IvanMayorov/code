@@ -24,6 +24,7 @@ let cloneOffset = 0; // Initialize offset for each clone
 let verticalOffset = 0;
 let prevCandlestickHeight = 100;
 bigButton.addEventListener('click', () => {
+    sequence.stop();
     sequence.progress = 0
     sequence.play();
     // console.log(sequence.progress);
