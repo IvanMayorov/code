@@ -152,7 +152,9 @@ document.querySelectorAll('img').forEach(img => {
         const image3Elements = document.querySelectorAll('.image-3');
 
         document.addEventListener('mousemove', (event) => {
+            
             const { clientX, clientY } = event;
+            // console.log(event)
             const xOffset = (clientX / window.innerWidth) * 3; // Scale to 0 to 4 rem
             const yOffset = ((clientY / window.innerHeight) * 4) - 2; // Scale to -2 to 2
 
