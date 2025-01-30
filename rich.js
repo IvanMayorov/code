@@ -111,9 +111,9 @@ document.querySelectorAll('img').forEach(img => {
 
         function randomizePosition() {
             glitchTexts.forEach(glitchText => {
-                const randomX = (Math.random() - 0.5) * 20; // Random value between -10 and 10
-                const randomY = (Math.random() - 0.5) * 20; // Random value between -10 and 10
-                glitchText.style.transform = `translate(${randomX}px, ${randomY}px)`;
+                const randomX = (Math.random() - 0.5) * 2; // Random value between -10 and 10
+                const randomY = (Math.random() - 0.5) * 2; // Random value between -10 and 10
+                glitchText.style.transform = `translate(${randomX}rem, ${randomY}rem)`;
             });
         }
 
