@@ -120,32 +120,30 @@ document.querySelectorAll('img').forEach(img => {
         setInterval(randomizePosition, 100); // Change position every 100ms
 
 
-        if (window.innerWidth < 480) {
-            const swiper = new Swiper('.swiper-container', {
-                // Optional parameters
-                loop: true,
-                slidesPerView: 'auto',
-                spaceBetween: 12,
-                // If we need pagination
-                pagination: {
-                  el: '.swiper-pagination-custom',
-                  bulletClass: 'swiper-pagination-custom-bullet',
-                  bulletActiveClass: 'swiper-pagination-bullet-custom--active',
-                  bulletElement: 'div',
-                },
-              
-                // Navigation arrows
-                navigation: {
-                  nextEl: '.swiper-button-next',
-                  prevEl: '.swiper-button-prev',
-                },
-              
-                // And if we need scrollbar
-                scrollbar: {
-                  el: '.swiper-scrollbar',
-                },
-            });
-        }
+        const swiper = new Swiper('.swiper-container', {
+            // Optional parameters
+            loop: true,
+            slidesPerView: 'auto',
+            spaceBetween: 12,
+            // If we need pagination
+            pagination: {
+              el: '.swiper-pagination-custom',
+              bulletClass: 'swiper-pagination-custom-bullet',
+              bulletActiveClass: 'swiper-pagination-bullet-custom--active',
+              bulletElement: 'div',
+            },
+          
+            // Navigation arrows
+            navigation: {
+              nextEl: '.swiper-button-next',
+              prevEl: '.swiper-button-prev',
+            },
+          
+            // And if we need scrollbar
+            scrollbar: {
+              el: '.swiper-scrollbar',
+            },
+        });
 
 
         // const secContractAddress = document.querySelector('.sec-contract-address');
