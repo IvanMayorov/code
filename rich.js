@@ -148,23 +148,42 @@ document.querySelectorAll('img').forEach(img => {
         }
 
 
-        // // const secContractAddress = document.querySelector('.sec-contract-address');
-        // const image3Elements = document.querySelectorAll('.image-3');
+        // const secContractAddress = document.querySelector('.sec-contract-address');
+        const image3Elements = document.querySelectorAll('.image-3');
 
-        // document.addEventListener('mousemove', (event) => {
-        //     const { clientX, clientY } = event;
-        //     const xOffset = (clientX / window.innerWidth) * 4; // Scale to 0 to 4 rem
-        //     const yOffset = ((clientY / window.innerHeight) * 4) - 2; // Scale to -2 to 2
+        document.addEventListener('mousemove', (event) => {
+            const { clientX, clientY } = event;
+            const xOffset = (clientX / window.innerWidth) * 3; // Scale to 0 to 4 rem
+            const yOffset = ((clientY / window.innerHeight) * 4) - 2; // Scale to -2 to 2
 
-        //     image3Elements.forEach((image) => {
-        //         gsap.to(image, {
-        //             x: xOffset * 16, // Convert rem to pixels (assuming 1 rem = 16px)
-        //             y: yOffset * 16,
-        //             duration: 0.2,
-        //             ease: "power1.out"
-        //         });
-        //     });
-        // });
+            image3Elements.forEach((image) => {
+                gsap.to(image, {
+                    x: xOffset * 16, // Convert rem to pixels (assuming 1 rem = 16px)
+                    y: yOffset * 16,
+                    duration: 0.4,
+                    ease: "power1.out"
+                });
+            });
+        });
+        
+        const secContractAddress = document.querySelector('.sec-contract-address');
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY || window.pageYOffset; // Get the vertical scroll position
+            const sectionOffset = secContractAddress.getBoundingClientRect().top; // Get the offset of the section
+            const yOffset = (scrollY / window.innerHeight) * 6 - 4; // Scale to -4 to 2 rem
+
+            if (sectionOffset < window.innerHeight && sectionOffset > 0) { // Check if the section is in view
+                image3Elements.forEach((image) => {
+                    gsap.to(image, {
+                        y: yOffset * 16, // Convert rem to pixels (assuming 1 rem = 16px)
+                        duration: 0.4,
+                        ease: "power1.out"
+                    });
+                });
+            }
+        });
+
+        
 
         const imgSecMain = document.querySelector('.img-sec-main');
         const mainCats = document.querySelectorAll('.main_cat');
