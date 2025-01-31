@@ -32,13 +32,13 @@ let candlestickBoldHeight = document.querySelector('.candlestick_bold').height;
 let increaseValue = 0;
 bigButton.addEventListener('click', () => {
     // sequence.stop();
-    sequence.progress = 0
+    // sequence.progress = 0
     // sequence.progress = 0.1
     sequence.play();
     sequence.tick(function(){
         if(sequence.progress === 1){
-            // sequence.progress = 0
             sequence.stop();
+            sequence.progress = 0
         }
     })
     const candlestickClone = candlestickWrap.cloneNode(true);
