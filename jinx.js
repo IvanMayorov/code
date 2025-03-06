@@ -8,11 +8,14 @@ const benefitsSection = document.querySelector('.benefits_section');
 const manifestSection = document.querySelector('.mnfst_section');
 const servicesSection = document.querySelector('.services_section');
 const processSection = document.querySelector('.process_section');
+const processTrack = document.querySelector('.process_track');
 const projectsSection = document.querySelector('.projects_section');
 const boardSection = document.querySelector('.board_section');
 const footerHeight = document.querySelector('.footer').offsetHeight ;
 const servicesSectionHeight = document.querySelector('.services_section .bigtitle_row')?.offsetHeight || 0;
 const projectsSectionHeight = document.querySelector('.projects_section .bigtitle_row')?.offsetHeight || 0;
+
+const remSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
 
 const navLinksBox = document.querySelector('.nav_links_box');
 const navLinks = document.querySelectorAll('.nav_links_box a');
@@ -34,6 +37,7 @@ const calculatedProjectsHeight = totalProjectsHeight - projectsSectionHeight;
 gsap.set('.bigtitle_wrap', { opacity: 0 });
 gsap.set('.section_title_box *', { yPercent: -150 });
 gsap.set('.answer_drop', { height: 0 });
+gsap.set('.process_right_box', { opacity: 0 });
 
 const bigtitleRowsServices = document.querySelectorAll('.services_section .bigtitle_row');
 const bigtitleRowsProjects = document.querySelectorAll('.projects_section .bigtitle_row');
@@ -167,16 +171,37 @@ tl.to('.track', {
   }
 })
 .addLabel('process')
+.to('.process_track', {
+  x: -processTrack.offsetWidth - 1 * remSize,
+  ease: "none",
+  duration: 3,
+
+})
+
+.to('.process_left_col', {
+  opacity: 0,
+  ease: "none",
+  duration: 0.5
+}, "<")
+
+
 .to('.track', {
   x: -getSectionPosition(5),
   ease: "none",
-  duration: 2,
+  duration: 1,
   onUpdate() {
     const p = this.progress();
-    updateTitle('4', p, 'out', 0.8);
-    updateTitle('5', p, 'in', 0.9);
+    updateTitle('4', p, 'out');
+    updateTitle('5', p, 'in');
   }
 })
+.to('.process_right_box', {
+  opacity: 1,
+  ease: "none",
+  duration: 0.5
+}, '<-=0.5')
+
+
 
 .addLabel('projects')
 .to('.projects_section', {
@@ -186,6 +211,7 @@ tl.to('.track', {
   onUpdate() {
     const p = this.progress();
     updateBigtitleRows(p, bigtitleRowsProjects, activeRowsProjects, bigtitleWrapsProjects);
+
   }
 })
 
@@ -325,28 +351,73 @@ burger.addEventListener('mouseleave', () => {
   gsap.to(navMenuBackground, { width: navMenuButtonWidth, transform: 'translateX(0)', duration: 0.3, overwrite: true });
 });
 
-burger.addEventListener('click', () => {
-  
-  const newWidth = isOpen ? '100%' : `calc(100% - ${navLinksBox.offsetWidth}px)`;
-  const newRotation0 = isOpen ? 0 : 45;
-  const newRotation1 = isOpen ? 0 : -45;
-  const newY0 = isOpen ? '0rem' : '0.8rem';
-  const newY1 = isOpen ? '0rem' : '-0.8rem';
-  const newOpacity = isOpen ? 0 : 1;
-  // const newX = isOpen ? '50%' : '0%';
+function openMenu() {
+
+  const newWidth = `calc(100% - ${navLinksBox.offsetWidth}px)`;
+  const newRotation0 = 45;
+  const newRotation1 = -45;
+  const newY0 = '0.8rem';
+  const newY1 = '-0.8rem';
+  const newOpacity = 1;
+
   gsap.to(mask, { width: newWidth, duration: 0.5 });
   gsap.to(burgerLine[0], { rotation: newRotation0, duration: 0.3, y: newY0 });
   gsap.to(burgerLine[1], { rotation: newRotation1, duration: 0.3, y: newY1 });
-  gsap.to(navLinksBox, {autoAlpha: newOpacity, duration: 0.3});
-  if (!isOpen) {
-    gsap.to(navLinks, {x: '0%', delay: 0.2, duration: 0.3, stagger: 0.04, opacity: 1, ease: 'power1.inOut'});
+  gsap.to(navLinksBox, { autoAlpha: newOpacity, duration: 0.3 });
+
+  gsap.to(navLinks, { x: '0%', delay: 0.2, duration: 0.3, stagger: 0.04, opacity: 1, ease: 'power1.inOut', onComplete: () => {
+    document.addEventListener("click", handleOutsideClick);
+    burger.removeEventListener('click', openMenu);
+  }});
+
+  isOpen = true; // Set the state to open
+}
+
+function closeMenu() {
+  console.log('close');
+  
+  const newWidth = '100%';
+  const newRotation0 = 0;
+  const newRotation1 = 0;
+  const newY0 = '0rem';
+  const newY1 = '0rem';
+  const newOpacity = 0;
+
+  gsap.to(mask, { width: newWidth, duration: 0.5 });
+  gsap.to(burgerLine[0], { rotation: newRotation0, duration: 0.3, y: newY0 });
+  gsap.to(burgerLine[1], { rotation: newRotation1, duration: 0.3, y: newY1 });
+  gsap.to(navLinksBox, { autoAlpha: newOpacity, duration: 0.3 });
+
+  gsap.to(navLinks, { x: '50%', duration: 0.3, opacity: 0, ease: 'power1.inOut', onComplete: () => {
+    document.removeEventListener("click", handleOutsideClick);
+    burger.addEventListener('click', openMenu);
+  }});
+  
+
+  isOpen = false; // Set the state to closed
+}
+
+function toggleMenu() {
+  if (isOpen) {
+    closeMenu();
+  } else {
+    openMenu();
   }
-  else {
-    gsap.to(navLinks, {x: '50%', duration: 0.3, opacity: 0, ease: 'power1.inOut'});
+}
+
+burger.addEventListener('click', openMenu);
+
+
+const handleOutsideClick = (event) => {
+  const path = event.composedPath();
+  const isClickInsideDropdownOrButton = Array.from(navLinksBox.children).some(button => path.includes(button))
+
+  if (!isClickInsideDropdownOrButton) {
+    closeMenu()
   }
 
-  isOpen = !isOpen; // Toggle the state
-});
+};
+
 
 
 navLinks.forEach((link, index) => {
