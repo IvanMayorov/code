@@ -353,7 +353,6 @@ else {
         opacity: 1, 
         width: 'auto',
         duration: 0.3, 
-        overwrite: 'auto',
         scrollTrigger: {
           trigger: row,
           start: "top 70%", // Adjust as needed
@@ -361,12 +360,12 @@ else {
           toggleActions: "play none none reverse",
           markers: true
         },
-        // onStart: () => {
-        //   row.classList.add('is-hovered');
-        // },
-        // onReverseComplete: () => {
-        //   row.classList.remove('is-hovered');
-        // }
+        onStart: () => {
+          row.classList.add('is-hovered');
+        },
+        onReverseComplete: () => {
+          row.classList.remove('is-hovered');
+        }
       }
     );
   });
