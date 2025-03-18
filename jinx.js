@@ -362,8 +362,7 @@ else {
   
   bigtitleRows.forEach(row => {
     const wrap = row.querySelector('.bigtitle_wrap');
-    gsap.fromTo(wrap, 
-      { opacity: 0, width: '0' }, 
+    gsap.to(wrap, 
       { 
         opacity: 1, 
         width: 'auto',
