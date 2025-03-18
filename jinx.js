@@ -351,7 +351,7 @@ else {
       { opacity: 0, width: '0' }, 
       { 
         opacity: 1, 
-        width: 'auto', 
+        width: 'auto',
         duration: 0.3, 
         overwrite: 'auto',
         scrollTrigger: {
@@ -361,12 +361,12 @@ else {
           toggleActions: "play none none reverse",
           markers: true
         },
-        onStart: () => {
-          row.classList.add('is-hovered');
-        },
-        onReverseComplete: () => {
-          row.classList.remove('is-hovered');
-        }
+        // onStart: () => {
+        //   row.classList.add('is-hovered');
+        // },
+        // onReverseComplete: () => {
+        //   row.classList.remove('is-hovered');
+        // }
       }
     );
   });
