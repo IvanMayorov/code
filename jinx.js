@@ -355,7 +355,11 @@ mm.add("(max-width: 479px)", () => {
 
   
   bigtitleRows.forEach(row => {
-    gsap.to(row, 
+    gsap.fromTo(row, 
+      {
+        opacity: 0, 
+        width: 0,
+      },
       { 
         opacity: 1, 
         width: 'auto',
@@ -363,12 +367,29 @@ mm.add("(max-width: 479px)", () => {
         scrollTrigger: {
           trigger: row,
           start: "top 70%",
-          end: "bottom 0%", 
+          end: "bottom 50%", 
           toggleActions: "play none none reverse",
-          toggleClass: {
-            targets: row.parentElement,
-            className: "is-hovered"
+          // toggleClass: {
+          //   targets: row.parentElement,
+          //   className: "is-hovered"
+          // },
+          onEnter: () => {
+            console.log('enter');
+            row.parentElement.classList.add('is-hovered');
           },
+          onEnterBack: () => {
+            console.log('enter back');
+      
+          },
+          onLeave: () => {
+            console.log('leave');
+ 
+          },
+          onLeaveBack: () => {
+            console.log('leave back');
+            row.parentElement.classList.remove('is-hovered');
+          },
+          
           markers: true
         },
   
