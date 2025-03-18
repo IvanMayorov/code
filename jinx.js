@@ -343,7 +343,7 @@ else {
 
   //Mobile__________________________________________________________________________________________________________
 
-  const bigtitleRows = document.querySelectorAll('.bigtitle_row');
+  const bigtitleRows = document.querySelectorAll('.bigtitle_wrap');
   // const bigtitleWraps = document.querySelectorAll('.bigtitle_wrap');
   
   // // Add and remove is-hovered class on scroll with ScrollTrigger
@@ -361,8 +361,8 @@ else {
   // });
   
   bigtitleRows.forEach(row => {
-    const wrap = row.querySelector('.bigtitle_wrap');
-    gsap.to(wrap, 
+    gsap.fromTo(row, 
+      { opacity: 0, width: '0' }, 
       { 
         opacity: 1, 
         width: 'auto',
@@ -373,7 +373,7 @@ else {
           end: "bottom 0%", 
           toggleActions: "play none none reverse",
           toggleClass: {
-            targets: row,
+            targets: row.parentElement,
             className: "is-hovered"
           },
           markers: true
