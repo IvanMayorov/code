@@ -340,23 +340,53 @@ if (window.innerWidth > 479) {
   .to(navLogo, { opacity: 1, duration: 0.3 }, "<0.1");
 }
 else {
-  let tl = gsap.timeline({
-    scrollTrigger: {
-      trigger: ".services_section",
-      scrub: 1,
-      start: 'top center',
-      end: 'bottom center',
-      markers: true
-    }
+
+  //Mobile__________________________________________________________________________________________________________
+
+  const bigtitleRows = document.querySelectorAll('.bigtitle_row');
+  
+  bigtitleRows.forEach(row => {
+    const wrap = row.querySelector('.bigtitle_wrap');
+    gsap.fromTo(wrap, 
+      { opacity: 0, width: '0' }, 
+      { 
+        opacity: 1, 
+        width: 'auto', 
+        duration: 0.3, 
+        overwrite: 'auto',
+        scrollTrigger: {
+          trigger: row,
+          start: "top 70%", // Adjust as needed
+          end: "top 30%", // Adjust as needed
+          toggleActions: "play none none reverse",
+          markers: true
+        },
+        onStart: () => {
+          row.classList.add('is-hovered');
+        },
+        onReverseComplete: () => {
+          row.classList.remove('is-hovered');
+        }
+      }
+    );
   });
-  tl.to('.track', {
-    ease: "none",
-    duration: 1,
-    onUpdate() {
-      const p = this.progress();
-      updateBigtitleRows(p, bigtitleRowsServices, activeRowsServices, bigtitleWrapsServices);
-    }
-  })
+  // let tl = gsap.timeline({
+  //   scrollTrigger: {
+  //     trigger: ".services_section",
+  //     scrub: 1,
+  //     start: 'top center',
+  //     end: 'bottom center',
+  //     markers: true
+  //   }
+  // });
+  // tl.to('.track', {
+  //   ease: "none",
+  //   duration: 1,
+  //   onUpdate() {
+  //     const p = this.progress();
+  //     updateBigtitleRows(p, bigtitleRowsServices, activeRowsServices, bigtitleWrapsServices);
+  //   }
+  // })
 }
 
 
