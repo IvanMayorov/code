@@ -357,7 +357,7 @@ else {
         scrollTrigger: {
           trigger: row,
           start: "top 70%", // Adjust as needed
-          end: "top 30%", // Adjust as needed
+          end: "bottom 30%", // Adjust as needed
           toggleActions: "play none none reverse",
           markers: true
         },
