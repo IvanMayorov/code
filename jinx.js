@@ -363,8 +363,7 @@ else {
   // });
   
   bigtitleRows.forEach(row => {
-    gsap.fromTo(row, 
-      { opacity: 0, width: '0' }, 
+    gsap.to(row, 
       { 
         opacity: 1, 
         width: 'auto',
