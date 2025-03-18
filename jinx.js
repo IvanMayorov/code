@@ -10,7 +10,7 @@ gsap.set('.benefits_col:first-child', { y: `${firstBenefitColHeight - deadTitleH
 gsap.set('.benefits_col:last-child', { y: `-${lastBenefitColHeight - deadTitleHeight}px` });
 
 
-function initGsap() {
+
 
 const firstSection = document.querySelector('.main_section');
 const benefitsSection = document.querySelector('.benefits_section');
@@ -156,10 +156,10 @@ answersLeftBoxHeight = getTotalFlexHeight(container);
 
 const answerGap = (container.offsetHeight - answersBoxHeight)/2;
 
-if (gsap.matchMedia().add("(min-width: 480px)", () => {
-  return true;
-}).matches) {
+let mm = gsap.matchMedia();
 
+mm.add("(min-width: 480px)", () => {
+  console.log('desktop');
   const calculateTotalHeight = (section, bigtitleRow) => {
     if (!section) return 0;
     const paddingValue = (section.offsetHeight - bigtitleRow) / 2;
@@ -340,27 +340,19 @@ if (gsap.matchMedia().add("(min-width: 480px)", () => {
   })
   .addLabel('contacts')
   .to(navLogo, { opacity: 1, duration: 0.3 }, "<0.1");
-}
-else {
 
-  //Mobile__________________________________________________________________________________________________________
+  return () => {
+    // cleanup function
+    // здесь можно добавить очистку анимаций если нужно
+  };
+});
 
+// Для мобильных устройств
+mm.add("(max-width: 479px)", () => {
+  console.log('mobile');
+  // весь код для мобильных
   const bigtitleRows = document.querySelectorAll('.bigtitle_wrap');
-  // const bigtitleWraps = document.querySelectorAll('.bigtitle_wrap');
-  
-  // // Add and remove is-hovered class on scroll with ScrollTrigger
-  // bigtitleWraps.forEach(wrap => {
-  //   ScrollTrigger.create({
-  //     trigger: wrap,
-  //     start: "top 70%",
-  //     end: "bottom 0%",
-  //     toggleClass: {
-  //       targets: wrap.parentElement,
-  //       className: "is-hovered"
-  //     },
-  //     markers: true
-  //   });
-  // });
+
   
   bigtitleRows.forEach(row => {
     gsap.to(row, 
@@ -383,24 +375,10 @@ else {
       }
     );
   });
-  // let tl = gsap.timeline({
-  //   scrollTrigger: {
-  //     trigger: ".services_section",
-  //     scrub: 1,
-  //     start: 'top center',
-  //     end: 'bottom center',
-  //     markers: true
-  //   }
-  // });
-  // tl.to('.track', {
-  //   ease: "none",
-  //   duration: 1,
-  //   onUpdate() {
-  //     const p = this.progress();
-  //     updateBigtitleRows(p, bigtitleRowsServices, activeRowsServices, bigtitleWrapsServices);
-  //   }
-  // })
-}
+  return () => {
+    // cleanup function
+  };
+});
 
 
 const swiper = new Swiper('.news_slider_wrap', {
@@ -560,22 +538,22 @@ navLinks.forEach((link, index) => {
 
 
 
-}
 
 
 
 
 
-window.addEventListener('resize', () => {
-  ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-  initGsap();
-});
+
+// window.addEventListener('resize', () => {
+//   ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+//   initGsap();
+// });
 
 
-var Webflow = Webflow || [];
-Webflow.push(function(){
-  initGsap();
-}); 
+// var Webflow = Webflow || [];
+// Webflow.push(function(){
+//   initGsap();
+// }); 
 
 
 let pricePeriod = 'quarterly';
