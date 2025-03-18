@@ -355,15 +355,15 @@ else {
         duration: 0.3, 
         scrollTrigger: {
           trigger: row,
-          start: "top 70%", // Adjust as needed
-          end: "bottom 30%", // Adjust as needed
+          start: "top 70%",
+          end: "bottom 0%", 
           toggleActions: "play none none reverse",
           markers: true
         },
         onStart: () => {
           row.classList.add('is-hovered');
         },
-        onReverseComplete: () => {
+        onReverseStart: () => {
           row.classList.remove('is-hovered');
         }
       }
