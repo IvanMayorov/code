@@ -344,6 +344,21 @@ else {
   //Mobile__________________________________________________________________________________________________________
 
   const bigtitleRows = document.querySelectorAll('.bigtitle_row');
+  // const bigtitleWraps = document.querySelectorAll('.bigtitle_wrap');
+  
+  // // Add and remove is-hovered class on scroll with ScrollTrigger
+  // bigtitleWraps.forEach(wrap => {
+  //   ScrollTrigger.create({
+  //     trigger: wrap,
+  //     start: "top 70%",
+  //     end: "bottom 0%",
+  //     toggleClass: {
+  //       targets: wrap.parentElement,
+  //       className: "is-hovered"
+  //     },
+  //     markers: true
+  //   });
+  // });
   
   bigtitleRows.forEach(row => {
     const wrap = row.querySelector('.bigtitle_wrap');
@@ -358,14 +373,13 @@ else {
           start: "top 70%",
           end: "bottom 0%", 
           toggleActions: "play none none reverse",
+          toggleClass: {
+            targets: row,
+            className: "is-hovered"
+          },
           markers: true
         },
-        onStart: () => {
-          row.classList.add('is-hovered');
-        },
-        onReverseStart: () => {
-          row.classList.remove('is-hovered');
-        }
+  
       }
     );
   });
