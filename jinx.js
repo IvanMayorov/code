@@ -156,7 +156,9 @@ answersLeftBoxHeight = getTotalFlexHeight(container);
 
 const answerGap = (container.offsetHeight - answersBoxHeight)/2;
 
-if (window.innerWidth > 479) {
+if (gsap.matchMedia().add("(min-width: 480px)", () => {
+  return true;
+}).matches) {
 
   const calculateTotalHeight = (section, bigtitleRow) => {
     if (!section) return 0;
