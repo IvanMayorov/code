@@ -1,5 +1,14 @@
 gsap.registerPlugin(ScrollTrigger);
 
+const deadTitleHeight = document.querySelector('.benefits_title_box')?.offsetHeight/2 || 0;
+const firstBenefitColHeight = document.querySelector('.benefits_col:first-child')?.offsetHeight/2 || 0;
+const lastBenefitColHeight = document.querySelector('.benefits_col:last-child')?.offsetHeight/2 || 0;
+const bSquare = document.querySelector('.benefits_square_wrap')?.offsetHeight/2 || 0;
+
+console.log(firstBenefitColHeight, lastBenefitColHeight);
+gsap.set('.benefits_col:first-child', { y: `${firstBenefitColHeight - deadTitleHeight}px` });
+gsap.set('.benefits_col:last-child', { y: `-${lastBenefitColHeight - deadTitleHeight}px` });
+
 
 function initGsap() {
 
@@ -14,6 +23,10 @@ const boardSection = document.querySelector('.board_section');
 const footerHeight = document.querySelector('.footer').offsetHeight ;
 const servicesSectionHeight = document.querySelector('.services_section .bigtitle_row')?.offsetHeight || 0;
 const projectsSectionHeight = document.querySelector('.projects_section .bigtitle_row')?.offsetHeight || 0;
+let answersLeftBoxHeight = 0;
+const answersBoxHeight = document.querySelector('.answers_box')?.offsetHeight || 0;
+
+//MAIN__________________________________________________________________________________________________________
 
 const remSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
 
@@ -21,18 +34,7 @@ const navLinksBox = document.querySelector('.nav_links_box');
 const navLinks = document.querySelectorAll('.nav_links_box a');
 
 const navLogo = document.querySelector('.nav_logo');
-const calculateTotalHeight = (section, bigtitleRow) => {
-  if (!section) return 0;
-  const paddingValue = (section.offsetHeight - bigtitleRow) / 2;
-  section.style.paddingTop = `${paddingValue}px`;
-  return Array.from(section.children).reduce((total, child) => total + child.offsetHeight, 0);
-};
 
-const totalServicesHeight = calculateTotalHeight(servicesSection, servicesSectionHeight);
-const totalProjectsHeight = calculateTotalHeight(projectsSection, projectsSectionHeight);
-
-const calculatedServicesHeight = totalServicesHeight - servicesSectionHeight;
-const calculatedProjectsHeight = totalProjectsHeight - projectsSectionHeight;
 
 gsap.set('.bigtitle_wrap', { opacity: 0 });
 gsap.set('.section_title_box *', { yPercent: -150 });
@@ -103,174 +105,259 @@ function updateBigtitleRows(progress, rows, activeRows, wraps) {
   });
 }
 
-let tl = gsap.timeline({
-  scrollTrigger: {
-    trigger: ".section",
-    pin: true,
-    scrub: 1,
-    end: getSectionPosition(9),
-    // markers: true
-  }
+//FAQ__________________________________________________________________________________________________________
+
+document.querySelectorAll('.answer_item').forEach((item, index) => {
+  item.addEventListener('click', () => {
+    // Close all other dropdowns first
+    document.querySelectorAll('.answer_drop.is-active').forEach(drop => {
+      if (drop !== item.querySelector('.answer_drop')) {
+        drop.classList.remove('is-active');
+        gsap.to(drop, {
+          height: 0,
+          duration: 0.3
+        });
+      }
+    });
+
+    // Toggle clicked dropdown
+    const dropElement = item.querySelector('.answer_drop');
+    dropElement.classList.toggle('is-active');
+    gsap.to(dropElement, {
+      height: dropElement.classList.contains('is-active') ? 'auto' : 0,
+      duration: 0.3
+    });
+  });
 });
 
-tl.to('.track', {
-  x: -getSectionPosition(1),
-  ease: "none",
-  duration: 1,
-  onUpdate() {
-    updateTitle('1', this.progress(), 'in');
-  }
-})
+// Open the first dropdown by default
+const firstDropElement = document.querySelector('.answer_item .answer_drop');
+if (firstDropElement) {
+  firstDropElement.classList.add('is-active');
+  gsap.set(firstDropElement, { height: 'auto' });
+}
 
-.to('.flames', {
-  y: '-40%',
-  ease: "none",
-  duration: 0.5
-}, 0)
-.addLabel('benefits')
-.to('.track', {
-  x: -getSectionPosition(2),
-  ease: "none",
-  duration: 1,
-  onUpdate() {
-    const p = this.progress();
-    updateTitle('1', p, 'out');
-    updateTitle('2', p, 'in');
-  }
-})
-.addLabel('manifest')
-.to('.track', {
-  x: -getSectionPosition(3),
-  ease: "none",
-  duration: 3,
-  onUpdate() {
-    const p = this.progress();
-    updateTitle('2', p, 'out', 0.8);
-    updateTitle('3', p, 'in', 0.9);
-  }
-})
-.addLabel('services')
-.to('.services_section', {
-  y: -calculatedServicesHeight,
-  ease: "none",
-  duration: 3,
-  onUpdate() {
-    const p = this.progress();
-    updateBigtitleRows(p, bigtitleRowsServices, activeRowsServices, bigtitleWrapsServices);
-  }
-})
-.to('.track', {
-  x: -getSectionPosition(4),
-  ease: "none",
-  duration: 1,
-  onUpdate() {
-    const p = this.progress();
-    updateTitle('3', p, 'out');
-    updateTitle('4', p, 'in');
+function getTotalFlexHeight(container) {
+  let elements = Array.from(container.children);
+  if (elements.length === 0) return 0;
 
-  }
-})
-.addLabel('process')
-.to('.process_track', {
-  x: -processTrack.offsetWidth - 1 * remSize,
-  ease: "none",
-  duration: 3,
+  let totalHeight = elements.reduce((sum, el) => sum + el.offsetHeight, 0);
 
-})
+  let style = window.getComputedStyle(container);
+  let gap = parseFloat(style.rowGap || 0); // Берём `gap` (rowGap для колонок)
 
-.to('.process_left_col', {
-  opacity: 0,
-  ease: "none",
-  duration: 0.5
-}, "<")
+  let totalGaps = gap * (elements.length - 1); // Количество промежутков
 
+  return totalHeight + totalGaps;
+}
 
-.to('.track', {
-  x: -getSectionPosition(5),
-  ease: "none",
-  duration: 1,
-  onUpdate() {
-    const p = this.progress();
-    updateTitle('4', p, 'out');
-    updateTitle('5', p, 'in');
-  }
-})
-.to('.process_right_box', {
-  opacity: 1,
-  ease: "none",
-  duration: 0.5
-}, '<-=0.5')
+let container = document.querySelector(".answers_box_left");
+answersLeftBoxHeight = getTotalFlexHeight(container);
 
+const answerGap = (container.offsetHeight - answersBoxHeight)/2;
 
+if (window.innerWidth > 479) {
 
-.addLabel('projects')
-.to('.projects_section', {
-  y: -calculatedProjectsHeight,
-  ease: "none",
-  duration: 3,
-  onUpdate() {
-    const p = this.progress();
-    updateBigtitleRows(p, bigtitleRowsProjects, activeRowsProjects, bigtitleWrapsProjects);
+  const calculateTotalHeight = (section, bigtitleRow) => {
+    if (!section) return 0;
+    const paddingValue = (section.offsetHeight - bigtitleRow) / 2;
+    section.style.paddingTop = `${paddingValue}px`;
+    return Array.from(section.children).reduce((total, child) => total + child.offsetHeight, 0);
+  };
+  
+  const totalServicesHeight = calculateTotalHeight(servicesSection, servicesSectionHeight);
+  const totalProjectsHeight = calculateTotalHeight(projectsSection, projectsSectionHeight);
+  
+  const calculatedServicesHeight = totalServicesHeight - servicesSectionHeight;
+  const calculatedProjectsHeight = totalProjectsHeight - projectsSectionHeight;
 
-  }
-})
+  let tl = gsap.timeline({
+    scrollTrigger: {
+      trigger: ".section",
+      pin: true,
+      scrub: 1,
+      end: getSectionPosition(9),
+      // markers: true
+    }
+  });
 
-.to('.track', {
-  x: -getSectionPosition(6),
-  ease: "none",
-  duration: 1,
-  onUpdate() {
-    const p = this.progress();
-    updateTitle('5', p, 'out', 0.5);
-    updateTitle('6', p, 'in', 0.5);
-  }
+  tl.to('.track', {
+    x: -getSectionPosition(1),
+    ease: "none",
+    duration: 1,
+    onUpdate() {
+      updateTitle('1', this.progress(), 'in');
+    }
+  })
 
-})
-.addLabel('plans')
-.to('.track', {
-  x: -getSectionPosition(7),
-  ease: "none",
-  duration: 2,
-  onUpdate() {
-    const p = this.progress();
-    updateTitle('6', p, 'out', 0.7);
-    updateTitle('7', p, 'in', 0.75);
-  }
-
-})
-.addLabel('answers')
-.to('.track', {
-  x: -getSectionPosition(8),
-  ease: "none",
-  duration: 1,
-  onUpdate() {
-    const p = this.progress();
-    updateTitle('7', p, 'out', 0.5);
-    updateTitle('8', p, 'in', 0.55);
-  }
-
-})
-.addLabel('board')
-
-.to('.track', {
-  x: -(getSectionPosition(9) - firstSection.offsetWidth),
-  ease: "none",
-  duration: 2,
-  onUpdate() {
-    const p = this.progress();
-    updateTitle('8', p, 'out', 0.9);
-    updateTitle('9', p, 'in', 0.9);
-  }
-
-})
-.to('.navbar, .footer, .main_mask, .nav_links_box', {
-  y: - footerHeight,
-  ease: "none",
-  duration: 0.5,
-
-})
-.addLabel('contacts')
-.to(navLogo, { opacity: 1, duration: 0.3 }, "<0.1");
+  .to('.flames', {
+    y: '-40%',
+    ease: "none",
+    duration: 0.5
+  }, 0)
+  .addLabel('benefits')
+  .to('.benefits_col:first-child', {
+    y: `-${firstBenefitColHeight - bSquare}px`,
+    ease: "none",
+    duration: 1
+  })
+  .to('.benefits_col:last-child', {
+    y: `${lastBenefitColHeight - bSquare}px`,
+    ease: "none",
+    duration: 1
+  }, '<')
+  .to('.track', {
+    x: -getSectionPosition(2),
+    ease: "none",
+    duration: 1,
+    onUpdate() {
+      const p = this.progress();
+      updateTitle('1', p, 'out');
+      updateTitle('2', p, 'in');
+    }
+  })
+  .addLabel('manifest')
+  .to('.track', {
+    x: -getSectionPosition(3),
+    ease: "none",
+    duration: 3,
+    onUpdate() {
+      const p = this.progress();
+      updateTitle('2', p, 'out', 0.8);
+      updateTitle('3', p, 'in', 0.9);
+    }
+  })
+  .addLabel('services')
+  .to('.services_section', {
+    y: -calculatedServicesHeight,
+    ease: "none",
+    duration: 3,
+    onUpdate() {
+      const p = this.progress();
+      updateBigtitleRows(p, bigtitleRowsServices, activeRowsServices, bigtitleWrapsServices);
+    }
+  })
+  .to('.track', {
+    x: -getSectionPosition(4),
+    ease: "none",
+    duration: 1,
+    onUpdate() {
+      const p = this.progress();
+      updateTitle('3', p, 'out');
+      updateTitle('4', p, 'in');
+    }
+  })
+  .addLabel('process')
+  .to('.process_track', {
+    x: -processTrack.offsetWidth - 1 * remSize,
+    ease: "none",
+    duration: 3,
+  })
+  .to('.process_left_col', {
+    opacity: 0,
+    ease: "none",
+    duration: 0.5
+  }, "<")
+  .to('.track', {
+    x: -getSectionPosition(5),
+    ease: "none",
+    duration: 1,
+    onUpdate() {
+      const p = this.progress();
+      updateTitle('4', p, 'out');
+      updateTitle('5', p, 'in');
+    }
+  })
+  .to('.process_right_box', {
+    opacity: 1,
+    ease: "none",
+    duration: 0.5
+  }, '<-=0.5')
+  .addLabel('projects')
+  .to('.projects_section', {
+    y: -calculatedProjectsHeight,
+    ease: "none",
+    duration: 3,
+    onUpdate() {
+      const p = this.progress();
+      updateBigtitleRows(p, bigtitleRowsProjects, activeRowsProjects, bigtitleWrapsProjects);
+    }
+  })
+  .to('.track', {
+    x: -getSectionPosition(6),
+    ease: "none",
+    duration: 1,
+    onUpdate() {
+      const p = this.progress();
+      updateTitle('5', p, 'out', 0.5);
+      updateTitle('6', p, 'in', 0.5);
+    }
+  })
+  .addLabel('plans')
+  .to('.track', {
+    x: -getSectionPosition(7),
+    ease: "none",
+    duration: 2,
+    onUpdate() {
+      const p = this.progress();
+      updateTitle('6', p, 'out', 0.7);
+      updateTitle('7', p, 'in', 0.75);
+    }
+  })
+  .addLabel('answers')
+  .to('.answers_box_left', {
+    y: -answersLeftBoxHeight + answersBoxHeight + answerGap,
+    ease: "none",
+    duration: 1
+  })
+  .to('.track', {
+    x: -getSectionPosition(8),
+    ease: "none",
+    duration: 1,
+    onUpdate() {
+      const p = this.progress();
+      updateTitle('7', p, 'out', 0.5);
+      updateTitle('8', p, 'in', 0.55);
+    }
+  })
+  .addLabel('board')
+  .to('.track', {
+    x: -(getSectionPosition(9) - firstSection.offsetWidth),
+    ease: "none",
+    duration: 2,
+    onUpdate() {
+      const p = this.progress();
+      updateTitle('8', p, 'out', 0.9);
+      updateTitle('9', p, 'in', 0.9);
+    }
+  })
+  .to('.navbar, .footer, .main_mask, .nav_links_box', {
+    y: -footerHeight,
+    ease: "none",
+    duration: 0.5,
+  })
+  .addLabel('contacts')
+  .to(navLogo, { opacity: 1, duration: 0.3 }, "<0.1");
+}
+else {
+  let tl = gsap.timeline({
+    scrollTrigger: {
+      trigger: ".services_section",
+      scrub: 1,
+      start: 'top center',
+      end: 'bottom center',
+      markers: true
+    }
+  });
+  tl.to('.track', {
+    ease: "none",
+    duration: 1,
+    onUpdate() {
+      const p = this.progress();
+      updateBigtitleRows(p, bigtitleRowsServices, activeRowsServices, bigtitleWrapsServices);
+    }
+  })
+}
 
 
 const swiper = new Swiper('.news_slider_wrap', {
@@ -459,7 +546,7 @@ const prices = [initialTrial, initialSingle, initialDouble, initialTrouble];
 
 
 const activeElement = document.querySelector('.plans_swither_active');
-document.querySelector('.plans_swither_box').children[0].addEventListener('click', () => {
+document.querySelector('[data-switcher]').children[0].addEventListener('click', () => {
   activeElement.style.transform = 'translateX(-100%)';
   
  
@@ -467,7 +554,7 @@ document.querySelector('.plans_swither_box').children[0].addEventListener('click
     countPrice(); 
   
 });
-document.querySelector('.plans_swither_box').children[1].addEventListener('click', () => {
+document.querySelector('[data-switcher]').children[1].addEventListener('click', () => {
   activeElement.style.transform = 'translateX(0%)';
 
   pricePeriod = 'quarterly';
@@ -505,28 +592,6 @@ function countPrice() {
   });
 }
 
-document.querySelectorAll('.answer_item').forEach(item => {
-  item.addEventListener('click', () => {
-    // Close all other dropdowns first
-    document.querySelectorAll('.answer_drop.is-active').forEach(drop => {
-      if (drop !== item.querySelector('.answer_drop')) {
-        drop.classList.remove('is-active');
-        gsap.to(drop, {
-          height: 0,
-          duration: 0.3
-        });
-      }
-    });
-
-    // Toggle clicked dropdown
-    const dropElement = item.querySelector('.answer_drop');
-    dropElement.classList.toggle('is-active');
-    gsap.to(dropElement, {
-      height: dropElement.classList.contains('is-active') ? 'auto' : 0,
-      duration: 0.3
-    });
-  });
-});
 
 
 
@@ -540,3 +605,21 @@ document.querySelectorAll('.answer_item').forEach(item => {
     //     } 
     //   });
     // }
+
+
+
+
+
+
+// function getTotalFlexHeight(container) {
+//   let elements = Array.from(container.children);
+//   if (elements.length === 0) return 0;
+
+//   let firstEl = elements[0].getBoundingClientRect();
+//   let lastEl = elements[elements.length - 1].getBoundingClientRect();
+
+//   return lastEl.bottom - firstEl.top;
+// }
+
+// let answersLeftBoxHeight = getTotalFlexHeight(document.querySelector(".answers_box_left"));
+// console.log(answersLeftBoxHeight);
