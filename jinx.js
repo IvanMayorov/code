@@ -705,12 +705,12 @@ function initMediaQueries() {
 // Инициализируем медиа-запросы при загрузке
 initMediaQueries();
 
-// Обработчик изменения размера окна
-let resizeTimeout;
-window.addEventListener('resize', () => {
-  clearTimeout(resizeTimeout);
-  resizeTimeout = setTimeout(() => {
-    console.log('Resizing - reinitializing animations');
-    initMediaQueries();
-  }, 250);
-});
+// // Обработчик изменения размера окна
+// let resizeTimeout;
+// window.addEventListener('resize', () => {
+//   clearTimeout(resizeTimeout);
+//   resizeTimeout = setTimeout(() => {
+//     console.log('Resizing - reinitializing animations');
+//     initMediaQueries();
+//   }, 250);
+// });
