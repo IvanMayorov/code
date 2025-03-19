@@ -1,11 +1,49 @@
 gsap.registerPlugin(ScrollTrigger);
 
-const deadTitleHeight = document.querySelector('.benefits_title_box')?.offsetHeight/2 || 0;
+
+
+let mm = gsap.matchMedia();
+
+
+function getTotalFlexHeight(container) {
+  let elements = Array.from(container.children);
+  if (elements.length === 0) return 0;
+
+  let totalHeight = elements.reduce((sum, el) => sum + el.offsetHeight, 0);
+
+  let style = window.getComputedStyle(container);
+  let gap = parseFloat(style.rowGap || 0); // Берём `gap` (rowGap для колонок)
+
+  let totalGaps = gap * (elements.length - 1); // Количество промежутков
+
+  return totalHeight + totalGaps;
+}
+
+// #region Desktop ___________________________________________________________________________________________________________
+function initDesktopAnimations() {
+
+  console.log('desktop');
+
+  let tl;
+  console.log('initAnimations');
+
+    // Очистить предыдущие анимации если они существуют
+    if (tl) {
+      tl.kill();
+    }
+    // Сбросить все ScrollTrigger
+    ScrollTrigger.refresh();
+    ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    
+    // Пересоздаем медиа-запросы
+    mm.revert(); // Отменить предыдущие медиа-запросы
+
+
+  const deadTitleHeight = document.querySelector('.benefits_title_box')?.offsetHeight/2 || 0;
 const firstBenefitColHeight = document.querySelector('.benefits_col:first-child')?.offsetHeight/2 || 0;
 const lastBenefitColHeight = document.querySelector('.benefits_col:last-child')?.offsetHeight/2 || 0;
 const bSquare = document.querySelector('.benefits_square_wrap')?.offsetHeight/2 || 0;
 
-console.log(firstBenefitColHeight, lastBenefitColHeight);
 gsap.set('.benefits_col:first-child', { y: `${firstBenefitColHeight - deadTitleHeight}px` });
 gsap.set('.benefits_col:last-child', { y: `-${lastBenefitColHeight - deadTitleHeight}px` });
 
@@ -26,19 +64,21 @@ const projectsSectionHeight = document.querySelector('.projects_section .bigtitl
 let answersLeftBoxHeight = 0;
 const answersBoxHeight = document.querySelector('.answers_box')?.offsetHeight || 0;
 
-//MAIN__________________________________________________________________________________________________________
+let container = document.querySelector(".answers_box_left");
+answersLeftBoxHeight = getTotalFlexHeight(container);
+
+const answerGap = (container.offsetHeight - answersBoxHeight)/2;
+
 
 const remSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
 
-const navLinksBox = document.querySelector('.nav_links_box');
-const navLinks = document.querySelectorAll('.nav_links_box a');
+
 
 const navLogo = document.querySelector('.nav_logo');
 
-
 gsap.set('.bigtitle_wrap', { opacity: 0 });
 gsap.set('.section_title_box *', { yPercent: -150 });
-gsap.set('.answer_drop', { height: 0 });
+
 gsap.set('.process_right_box', { opacity: 0 });
 
 const bigtitleRowsServices = document.querySelectorAll('.services_section .bigtitle_row');
@@ -90,76 +130,8 @@ function getSectionPosition(index) {
   return position;
 }
 
-function updateBigtitleRows(progress, rows, activeRows, wraps) {
-  const index = Math.floor(progress * rows.length);
-  rows.forEach((row, i) => {
-    if (i <= index && progress > 0 && !activeRows[i]) {
-      activeRows[i] = true;
-      row.classList.add('is-hovered');
-      gsap.to(wraps[i], { opacity: 1, width: 'auto', duration: 0.3, overwrite: 'auto' });
-    } else if ((i > index || progress === 0) && activeRows[i]) {
-      activeRows[i] = false;
-      row.classList.remove('is-hovered');
-      gsap.to(wraps[i], { opacity: 0, width: '0', duration: 0.3, overwrite: 'auto' });
-    }
-  });
-}
 
-//FAQ__________________________________________________________________________________________________________
 
-document.querySelectorAll('.answer_item').forEach((item, index) => {
-  item.addEventListener('click', () => {
-    // Close all other dropdowns first
-    document.querySelectorAll('.answer_drop.is-active').forEach(drop => {
-      if (drop !== item.querySelector('.answer_drop')) {
-        drop.classList.remove('is-active');
-        gsap.to(drop, {
-          height: 0,
-          duration: 0.3
-        });
-      }
-    });
-
-    // Toggle clicked dropdown
-    const dropElement = item.querySelector('.answer_drop');
-    dropElement.classList.toggle('is-active');
-    gsap.to(dropElement, {
-      height: dropElement.classList.contains('is-active') ? 'auto' : 0,
-      duration: 0.3
-    });
-  });
-});
-
-// Open the first dropdown by default
-const firstDropElement = document.querySelector('.answer_item .answer_drop');
-if (firstDropElement) {
-  firstDropElement.classList.add('is-active');
-  gsap.set(firstDropElement, { height: 'auto' });
-}
-
-function getTotalFlexHeight(container) {
-  let elements = Array.from(container.children);
-  if (elements.length === 0) return 0;
-
-  let totalHeight = elements.reduce((sum, el) => sum + el.offsetHeight, 0);
-
-  let style = window.getComputedStyle(container);
-  let gap = parseFloat(style.rowGap || 0); // Берём `gap` (rowGap для колонок)
-
-  let totalGaps = gap * (elements.length - 1); // Количество промежутков
-
-  return totalHeight + totalGaps;
-}
-
-let container = document.querySelector(".answers_box_left");
-answersLeftBoxHeight = getTotalFlexHeight(container);
-
-const answerGap = (container.offsetHeight - answersBoxHeight)/2;
-
-let mm = gsap.matchMedia();
-
-mm.add("(min-width: 480px)", () => {
-  console.log('desktop');
   const calculateTotalHeight = (section, bigtitleRow) => {
     if (!section) return 0;
     const paddingValue = (section.offsetHeight - bigtitleRow) / 2;
@@ -173,7 +145,7 @@ mm.add("(min-width: 480px)", () => {
   const calculatedServicesHeight = totalServicesHeight - servicesSectionHeight;
   const calculatedProjectsHeight = totalProjectsHeight - projectsSectionHeight;
 
-  let tl = gsap.timeline({
+  tl = gsap.timeline({
     scrollTrigger: {
       trigger: ".section",
       pin: true,
@@ -341,21 +313,69 @@ mm.add("(min-width: 480px)", () => {
   .addLabel('contacts')
   .to(navLogo, { opacity: 1, duration: 0.3 }, "<0.1");
 
-  return () => {
-    // cleanup function
-    // здесь можно добавить очистку анимаций если нужно
-  };
-});
+}
 
-// Для мобильных устройств
-mm.add("(max-width: 479px)", () => {
+
+
+
+
+
+function updateBigtitleRows(progress, rows, activeRows, wraps) {
+  const index = Math.floor(progress * rows.length);
+  rows.forEach((row, i) => {
+    if (i <= index && progress > 0 && !activeRows[i]) {
+      activeRows[i] = true;
+      row.classList.add('is-hovered');
+      gsap.to(wraps[i], { opacity: 1, width: 'auto', duration: 0.3, overwrite: 'auto' });
+    } else if ((i > index || progress === 0) && activeRows[i]) {
+      activeRows[i] = false;
+      row.classList.remove('is-hovered');
+      gsap.to(wraps[i], { opacity: 0, width: '0', duration: 0.3, overwrite: 'auto' });
+    }
+  });
+}
+
+
+
+
+
+
+// #region Mobile ___________________________________________________________________________________________________________
+
+let mobileSwiper;
+const processTrack = document.querySelector('.process_track');
+const processCards = document.querySelectorAll('.process_card');
+
+function initMobileAnimations() {
   console.log('mobile');
+
+      // Сбросить все ScrollTrigger
+      ScrollTrigger.refresh();
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      
+      // Пересоздаем медиа-запросы
+      mm.revert(); // Отменить предыдущие медиа-запросы
+
   // весь код для мобильных
-  const bigtitleRows = document.querySelectorAll('.bigtitle_wrap');
+  const bigtitleRows = document.querySelectorAll('.bigtitle_row');
+
+  //Добавляю классы для swiper
+  const processTrack = document.querySelector('.process_track');
+  const processCards = document.querySelectorAll('.process_card');
+  processTrack.classList.add('swiper-wrapper');
+  processCards.forEach(card => {
+    card.classList.add('swiper-slide');
+  });
+
+  mobileSwiper = new Swiper('.process_right_col', {
+    spaceBetween: 10,
+  
+  });
 
   
   bigtitleRows.forEach(row => {
-    gsap.fromTo(row, 
+    const bigtitleWrap = row.querySelector('.bigtitle_wrap');
+    gsap.fromTo(bigtitleWrap, 
       {
         opacity: 0, 
         width: 0,
@@ -366,28 +386,19 @@ mm.add("(max-width: 479px)", () => {
         duration: 0.3, 
         scrollTrigger: {
           trigger: row,
-          start: "top 70%",
-          end: "bottom 50%", 
+          start: "top 50%",
+          end: "bottom 0%", 
           toggleActions: "play none none reverse",
           // toggleClass: {
           //   targets: row.parentElement,
           //   className: "is-hovered"
           // },
           onEnter: () => {
-            console.log('enter');
-            row.parentElement.classList.add('is-hovered');
+            row.classList.add('is-hovered');
           },
-          onEnterBack: () => {
-            console.log('enter back');
-      
-          },
-          onLeave: () => {
-            console.log('leave');
- 
-          },
+  
           onLeaveBack: () => {
-            console.log('leave back');
-            row.parentElement.classList.remove('is-hovered');
+            row.classList.remove('is-hovered');
           },
           
           markers: true
@@ -396,12 +407,12 @@ mm.add("(max-width: 479px)", () => {
       }
     );
   });
-  return () => {
-    // cleanup function
-  };
-});
+}
 
 
+// #endregion 
+
+// #region Swipers
 const swiper = new Swiper('.news_slider_wrap', {
   // Optional parameters
   loop: true,
@@ -412,37 +423,13 @@ const swiper = new Swiper('.news_slider_wrap', {
 
 });
 
-// Intersection Observer________________________________________________________________________________________
 
 
-// const observerOptions = {
-//   root: null,
-//   rootMargin: '0px',
-//   threshold: Array.from({ length: 101 }, (_, i) => i / 100) // Create thresholds from 0 to 1 in increments of 0.01
-// };
-
-// const observerCallback = (entries, observer) => {
-//   entries.forEach(entry => {
-//     if (entry.isIntersecting) {
-//       const visibilityPercentage = Math.round(entry.intersectionRatio * 100);
-//       console.log(visibilityPercentage);
-//       if (visibilityPercentage > 50) {
-//         animateLabelIn('.label:nth-of-type(1)');
-//       }
-//       else {
-//         animateLabelOut('.label:nth-of-type(1)');
-//       }
-//     }
-//   });
-// };
-
-// const observer = new IntersectionObserver(observerCallback, observerOptions);
-
-// if (manifestSection) {
-//   observer.observe(manifestSection);
-// }
 
 
+//#region BURGER 
+const navLinksBox = document.querySelector('.nav_links_box');
+const navLinks = document.querySelectorAll('.nav_links_box a');
 const burger = document.querySelector('.burger_button');
 const mask = document.querySelector('.main_mask');
 const burgerLine = document.querySelectorAll('.burger_line');
@@ -470,7 +457,6 @@ cookieIcon.addEventListener('mouseleave', () => {
   gsap.to('.cookie_text_wrap', { width: '0', duration: 0.3, opacity: 0, overwrite: true });
   gsap.to('.red_back', { width: '7rem', transform: 'translateX(0)', duration: 0.3, overwrite: true });
 });
-
 burger.addEventListener('mouseenter', () => {
   
   gsap.to(navMenuBackground, { width: `7rem`, transform: `translateX(${navMenuButtonWidth}px)`, duration: 0.3, overwrite: true });
@@ -548,7 +534,6 @@ const handleOutsideClick = (event) => {
 };
 
 
-
 navLinks.forEach((link, index) => {
   const sections = ["benefits", "manifest", "services", "process", "projects", "plans", "answers", "board", "contacts"];
   link.addEventListener('click', () => {
@@ -556,19 +541,8 @@ navLinks.forEach((link, index) => {
   });
 });
 
+//#endregion BURGER MENU__________________________________________________________________________________________________________
 
-
-
-
-
-
-
-
-
-// window.addEventListener('resize', () => {
-//   ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-//   initGsap();
-// });
 
 
 // var Webflow = Webflow || [];
@@ -576,7 +550,7 @@ navLinks.forEach((link, index) => {
 //   initGsap();
 // }); 
 
-
+//#region PRICES  
 let pricePeriod = 'quarterly';
 const initialTrial = parseInt(document.querySelectorAll('[data-price]')[0].textContent.replace(',', ''));
 const initialSingle = parseInt(document.querySelectorAll('[data-price]')[1].textContent.replace(',', ''));
@@ -634,34 +608,84 @@ function countPrice() {
   });
 }
 
+//#endregion PRICES  
+
+//#region FAQ
+
+document.querySelectorAll('.answer_item').forEach((item, index) => {
+  item.addEventListener('click', () => {
+    // Close all other dropdowns first
+    document.querySelectorAll('.answer_drop.is-active').forEach(drop => {
+      if (drop !== item.querySelector('.answer_drop')) {
+        drop.classList.remove('is-active');
+        gsap.to(drop, {
+          height: 0,
+          duration: 0.3
+        });
+      }
+    });
+
+    // Toggle clicked dropdown
+    const dropElement = item.querySelector('.answer_drop');
+    dropElement.classList.toggle('is-active');
+    gsap.to(dropElement, {
+      height: dropElement.classList.contains('is-active') ? 'auto' : 0,
+      duration: 0.3
+    });
+  });
+});
+
+gsap.set('.answer_drop', { height: 0 });
+
+// Open the first dropdown by default
+const firstDropElement = document.querySelector('.answer_item .answer_drop');
+if (firstDropElement) {
+  firstDropElement.classList.add('is-active');
+  console.log(firstDropElement);
+  gsap.set(firstDropElement, { height: 'auto' , onComplete: () => {
+    console.log('complete');
+  }});
+}
 
 
 
-    // onUpdate: function() {
-    //   const bigtitleRows = document.querySelectorAll('.bigtitle_row');
-    //   const progress = this.progress();
-    //   const index = Math.floor(progress * bigtitleRows.length);
-    //   bigtitleRows.forEach((row, i) => {
-    //     if (i === index) {
-    //       row.classList.add('is-hovered');
-    //     } 
-    //   });
-    // }
+
+//#endregion FAQ__________________________________________________________________________________________________________
 
 
 
 
+// Инициализация медиа-запросов однократно
+function initMediaQueries() {
+  mm.revert(); // Очистка предыдущих медиа-запросов
+  
+  mm.add("(min-width: 480px)", () => {
+    initDesktopAnimations();
+    return () => { /* cleanup function */ };
+  });
+  
+  mm.add("(max-width: 479px)", () => {
+    initMobileAnimations();
+    return () => { /* cleanup function */ 
+      mobileSwiper.destroy();
+      processTrack.classList.remove('swiper-wrapper');
+      processCards.forEach(card => {
+        card.classList.remove('swiper-slide');
+      });
+    
+    };
+  });
+}
 
+// Инициализируем медиа-запросы при загрузке
+initMediaQueries();
 
-// function getTotalFlexHeight(container) {
-//   let elements = Array.from(container.children);
-//   if (elements.length === 0) return 0;
-
-//   let firstEl = elements[0].getBoundingClientRect();
-//   let lastEl = elements[elements.length - 1].getBoundingClientRect();
-
-//   return lastEl.bottom - firstEl.top;
-// }
-
-// let answersLeftBoxHeight = getTotalFlexHeight(document.querySelector(".answers_box_left"));
-// console.log(answersLeftBoxHeight);
+// Обработчик изменения размера окна
+let resizeTimeout;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(() => {
+    console.log('Resizing - reinitializing animations');
+    initMediaQueries();
+  }, 250);
+});
