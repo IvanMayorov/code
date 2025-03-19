@@ -407,6 +407,32 @@ function initMobileAnimations() {
       }
     );
   });
+  const boardSection = document.querySelector('.board_section');
+  const boardSectionChildren = boardSection.children;
+  const boardSectionChildrenWidths = Array.from(boardSectionChildren).map(child => child.offsetWidth);
+  
+  // Calculate total width considering negative margins
+  const totalChildrenWidth = Array.from(boardSectionChildren).reduce((total, child) => {
+    const computedStyle = window.getComputedStyle(child);
+    const marginLeft = parseInt(computedStyle.marginLeft) || 0;
+    const marginRight = parseInt(computedStyle.marginRight) || 0;
+    return total + child.offsetWidth + (marginLeft < 0 ? marginLeft : 0) + (marginRight < 0 ? marginRight : 0);
+  }, 0) - boardSection.offsetWidth;
+  
+  gsap.to('.board_section > *', {
+    x: -totalChildrenWidth,
+    ease: "none",
+    duration: 1,
+    scrollTrigger: {
+      trigger: '.board_section',
+      start: "top 10%",
+      end: "+=1000px",
+      pinSpacing: true,
+      pin: true,
+      scrub: 1,
+    }
+  })
+
 }
 
 
