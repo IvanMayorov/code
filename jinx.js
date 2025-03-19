@@ -22,7 +22,7 @@ function getTotalFlexHeight(container) {
 // #region Desktop ___________________________________________________________________________________________________________
 function initDesktopAnimations() {
 
-  console.log('desktop');
+  alert('desktop');
 
   let tl;
   console.log('initAnimations');
@@ -347,7 +347,7 @@ const processTrack = document.querySelector('.process_track');
 const processCards = document.querySelectorAll('.process_card');
 
 function initMobileAnimations() {
-  console.log('mobile');
+  alert('mobile');
 
       // Сбросить все ScrollTrigger
       ScrollTrigger.refresh();
@@ -401,7 +401,7 @@ function initMobileAnimations() {
             row.classList.remove('is-hovered');
           },
           
-          markers: true
+          // markers: true
         },
   
       }
@@ -425,11 +425,10 @@ function initMobileAnimations() {
     duration: 1,
     scrollTrigger: {
       trigger: '.board_section',
-      start: "top 10%",
-      end: "+=1000px",
-      pinSpacing: true,
-      pin: true,
+      start: "top 0%",
+      end: "bottom 50%",
       scrub: 1,
+      markers: true,
     }
   })
 
