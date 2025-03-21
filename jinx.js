@@ -22,7 +22,7 @@ function getTotalFlexHeight(container) {
 // #region Desktop ___________________________________________________________________________________________________________
 function initDesktopAnimations() {
 
-  alert('desktop');
+  // alert('desktop');
 
   let tl;
   console.log('initAnimations');
@@ -313,6 +313,14 @@ function getSectionPosition(index) {
   .addLabel('contacts')
   .to(navLogo, { opacity: 1, duration: 0.3 }, "<0.1");
 
+  navLinks.forEach((link, index) => {
+    const sections = ["benefits", "manifest", "services", "process", "projects", "plans", "answers", "board", "contacts"];
+    link.addEventListener('click', () => {
+      closeMenu()
+      gsap.to(window, {scrollTo: tl.scrollTrigger.labelToScroll(sections[index]), duration: 0.5});
+    });
+  });
+
 }
 
 
@@ -343,11 +351,12 @@ function updateBigtitleRows(progress, rows, activeRows, wraps) {
 // #region Mobile ___________________________________________________________________________________________________________
 
 let mobileSwiper;
+let plansSlider;
 const processTrack = document.querySelector('.process_track');
 const processCards = document.querySelectorAll('.process_card');
 
 function initMobileAnimations() {
-  alert('mobile');
+  // alert('mobile');
 
       // Сбросить все ScrollTrigger
       ScrollTrigger.refresh();
@@ -359,19 +368,47 @@ function initMobileAnimations() {
   // весь код для мобильных
   const bigtitleRows = document.querySelectorAll('.bigtitle_row');
 
-  //Добавляю классы для swiper
+  //SWIPERS__________________________________________________________________________________________________________________________
   const processTrack = document.querySelector('.process_track');
   const processCards = document.querySelectorAll('.process_card');
+
+  const planSlider = document.querySelector('.plans_slider');
+  const plansSlides = document.querySelectorAll('.plans_slider > *');
+  // plansSlides.forEach(slide => {
+  //   // Create a wrapper div with swiper-slide class
+  //   const wrapper = document.createElement('div');
+  //   wrapper.classList.add('swiper-slide');
+    
+  //   // Get the parent element (plans_slider)
+  //   const parent = slide.parentNode;
+    
+  //   // Insert the wrapper before the slide
+  //   parent.insertBefore(wrapper, slide);
+    
+  //   // Move the slide into the wrapper
+  //   wrapper.appendChild(slide);
+  // });
+
   processTrack.classList.add('swiper-wrapper');
-  processCards.forEach(card => {
-    card.classList.add('swiper-slide');
-  });
+  planSlider.classList.add('swiper-wrapper');
+
+  function addSwiperSlideClass(cards) {
+    cards.forEach(card => {
+      card.classList.add('swiper-slide');
+    });
+  }
+  
+  addSwiperSlideClass(processCards);
+  addSwiperSlideClass(plansSlides);
 
   mobileSwiper = new Swiper('.process_right_col', {
     spaceBetween: 10,
   
   });
-
+  plansSlider = new Swiper('.plans_section', {
+    // spaceBetween: 10,
+    slidesPerView: 'auto',
+  });
   
   bigtitleRows.forEach(row => {
     const bigtitleWrap = row.querySelector('.bigtitle_wrap');
@@ -428,10 +465,49 @@ function initMobileAnimations() {
       start: "top 0%",
       end: "bottom 50%",
       scrub: 1,
-      markers: true,
+      // markers: true,
     }
   })
 
+// Create ScrollTrigger for each section in .track to show corresponding image in .section_title_box
+document.querySelectorAll('.track > div').forEach((section, index) => {
+  // Adjust index to start showing images from the second section
+  // For the second section (index 1), show the first image (index 0)
+  const imageIndex = index > 0 ? index - 1 : null;
+  
+  // Skip the first section
+  if (imageIndex === null) return;
+  
+  // Get the corresponding image in the section_title_box
+  const sectionImage = document.querySelector(`.section_title_box img:nth-child(${imageIndex + 1})`);
+  
+  if (sectionImage) {
+    gsap.set(sectionImage, { yPercent: -150 });
+
+    // Create ScrollTrigger for each section
+    ScrollTrigger.create({
+      trigger: section,
+      start: "top center",
+      end: "bottom center",
+      onEnter: () => {
+        // Show the corresponding image
+        gsap.to(sectionImage, { yPercent: 0, duration: 0.3 });
+      },
+      onLeave: () => {
+        // Hide the image when leaving the section
+        gsap.to(sectionImage, { yPercent: -150, duration: 0.3 });
+      },
+      onEnterBack: () => {
+        // Show the image when scrolling back up
+        gsap.to(sectionImage, { yPercent: 0, duration: 0.3 });
+      },
+      onLeaveBack: () => {
+        // Hide the image when scrolling back up past the section
+        gsap.to(sectionImage, { yPercent: -150, duration: 0.3 });
+      }
+    });
+  }
+});
 }
 
 
@@ -559,12 +635,7 @@ const handleOutsideClick = (event) => {
 };
 
 
-navLinks.forEach((link, index) => {
-  const sections = ["benefits", "manifest", "services", "process", "projects", "plans", "answers", "board", "contacts"];
-  link.addEventListener('click', () => {
-    gsap.to(window, {scrollTo: tl.scrollTrigger.labelToScroll(sections[index]), duration: 0.5});
-  });
-});
+
 
 //#endregion BURGER MENU__________________________________________________________________________________________________________
 
