@@ -530,13 +530,13 @@ const swiper = new Swiper('.news_slider_wrap', {
 
 //#region BURGER 
 const navLinksBox = document.querySelector('.nav_links_box');
-const navLinks = document.querySelectorAll('.nav_links_box a');
+const navLinks = gsap.utils.toArray('.nav_links_box a');
 const burger = document.querySelector('.burger_button');
 const mask = document.querySelector('.main_mask');
 const burgerLine = document.querySelectorAll('.burger_line');
 let isOpen = false; // Track the state of the menu
 
-// gsap.set(navLinksBox, {autoAlpha: 0});
+gsap.set(navLinksBox, {autoAlpha: 0});
 gsap.set(navLinks, {xPercent: 50, opacity: 0});
 const cookieTextWrap = document.querySelector('.cookie_text_wrap');
 
@@ -592,7 +592,7 @@ function openMenu() {
 
   gsap.to(burgerLine[0], { rotation: newRotation0, duration: 0.3, y: newY0 });
   gsap.to(burgerLine[1], { rotation: newRotation1, duration: 0.3, y: newY1 });
-  // gsap.to(navLinksBox, { autoAlpha: newOpacity, duration: 0.3 });
+  gsap.to(navLinksBox, { autoAlpha: newOpacity, duration: 0.3 });
 
   gsap.to(navLinks, { xPercent: 0, delay: 0.2, duration: 0.3, stagger: 0.04, opacity: 1, ease: 'power1.inOut', onComplete: () => {
     document.addEventListener("click", handleOutsideClick);
@@ -621,7 +621,7 @@ function closeMenu() {
   }
   gsap.to(burgerLine[0], { rotation: newRotation0, duration: 0.3, y: newY0 });
   gsap.to(burgerLine[1], { rotation: newRotation1, duration: 0.3, y: newY1 });
-  // gsap.to(navLinksBox, { autoAlpha: newOpacity, duration: 0.3 });
+  gsap.to(navLinksBox, { autoAlpha: newOpacity, duration: 0.3 });
 
   gsap.to(navLinks, { xPercent: 50, duration: 0.3, opacity: 0, ease: 'power1.inOut', onComplete: () => {
     document.removeEventListener("click", handleOutsideClick);
