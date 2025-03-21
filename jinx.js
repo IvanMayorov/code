@@ -542,6 +542,8 @@ const cookieTextWrap = document.querySelector('.cookie_text_wrap');
 
 const navMenuBackground = document.querySelector('.nav_menu_background');
 const navMenuButton = document.querySelector('.nav_menu_button');
+const mobileMask = document.querySelector('.mobile_mask');
+
 const navMenuButtonWidth = navMenuButton.offsetWidth;
 
 const cookieTextWrapWidth = cookieTextWrap.offsetWidth;
@@ -558,25 +560,36 @@ cookieIcon.addEventListener('mouseleave', () => {
   gsap.to('.cookie_text_wrap', { width: '0', duration: 0.3, opacity: 0, overwrite: true });
   gsap.to('.red_back', { width: '7rem', transform: 'translateX(0)', duration: 0.3, overwrite: true });
 });
-burger.addEventListener('mouseenter', () => {
-  
-  gsap.to(navMenuBackground, { width: `7rem`, transform: `translateX(${navMenuButtonWidth}px)`, duration: 0.3, overwrite: true });
-});
-burger.addEventListener('mouseleave', () => {
- 
-  gsap.to(navMenuBackground, { width: navMenuButtonWidth, transform: 'translateX(0)', duration: 0.3, overwrite: true });
-});
 
+if (window.innerWidth >= 480) {
+  burger.addEventListener('mouseenter', () => {
+    gsap.to(navMenuBackground, { width: `7rem`, transform: `translateX(${navMenuButtonWidth}px)`, duration: 0.3, overwrite: true });
+  });
+  burger.addEventListener('mouseleave', () => {
+    gsap.to(navMenuBackground, { width: navMenuButtonWidth, transform: 'translateX(0)', duration: 0.3, overwrite: true });
+  });
+}
 function openMenu() {
-
+  let newY0 = '0.8rem';
+  let newY1 = '-0.8rem';
   const newWidth = `calc(100% - ${navLinksBox.offsetWidth}px)`;
   const newRotation0 = 45;
   const newRotation1 = -45;
-  const newY0 = '0.8rem';
-  const newY1 = '-0.8rem';
+
   const newOpacity = 1;
 
-  gsap.to(mask, { width: newWidth, duration: 0.5 });
+  // Простая проверка ширины экрана
+  if (window.innerWidth >= 480) {
+    // Код для десктопа
+
+    gsap.to(mask, { width: newWidth, duration: 0.5 });
+  } else {
+    // Код для мобильных
+    mobileMask.classList.add('is-opened');
+    newY0 = '0.5rem';
+    newY1 = '-0.5rem';
+  }
+
   gsap.to(burgerLine[0], { rotation: newRotation0, duration: 0.3, y: newY0 });
   gsap.to(burgerLine[1], { rotation: newRotation1, duration: 0.3, y: newY1 });
   gsap.to(navLinksBox, { autoAlpha: newOpacity, duration: 0.3 });
@@ -598,8 +611,14 @@ function closeMenu() {
   const newY0 = '0rem';
   const newY1 = '0rem';
   const newOpacity = 0;
-
-  gsap.to(mask, { width: newWidth, duration: 0.5 });
+    // Простая проверка ширины экрана
+    if (window.innerWidth >= 480) {
+      // Код для десктопа
+      gsap.to(mask, { width: newWidth, duration: 0.5 });
+    } else {
+      // Код для мобильных
+    mobileMask.classList.remove('is-opened');
+  }
   gsap.to(burgerLine[0], { rotation: newRotation0, duration: 0.3, y: newY0 });
   gsap.to(burgerLine[1], { rotation: newRotation1, duration: 0.3, y: newY1 });
   gsap.to(navLinksBox, { autoAlpha: newOpacity, duration: 0.3 });
