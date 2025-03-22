@@ -539,6 +539,9 @@ document.querySelectorAll('.track > div').forEach((section, index) => {
   }
 });
 // Add click event listeners to nav links to scroll to corresponding sections in track
+
+
+
 navLinks.forEach((link, index) => {
   link.addEventListener('click', (e) => {
     e.preventDefault();
@@ -644,6 +647,9 @@ if (window.innerWidth >= 480) {
   });
 }
 function openMenu() {
+
+
+
   if (progress === 0) {
     flames.classList.add('is-menu-opened');
   } else {
@@ -674,10 +680,19 @@ function openMenu() {
   gsap.to(burgerLine[0], { rotation: newRotation0, duration: 0.3, y: newY0 });
   gsap.to(burgerLine[1], { rotation: newRotation1, duration: 0.3, y: newY1 });
   gsap.to(navLinksBox, { autoAlpha: newOpacity, duration: 0.3 });
+  
+  navLinks.forEach(link => {
+    link.style.willChange = "transform, opacity";
+  });
+
+  navLinks.forEach(link => {
+    link.style.willChange = "transform, opacity";
+  });
 
   gsap.to(navLinks, { xPercent: 0, delay: 0.2, duration: 0.3, stagger: 0.04, opacity: 1, ease: 'power1.inOut', onComplete: () => {
     document.addEventListener("click", handleOutsideClick);
     burger.removeEventListener('click', openMenu);
+    navLinks.forEach(el => el.style.willChange = "");
   }});
 
   isOpen = true; // Set the state to open
