@@ -719,7 +719,7 @@ function closeMenu() {
   gsap.to(burgerLine[1], { rotation: newRotation1, duration: 0.3, y: newY1 });
   gsap.to(navLinksBox, { autoAlpha: newOpacity, delay: 0.5, duration: 0.3 });
 
-  gsap.to(navLinks, { xPercent: 50, stagger: 0.04, duration: 0.3, opacity: 0, ease: 'power1.inOut', onComplete: () => {
+  gsap.to(navLinks, { xPercent: 50, stagger: 0.04, duration: 0.3, opacity: 0, force3D: true, ease: 'power1.inOut', onComplete: () => {
     document.removeEventListener("click", handleOutsideClick);
     burger.addEventListener('click', openMenu);
   }});
