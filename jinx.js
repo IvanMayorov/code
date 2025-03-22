@@ -1,8 +1,25 @@
 gsap.registerPlugin(ScrollTrigger);
 
+//Hero
+lottie.loadAnimation({
+  container: document.querySelector('.hero_lottie'),
+  renderer: 'svg',
+  loop: false,
+  autoplay: true,
+  path: 'https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/67de76d3c963e2fea84cfb4f_main-EUmoj.json'
+});
 
+//Benefits
+const benefitsLottie = lottie.loadAnimation({
+  container: document.querySelector('.traditional-h2-image'), // Make sure this element exists
+  renderer: 'svg',
+  loop: false,
+  autoplay: false,
+  path: 'https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/67de874bff0309089a98e25b_scratch-qddRu.json' // Update with your actual JSON path
+});
 
 let mm = gsap.matchMedia();
+let progress = 0;
 
 
 function getTotalFlexHeight(container) {
@@ -165,11 +182,23 @@ function getSectionPosition(index) {
   })
 
   .to('.flames', {
-    y: '-40%',
+    y: '-17%',
     ease: "none",
-    duration: 0.5
+    duration: 0.5,
+    onComplete: () => {
+      progress = 1;
+    },
+    onReverseComplete: () => {
+      progress = 0;
+    }
+    
   }, 0)
   .addLabel('benefits')
+  // Add Lottie animation for benefits section
+  .add(() => {
+    // Create a new Lottie animation when we reach the benefits section
+    benefitsLottie.play();
+  }, 'benefits')
   .to('.benefits_col:first-child', {
     y: `-${firstBenefitColHeight - bSquare}px`,
     ease: "none",
@@ -321,6 +350,7 @@ function getSectionPosition(index) {
     });
   });
 
+  
 }
 
 
@@ -508,10 +538,53 @@ document.querySelectorAll('.track > div').forEach((section, index) => {
     });
   }
 });
-}
+// Add click event listeners to nav links to scroll to corresponding sections in track
+navLinks.forEach((link, index) => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    
+    // Get all sections in the track
+    const trackSections = document.querySelectorAll('.track > div');
+    
+    // Close the menu if it's open
+    if (isOpen) {
+      closeMenu();
+    }
+    
+    // For the last link, scroll to footer
+    if (index === navLinks.length - 1) {
+      gsap.to(window, {
+        scrollTo: {
+          y: '.footer',
+          offsetY: 0
+        },
+        duration: 1,
+        ease: "power2.inOut"
+      });
+    } else {
+      // Skip the first section (index 0) and adjust index to start from the second section
+      // For nav link at index 0, we want to scroll to track section at index 1
+      const targetSectionIndex = index + 1;
+      
+      // Make sure the target section exists
+      if (targetSectionIndex < trackSections.length) {
+        const targetSection = trackSections[targetSectionIndex];
+        
+        // Scroll to the target section
+        gsap.to(window, {
+          scrollTo: {
+            y: targetSection,
+            offsetY: 100
+          },
+          duration: 1,
+          ease: "power2.inOut"
+        });
+      }
+    }
+  });
+});
 
-
-// #endregion 
+} // #endregion 
 
 // #region Swipers
 const swiper = new Swiper('.news_slider_wrap', {
@@ -543,6 +616,7 @@ const cookieTextWrap = document.querySelector('.cookie_text_wrap');
 const navMenuBackground = document.querySelector('.nav_menu_background');
 const navMenuButton = document.querySelector('.nav_menu_button');
 const mobileMask = document.querySelector('.mobile_mask');
+const flames = document.querySelector('.flames');
 
 const navMenuButtonWidth = navMenuButton.offsetWidth;
 
@@ -570,6 +644,13 @@ if (window.innerWidth >= 480) {
   });
 }
 function openMenu() {
+  if (progress === 0) {
+    flames.classList.add('is-menu-opened');
+  } else {
+    flames.classList.add('is-menu-opened-2');
+  }
+  
+
   let newY0 = '0.8rem';
   let newY1 = '-0.8rem';
   const newWidth = `calc(100% - ${navLinksBox.offsetWidth}px)`;
@@ -603,8 +684,9 @@ function openMenu() {
 }
 
 function closeMenu() {
-  console.log('close');
-  
+  flames.classList.remove('is-menu-opened');
+  flames.classList.remove('is-menu-opened-2');
+
   const newWidth = '100%';
   const newRotation0 = 0;
   const newRotation1 = 0;
@@ -614,16 +696,19 @@ function closeMenu() {
     // Простая проверка ширины экрана
     if (window.innerWidth >= 480) {
       // Код для десктопа
-      gsap.to(mask, { width: newWidth, duration: 0.5 });
+      gsap.to(mask, { width: newWidth, duration: 0.5, delay: 0.4 });
     } else {
       // Код для мобильных
-    mobileMask.classList.remove('is-opened');
-  }
+      setTimeout(() => {
+        mobileMask.classList.remove('is-opened');
+      }, 400);
+    }
+  
   gsap.to(burgerLine[0], { rotation: newRotation0, duration: 0.3, y: newY0 });
   gsap.to(burgerLine[1], { rotation: newRotation1, duration: 0.3, y: newY1 });
-  gsap.to(navLinksBox, { autoAlpha: newOpacity, duration: 0.3 });
+  gsap.to(navLinksBox, { autoAlpha: newOpacity, delay: 0.5, duration: 0.3 });
 
-  gsap.to(navLinks, { xPercent: 50, duration: 0.3, opacity: 0, ease: 'power1.inOut', onComplete: () => {
+  gsap.to(navLinks, { xPercent: 50, stagger: 0.04, duration: 0.3, opacity: 0, ease: 'power1.inOut', onComplete: () => {
     document.removeEventListener("click", handleOutsideClick);
     burger.addEventListener('click', openMenu);
   }});
