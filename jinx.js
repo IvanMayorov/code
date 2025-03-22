@@ -612,8 +612,8 @@ const mask = document.querySelector('.main_mask');
 const burgerLine = document.querySelectorAll('.burger_line');
 let isOpen = false; // Track the state of the menu
 
-gsap.set(navLinksBox, {autoAlpha: 0});
 gsap.set(navLinks, {xPercent: 50, opacity: 0});
+gsap.set(navLinksBox, {autoAlpha: 0});
 const cookieTextWrap = document.querySelector('.cookie_text_wrap');
 
 const navMenuBackground = document.querySelector('.nav_menu_background');
