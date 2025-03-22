@@ -681,18 +681,14 @@ function openMenu() {
   gsap.to(burgerLine[1], { rotation: newRotation1, duration: 0.3, y: newY1 });
   gsap.to(navLinksBox, { autoAlpha: newOpacity, duration: 0.3 });
   
-  navLinks.forEach(link => {
-    link.style.willChange = "transform, opacity";
-  });
-
-  navLinks.forEach(link => {
-    link.style.willChange = "transform, opacity";
-  });
+  // navLinks.forEach(link => {
+  //   link.style.willChange = "transform, opacity";
+  // });
 
   gsap.to(navLinks, { xPercent: 0, delay: 0.2, duration: 0.3, stagger: 0.04, opacity: 1, ease: 'power1.inOut', onComplete: () => {
     document.addEventListener("click", handleOutsideClick);
     burger.removeEventListener('click', openMenu);
-    navLinks.forEach(el => el.style.willChange = "");
+    // navLinks.forEach(el => el.style.willChange = "");
   }});
 
   isOpen = true; // Set the state to open
