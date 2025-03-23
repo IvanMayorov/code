@@ -18,6 +18,77 @@ const benefitsLottie = lottie.loadAnimation({
   path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/67de874bff0309089a98e25b_scratch-qddRu.json", // Update with your actual JSON path
 });
 
+// Function to create and play Lottie animations with standard options
+function createLottieAnimation(container, path) {
+  // Get container element if string was provided
+  const containerElement = typeof container === 'string' 
+    ? document.querySelector(container) 
+    : container;
+    
+  // Check if container exists
+  if (!containerElement) {
+    console.error(`Lottie container not found: ${container}`);
+    return null;
+  }
+
+  // Create animation with standard options
+  const animation = lottie.loadAnimation({
+    container: containerElement,
+    renderer: "svg",
+    loop: false,
+    autoplay: false,
+    path: path
+  });
+
+  return animation;
+}
+
+// Create animations for all elements with data-lottie attribute
+const lottieAnimationsServices = [];
+const lottieAnimationsProjects = [];
+
+// Function to process lottie elements for a specific section
+function processLottieElements(elements, sectionClass, animationsArray) {
+  elements.forEach(element => {
+    // Get the path from the data-lottie attribute
+    const path = element.getAttribute('data-lottie');
+    
+    // Find the parent bigtitle_row to determine the order
+    const parentRow = element.closest('.bigtitle_row');
+    
+    // Get the index of this row among all bigtitle_rows (or default to 0 if not found)
+    let rowIndex = 0;
+    if (parentRow) {
+      const allRows = Array.from(document.querySelectorAll(`.${sectionClass} .bigtitle_row`));
+      rowIndex = allRows.indexOf(parentRow);
+    }
+    
+    // Create the animation
+    const animation = createLottieAnimation(element, path);
+    
+    // Store the animation with its row index
+    if (animation) {
+      animationsArray.push({
+        rowIndex: rowIndex,
+        animation: animation,
+        element: element
+      });
+    }
+  });
+}
+
+// Find all elements with data-lottie attribute
+const lottieElementsServices = document.querySelectorAll('.services_section [data-lottie]');
+const lottieElementsProjects = document.querySelectorAll('.projects_section [data-lottie]');
+
+// Process lottie elements for each section
+processLottieElements(lottieElementsServices, 'services_section', lottieAnimationsServices);
+processLottieElements(lottieElementsProjects, 'projects_section', lottieAnimationsProjects);
+
+
+
+
+
 let mm = gsap.matchMedia();
 let progress = 0;
 
@@ -415,6 +486,26 @@ function initDesktopAnimations() {
       });
     });
   });
+
+      // Function to handle hover effects for projects section
+      bigtitleRowsProjects.forEach((row, index) => {
+        // Cache the matching animation lookup
+        const matchingLottie = lottieAnimationsProjects.find(anim => anim.rowIndex === index);
+        
+        if (matchingLottie && matchingLottie.animation) {
+          row.addEventListener('mouseenter', () => {
+            matchingLottie.animation.setDirection(1);
+            matchingLottie.animation.setSpeed(1);
+            matchingLottie.animation.play();
+          });
+          
+          row.addEventListener('mouseleave', () => {
+            matchingLottie.animation.setDirection(-1);
+            matchingLottie.animation.setSpeed(3); // Double the speed
+            matchingLottie.animation.play();
+          });
+        }
+      });
 }
 
 function updateBigtitleRows(progress, rows, activeRows, wraps) {
@@ -423,6 +514,17 @@ function updateBigtitleRows(progress, rows, activeRows, wraps) {
     if (i <= index && progress > 0 && !activeRows[i]) {
       activeRows[i] = true;
       row.classList.add("is-hovered");
+      // const lottie = row.querySelector('[data-lottie]');
+      // if (lottie && lottie.children && lottie.children.length === 0) {
+      //   createLottieAnimation(lottie, lottie.getAttribute('data-lottie'));
+      // }
+      // Find the matching lottie animation for this row
+      const matchingLottie = lottieAnimationsServices.find(anim => anim.rowIndex === i);
+      if (matchingLottie && matchingLottie.animation) {
+        // Play the animation if it exists
+        matchingLottie.animation.play(0);
+      }
+
       gsap.to(wraps[i], {
         opacity: 1,
         width: "auto",
@@ -440,6 +542,8 @@ function updateBigtitleRows(progress, rows, activeRows, wraps) {
       });
     }
   });
+
+
 }
 
 // #region Mobile ___________________________________________________________________________________________________________
