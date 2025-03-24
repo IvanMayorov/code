@@ -18,6 +18,15 @@ const benefitsLottie = lottie.loadAnimation({
   path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/67de874bff0309089a98e25b_scratch-qddRu.json", // Update with your actual JSON path
 });
 
+//Benefits
+const scratchLottie = lottie.loadAnimation({
+  container: document.querySelector(".scratches-2"), // Make sure this element exists
+  renderer: "svg",
+  loop: false,
+  autoplay: false,
+  path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/67de874bff0309089a98e25b_scratch-qddRu.json", // Update with your actual JSON path
+});
+
 // Function to create and play Lottie animations with standard options
 function createLottieAnimation(container, path) {
   // Get container element if string was provided
@@ -365,6 +374,9 @@ function initDesktopAnimations() {
       },
     })
     .addLabel("process")
+    .add(() => {
+      scratchLottie.play();
+    }, "process")
     .to(".process_track", {
       x: -processTrack.offsetWidth - 1 * remSize,
       ease: "none",
