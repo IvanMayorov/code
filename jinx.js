@@ -106,6 +106,7 @@ function getTotalFlexHeight(container) {
   return totalHeight + totalGaps;
 }
 
+gsap.set(".section_title_box", { opacity: 1 });
 // #region Desktop ___________________________________________________________________________________________________________
 function initDesktopAnimations() {
   // alert('desktop');
@@ -172,6 +173,8 @@ function initDesktopAnimations() {
 
   gsap.set(".bigtitle_wrap", { opacity: 0 });
   gsap.set(".section_title_box *", { yPercent: -150 });
+
+
 
   gsap.set(".process_right_box", { opacity: 0 });
 
