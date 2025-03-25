@@ -1,4 +1,57 @@
-gsap.registerPlugin(ScrollTrigger);
+
+// Sound
+const soundButton = document.querySelector(".sound_button");
+let audio = null;
+
+soundButton.addEventListener("click", () => {
+  // soundButton.classList.toggle("is-active");
+  if (audio && !audio.paused) {
+    // If audio is playing, stop it
+    audio.pause();
+    audio.currentTime = 0;
+  } else {
+    // If no audio or audio is paused, create and play
+    audio = new Audio("https://res.cloudinary.com/do7m7foqv/video/upload/v1742898919/Ava_Low_-_Them_Thieves_Looped_v2_kbv2gx.mp3");
+    audio.play();
+  }
+});
+
+//
+const iconCatLink = document.querySelector(".icon-cat-link");
+iconCatLink.addEventListener("click", () => {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+});
+//Joke
+const jokeButton = document.querySelector("[data-joke]");
+const jokeInitial = document.querySelector(".joke_initial");
+const jokeFinal = document.querySelector(".joke_box");
+let isFirstClick = true;
+let clickCount = 0;
+
+jokeButton.addEventListener("click", () => {
+  clickCount++;
+  
+  if (isFirstClick) {
+    // First click: Change the button text
+    jokeButton.textContent = "seriously, don't touch it";
+    isFirstClick = false;
+  } else if (clickCount === 2) {
+    // Second click: Show "please stop"
+    jokeButton.textContent = "please stop";
+  } else if (clickCount === 3) {
+    // Third click: Show 10 spaces
+    jokeButton.textContent = " ";
+  } else if (clickCount === 4) {
+    // Fourth click: Hide the button
+    jokeButton.style.display = "none";
+    jokeInitial.style.display = "none";
+    jokeFinal.style.display = "block";
+  }
+});
+
 
 //Hero
 lottie.loadAnimation({
@@ -26,6 +79,19 @@ const scratchLottie = lottie.loadAnimation({
   autoplay: false,
   path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/67de874bff0309089a98e25b_scratch-qddRu.json", // Update with your actual JSON path
 });
+
+// Debounce function to limit how often the resize handler fires
+function debounce(func, wait) {
+  let timeout;
+  return function() {
+    const context = this;
+    const args = arguments;
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      func.apply(context, args);
+    }, wait);
+  };
+}
 
 // Function to create and play Lottie animations with standard options
 function createLottieAnimation(container, path) {
@@ -114,14 +180,91 @@ function getTotalFlexHeight(container) {
 
   return totalHeight + totalGaps;
 }
+// Cookie
+const cookieTextWrap = document.querySelector(".cookie_text_wrap");
+const cookieWrap = document.querySelector(".cookie_wrap");
+let cookieWrapWidth = cookieWrap.offsetWidth;
+console.log(cookieTextWrap);
+gsap.set(cookieTextWrap, { width: 0, opacity: 0 });
+
+// Burger
+const navMenuBackground = document.querySelector(".nav_menu_background");
+const navMenuButton = document.querySelector(".nav_menu_button");
+let navMenuButtonWidth = navMenuButton.offsetWidth;
 
 gsap.set(".section_title_box", { opacity: 1 });
+
 // #region Desktop ___________________________________________________________________________________________________________
 function initDesktopAnimations() {
-  // alert('desktop');
+
+
+// Burger hover effect
+burger.addEventListener("mouseenter", () => {
+  gsap.to(navMenuBackground, {
+    width: `7rem`,
+    transform: `translateX(${navMenuButtonWidth}px)`,
+    duration: 0.3,
+    overwrite: true,
+  });
+});
+burger.addEventListener("mouseleave", () => {
+  gsap.to(navMenuBackground, {
+    width: navMenuButtonWidth,
+    transform: "translateX(0)",
+    duration: 0.3,
+    overwrite: true,
+  });
+});
+
+window.addEventListener('resize', debounce(() => {
+
+  // Burger
+  navMenuButtonWidth = navMenuButton.offsetWidth;
+  gsap.set(navMenuBackground, {
+    width: navMenuButtonWidth,
+  });
+
+  // Cookie
+  gsap.set(cookieTextWrap, {
+    width: "auto",
+  });
+  cookieWrapWidth = cookieWrap.offsetWidth;
+  gsap.set(cookieTextWrap, {
+    width: 0,
+  });
+}, 250)); 
+
+const cookieIcon = document.querySelector(".cookie_wrap");
+cookieIcon.addEventListener("mouseenter", () => {
+  gsap.to(".cookie_text_wrap", {
+    width: "auto",
+    duration: 0.3,
+    opacity: 1,
+    overwrite: true,
+  });
+  gsap.to(".red_back", {
+    width: cookieWrapWidth,
+    transform: "translateX(7rem)",
+    duration: 0.3,
+    overwrite: true,
+  });
+});
+cookieIcon.addEventListener("mouseleave", () => {
+  gsap.to(".cookie_text_wrap", {
+    width: "0",
+    duration: 0.3,
+    opacity: 0,
+    overwrite: true,
+  });
+  gsap.to(".red_back", {
+    width: "7rem",
+    transform: "translateX(0)",
+    duration: 0.3,
+    overwrite: true,
+  });
+});
 
   let tl;
-  console.log("initAnimations");
 
   // Очистить предыдущие анимации если они существуют
   if (tl) {
@@ -478,6 +621,11 @@ function initDesktopAnimations() {
       ease: "none",
       duration: 0.5,
     })
+    .to(".flames", {
+      y: "50%",
+      ease: "none",
+      duration: 0.5,
+    }, "<")
     .addLabel("contacts")
     .to(navLogo, { opacity: 1, duration: 0.3 }, "<0.1");
 
@@ -798,67 +946,14 @@ let isOpen = false; // Track the state of the menu
 
 gsap.set(navLinks, { xPercent: 50, autoAlpha: 0 });
 gsap.set(navLinksBox, { pointerEvents: "none" });
-const cookieTextWrap = document.querySelector(".cookie_text_wrap");
-const navMenuBackground = document.querySelector(".nav_menu_background");
-const navMenuButton = document.querySelector(".nav_menu_button");
+
 const mobileMask = document.querySelector(".mobile_mask");
 const flames = document.querySelector(".flames");
 
-const navMenuButtonWidth = navMenuButton.offsetWidth;
 
-const cookieTextWrapWidth = cookieTextWrap.offsetWidth;
 
-gsap.set(cookieTextWrap, { width: "0", opacity: 0 });
 
-const cookieIcon = document.querySelector(".cookie_wrap");
 
-cookieIcon.addEventListener("mouseenter", () => {
-  gsap.to(".cookie_text_wrap", {
-    width: "auto",
-    duration: 0.3,
-    opacity: 1,
-    overwrite: true,
-  });
-  gsap.to(".red_back", {
-    width: `calc(7rem + ${cookieTextWrapWidth}px)`,
-    transform: "translateX(7rem)",
-    duration: 0.3,
-    overwrite: true,
-  });
-});
-cookieIcon.addEventListener("mouseleave", () => {
-  gsap.to(".cookie_text_wrap", {
-    width: "0",
-    duration: 0.3,
-    opacity: 0,
-    overwrite: true,
-  });
-  gsap.to(".red_back", {
-    width: "7rem",
-    transform: "translateX(0)",
-    duration: 0.3,
-    overwrite: true,
-  });
-});
-
-if (window.innerWidth >= 480) {
-  burger.addEventListener("mouseenter", () => {
-    gsap.to(navMenuBackground, {
-      width: `7rem`,
-      transform: `translateX(${navMenuButtonWidth}px)`,
-      duration: 0.3,
-      overwrite: true,
-    });
-  });
-  burger.addEventListener("mouseleave", () => {
-    gsap.to(navMenuBackground, {
-      width: navMenuButtonWidth,
-      transform: "translateX(0)",
-      duration: 0.3,
-      overwrite: true,
-    });
-  });
-}
 function openMenu() {
   if (progress === 0) {
     flames.classList.add("is-menu-opened");
@@ -983,20 +1078,20 @@ const handleOutsideClick = (event) => {
 
 //#region PRICES
 let pricePeriod = "quarterly";
-const initialTrial = parseInt(
+// const initialTrial = parseInt(
+//   document.querySelectorAll("[data-price]")[0].textContent.replace(",", "")
+// );
+const initialSingle = parseInt(
   document.querySelectorAll("[data-price]")[0].textContent.replace(",", "")
 );
-const initialSingle = parseInt(
+const initialDouble = parseInt(
   document.querySelectorAll("[data-price]")[1].textContent.replace(",", "")
 );
-const initialDouble = parseInt(
+const initialTrouble = parseInt(
   document.querySelectorAll("[data-price]")[2].textContent.replace(",", "")
 );
-const initialTrouble = parseInt(
-  document.querySelectorAll("[data-price]")[3].textContent.replace(",", "")
-);
 
-const prices = [initialTrial, initialSingle, initialDouble, initialTrouble];
+const prices = [ initialSingle, initialDouble, initialTrouble];
 
 const activeElement = document.querySelector(".plans_swither_active");
 document
@@ -1101,6 +1196,7 @@ function initMediaQueries() {
 
   mm.add("(min-width: 480px)", () => {
     initDesktopAnimations();
+    console.log("initDesktopAnimations");
     return () => {
       /* cleanup function */
     };
@@ -1122,12 +1218,12 @@ function initMediaQueries() {
 // Инициализируем медиа-запросы при загрузке
 initMediaQueries();
 
-// // Обработчик изменения размера окна
-// let resizeTimeout;
-// window.addEventListener('resize', () => {
-//   clearTimeout(resizeTimeout);
-//   resizeTimeout = setTimeout(() => {
-//     console.log('Resizing - reinitializing animations');
-//     initMediaQueries();
-//   }, 250);
-// });
+// Обработчик изменения размера окна
+let resizeTimeout;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(() => {
+    console.log('Resizing - reinitializing animations');
+    initMediaQueries();
+  }, 250);
+});
