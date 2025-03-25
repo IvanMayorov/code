@@ -1,19 +1,21 @@
 
 // Sound
-const soundButton = document.querySelector(".sound_button");
+const soundButtons = document.querySelectorAll("[data-sound]");
 let audio = null;
 
-soundButton.addEventListener("click", () => {
-  // soundButton.classList.toggle("is-active");
-  if (audio && !audio.paused) {
-    // If audio is playing, stop it
-    audio.pause();
-    audio.currentTime = 0;
-  } else {
-    // If no audio or audio is paused, create and play
-    audio = new Audio("https://res.cloudinary.com/do7m7foqv/video/upload/v1742898919/Ava_Low_-_Them_Thieves_Looped_v2_kbv2gx.mp3");
-    audio.play();
-  }
+soundButtons.forEach(button => {
+  button.addEventListener("click", () => {
+    // button.classList.toggle("is-active");
+    if (audio && !audio.paused) {
+      // If audio is playing, stop it
+      audio.pause();
+      audio.currentTime = 0;
+    } else {
+      // If no audio or audio is paused, create and play
+      audio = new Audio("https://res.cloudinary.com/do7m7foqv/video/upload/v1742898919/Ava_Low_-_Them_Thieves_Looped_v2_kbv2gx.mp3");
+      audio.play();
+    }
+  });
 });
 
 //
@@ -770,6 +772,21 @@ function initMobileAnimations() {
     slidesPerView: "auto",
   });
 
+  // Flames scroll animation
+
+  if (flames) {
+    gsap.to(flames, {
+      y: "-25%",
+      duration: 0.3,
+      scrollTrigger: {
+        trigger: ".section", // Assuming this is the main container
+        start: "top top",
+        end: "bottom bottom",
+        toggleActions: "play none none reverse",
+
+      }
+    });
+  }
   bigtitleRows.forEach((row) => {
     const bigtitleWrap = row.querySelector(".bigtitle_wrap");
     gsap.fromTo(
@@ -1218,12 +1235,15 @@ function initMediaQueries() {
 // Инициализируем медиа-запросы при загрузке
 initMediaQueries();
 
-// Обработчик изменения размера окна
+// Обработчик изменения размера окна только для десктопа
 let resizeTimeout;
 window.addEventListener('resize', () => {
-  clearTimeout(resizeTimeout);
-  resizeTimeout = setTimeout(() => {
-    console.log('Resizing - reinitializing animations');
-    initMediaQueries();
-  }, 250);
+  // Проверяем, что ширина окна соответствует десктопу (≥ 480px)
+  if (window.innerWidth >= 480) {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      console.log('Resizing on desktop - reinitializing animations');
+      initMediaQueries();
+    }, 250);
+  }
 });
