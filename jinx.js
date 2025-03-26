@@ -779,10 +779,12 @@ function initMobileAnimations() {
       y: "-25%",
       duration: 0.3,
       scrollTrigger: {
-        trigger: ".section", // Assuming this is the main container
+        trigger: ".section_title_box", // Assuming this is the main container
         start: "top top",
-        end: "bottom bottom",
+        end: "200% top",
         toggleActions: "play none none reverse",
+        scrub: true,
+        markers: true,
 
       }
     });
