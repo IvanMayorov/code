@@ -785,7 +785,7 @@ function initMobileAnimations() {
 
   if (flames) {
     gsap.to(flames, {
-      y: "-25%",
+      y: "-18%",
       duration: 0.3,
       scrollTrigger: {
         trigger: ".section_title_box", // Assuming this is the main container
