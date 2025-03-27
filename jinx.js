@@ -633,7 +633,8 @@ cookieIcon.addEventListener("mouseleave", () => {
       duration: 0.5,
     })
     .to(".flames", {
-      y: "40%",
+      y: "60%",
+      scale: 1.3,
       ease: "none",
       duration: 0.5,
     }, "<")
@@ -780,6 +781,7 @@ function initMobileAnimations() {
     // spaceBetween: 10,
     slidesPerView: "auto",
   });
+
 
   // Flames scroll animation
 
