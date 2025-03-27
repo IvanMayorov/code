@@ -64,6 +64,15 @@ lottie.loadAnimation({
   path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/67de76d3c963e2fea84cfb4f_main-EUmoj.json",
 });
 
+//Fire
+lottie.loadAnimation({
+  container: document.querySelector(".flames"),
+  renderer: "svg",
+  loop: true,
+  autoplay: true,
+  path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/67e4f42cc34467f09b8f3481_fire.json",
+});
+
 //Benefits
 const benefitsLottie = lottie.loadAnimation({
   container: document.querySelector(".traditional-h2-image"), // Make sure this element exists
@@ -440,7 +449,7 @@ cookieIcon.addEventListener("mouseleave", () => {
     .to(
       ".flames",
       {
-        y: "-17%",
+        y: "-23%",
         ease: "none",
         duration: 0.5,
         onComplete: () => {
@@ -624,7 +633,7 @@ cookieIcon.addEventListener("mouseleave", () => {
       duration: 0.5,
     })
     .to(".flames", {
-      y: "50%",
+      y: "40%",
       ease: "none",
       duration: 0.5,
     }, "<")
