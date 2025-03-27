@@ -793,7 +793,7 @@ function initMobileAnimations() {
         end: "200% top",
         toggleActions: "play none none reverse",
         scrub: true,
-        markers: true,
+        // markers: true,
 
       }
     });
