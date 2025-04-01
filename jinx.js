@@ -834,6 +834,7 @@ function initMobileAnimations() {
       }
     });
   }
+
   bigtitleRows.forEach((row) => {
     const bigtitleWrap = row.querySelector(".bigtitle_wrap");
     gsap.fromTo(
@@ -1277,6 +1278,7 @@ if (firstDropElement) {
 function initMediaQueries() {
   mm.revert(); // Очистка предыдущих медиа-запросов
 
+
   mm.add("(min-width: 480px)", () => {
     initDesktopAnimations();
     console.log("initDesktopAnimations");
@@ -1286,6 +1288,7 @@ function initMediaQueries() {
       // flamesBox.style.height = `${distanceFromTop}px`;
       gsap.set(flamesBox, { height: `${distanceFromTop}px` });
     });
+  
     return () => {
       /* cleanup function */
     };
