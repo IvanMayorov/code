@@ -18,6 +18,14 @@ soundButtons.forEach(button => {
   });
 });
 
+
+const logo = document.querySelector('.logo-jinx');
+const footerLogo = document.querySelector('.nav_logo')
+const flamesBox = document.querySelector('.flames_box');
+let distanceFromTop = logo.getBoundingClientRect().bottom + window.scrollY;
+// flamesBox.style.height = `${distanceFromTop}px`;
+
+
 //
 const iconCatLink = document.querySelector(".icon-cat-link");
 iconCatLink.addEventListener("click", () => {
@@ -54,6 +62,17 @@ jokeButton.addEventListener("click", () => {
   }
 });
 
+let fireLastStepHeight ;
+
+//Fire
+const fireAnimation = lottie.loadAnimation({
+  container: document.querySelector(".flames"),
+  renderer: "svg",
+  loop: true,
+  autoplay: true,
+  path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/67e4f42cc34467f09b8f3481_fire.json",
+});
+
 
 //Hero
 lottie.loadAnimation({
@@ -64,14 +83,6 @@ lottie.loadAnimation({
   path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/67de76d3c963e2fea84cfb4f_main-EUmoj.json",
 });
 
-//Fire
-lottie.loadAnimation({
-  container: document.querySelector(".flames"),
-  renderer: "svg",
-  loop: true,
-  autoplay: true,
-  path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/67e4f42cc34467f09b8f3481_fire.json",
-});
 
 //Benefits
 const benefitsLottie = lottie.loadAnimation({
@@ -195,7 +206,7 @@ function getTotalFlexHeight(container) {
 const cookieTextWrap = document.querySelector(".cookie_text_wrap");
 const cookieWrap = document.querySelector(".cookie_wrap");
 let cookieWrapWidth = cookieWrap.offsetWidth;
-console.log(cookieTextWrap);
+// console.log(cookieTextWrap);
 gsap.set(cookieTextWrap, { width: 0, opacity: 0 });
 
 // Burger
@@ -209,6 +220,7 @@ gsap.set(".section_title_box", { opacity: 1 });
 function initDesktopAnimations() {
 
 
+  // flamesBox.style.height = `${distanceFromTop}px`;
 // Burger hover effect
 burger.addEventListener("mouseenter", () => {
   gsap.to(navMenuBackground, {
@@ -313,6 +325,7 @@ cookieIcon.addEventListener("mouseleave", () => {
   const projectsSection = document.querySelector(".projects_section");
   const boardSection = document.querySelector(".board_section");
   const footerHeight = document.querySelector(".footer").offsetHeight;
+
   const servicesSectionHeight =
     document.querySelector(".services_section .bigtitle_row")?.offsetHeight ||
     0;
@@ -437,6 +450,11 @@ cookieIcon.addEventListener("mouseleave", () => {
     },
   });
 
+  distanceFromTop = logo.getBoundingClientRect().bottom + window.scrollY;
+  distanceFromTopFooter = footerLogo.getBoundingClientRect().bottom + window.scrollY;
+  // console.log(distanceFromTop);
+  gsap.set(flamesBox, { height: `${distanceFromTop}px` });
+
   tl.to(".track", {
     x: -getSectionPosition(1),
     ease: "none",
@@ -447,9 +465,9 @@ cookieIcon.addEventListener("mouseleave", () => {
   })
 
     .to(
-      ".flames",
+      ".flames_box",
       {
-        y: "-23%",
+        height: document.querySelector('.label').offsetHeight,
         ease: "none",
         duration: 0.5,
         onComplete: () => {
@@ -626,21 +644,37 @@ cookieIcon.addEventListener("mouseleave", () => {
         updateTitle("8", p, "out", 0.9);
         updateTitle("9", p, "in", 0.9);
       },
+      onComplete: () => {
+        console.log(fireLastStepHeight);
+      },
     })
     .to(".navbar, .footer, .main_mask, .nav_links_box", {
       y: -footerHeight,
       ease: "none",
       duration: 0.5,
-    })
-    .to(".flames", {
-      y: "60%",
-      scale: 1.3,
-      ease: "none",
-      duration: 0.5,
+      // onComplete: () => {
+        //   gsap.to(flamesBox, {
+          //     height: fireLastStepHeight,
+          //   });
+          // },
+          
+        })
+    .to(".flames_box", {
+      // height: `${flames.offsetHeight + flamesMarginBottomValue}px`,
+      height: fireLastStepHeight,
+
+      // ease: "none",
+      // duration: 0.5,
+      // onStart: () => {
+      //   console.log(
+      //     fireLastStepHeight
+      //   );
+      // },
     }, "<")
     .addLabel("contacts")
     .to(navLogo, { opacity: 1, duration: 0.3 }, "<0.1");
 
+    
   navLinks.forEach((link, index) => {
     const sections = [
       "benefits",
@@ -786,8 +820,8 @@ function initMobileAnimations() {
   // Flames scroll animation
 
   if (flames) {
-    gsap.to(flames, {
-      y: "-18%",
+    gsap.to(flamesBox, {
+      height: 20,
       duration: 0.3,
       scrollTrigger: {
         trigger: ".section_title_box", // Assuming this is the main container
@@ -979,16 +1013,25 @@ gsap.set(navLinksBox, { pointerEvents: "none" });
 
 const mobileMask = document.querySelector(".mobile_mask");
 const flames = document.querySelector(".flames");
+// Get the computed style of the flames element to find its margin-bottom
+const flamesStyle = window.getComputedStyle(flames);
+const flamesMarginBottom = flamesStyle.marginBottom;
+
+// Alternative way to get the margin-bottom value
+const flamesMarginBottomValue = parseInt(flamesStyle.marginBottom, 10);
+
+
 
 
 
 
 
 function openMenu() {
-  if (progress === 0) {
-    flames.classList.add("is-menu-opened");
-  } else {
-    flames.classList.add("is-menu-opened-2");
+  if (window.innerWidth > 479) {
+    gsap.to(flamesBox, {
+      height: 0,
+      duration: 0.5,
+    });
   }
 
   let newY0 = "0.8rem";
@@ -1038,9 +1081,19 @@ function openMenu() {
 }
 
 function closeMenu() {
-  flames.classList.remove("is-menu-opened");
-  flames.classList.remove("is-menu-opened-2");
-
+  if (window.innerWidth > 479) {
+    if (progress === 0) {
+      gsap.to(flamesBox, {
+        height: distanceFromTop,
+        duration: 0.5,
+      });
+    } else {
+      gsap.to(flamesBox, {
+        height: document.querySelector('.label').offsetHeight,
+        duration: 0.5,
+      });
+    }
+  }
   const newWidth = "100%";
   const newRotation0 = 0;
   const newRotation1 = 0;
@@ -1227,6 +1280,12 @@ function initMediaQueries() {
   mm.add("(min-width: 480px)", () => {
     initDesktopAnimations();
     console.log("initDesktopAnimations");
+    window.addEventListener('load', () => {
+      distanceFromTop = logo.getBoundingClientRect().bottom + window.scrollY;
+      // console.log(distanceFromTop);
+      // flamesBox.style.height = `${distanceFromTop}px`;
+      gsap.set(flamesBox, { height: `${distanceFromTop}px` });
+    });
     return () => {
       /* cleanup function */
     };
@@ -1245,8 +1304,10 @@ function initMediaQueries() {
   });
 }
 
-// Инициализируем медиа-запросы при загрузке
 initMediaQueries();
+
+// Инициализируем медиа-запросы при загрузке
+
 
 // Обработчик изменения размера окна только для десктопа
 let resizeTimeout;
@@ -1259,4 +1320,11 @@ window.addEventListener('resize', () => {
       initMediaQueries();
     }, 250);
   }
+});
+
+// Событие срабатывает когда Lottie анимация полностью загружена
+fireAnimation.addEventListener('DOMLoaded', () => {
+  // Ваш код здесь
+  fireLastStepHeight = Math.min(flames.offsetHeight + flamesMarginBottomValue, window.innerHeight - document.querySelector('.footer').offsetHeight)
+  initMediaQueries();
 });
