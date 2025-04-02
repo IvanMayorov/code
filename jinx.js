@@ -1,19 +1,25 @@
-
 // Sound
 const soundButtons = document.querySelectorAll("[data-sound]");
 let audio = null;
 
 soundButtons.forEach(button => {
   button.addEventListener("click", () => {
+    const soundButtonIcon = button.querySelector('.sound_button');
+
     // button.classList.toggle("is-active");
     if (audio && !audio.paused) {
       // If audio is playing, stop it
       audio.pause();
       audio.currentTime = 0;
+      soundButtonIcon.style.display = 'block';
+      soundButtonIcon.nextElementSibling.style.display = 'none';
+
     } else {
       // If no audio or audio is paused, create and play
       audio = new Audio("https://res.cloudinary.com/do7m7foqv/video/upload/v1742898919/Ava_Low_-_Them_Thieves_Looped_v2_kbv2gx.mp3");
       audio.play();
+      soundButtonIcon.style.display = 'none';
+      soundButtonIcon.nextElementSibling.style.display = 'block';
     }
   });
 });
@@ -559,9 +565,9 @@ cookieIcon.addEventListener("mouseleave", () => {
       {
         opacity: 0,
         ease: "none",
-        duration: 0.5,
+        duration: 0,
       },
-      "<"
+      "<+=0.7"
     )
     .to(".track", {
       x: -getSectionPosition(5),
@@ -578,9 +584,9 @@ cookieIcon.addEventListener("mouseleave", () => {
       {
         opacity: 1,
         ease: "none",
-        duration: 0.5,
+        duration: 0,
       },
-      "<-=0.5"
+      "<-=0.7"
     )
     .addLabel("projects")
     .to(".projects_section", {
@@ -623,6 +629,33 @@ cookieIcon.addEventListener("mouseleave", () => {
       y: -answersLeftBoxHeight + answersBoxHeight + answerGap,
       ease: "none",
       duration: 1,
+      onUpdate() {
+        const p = this.progress();
+        // Count the number of answer items in the container
+        const answerItems = document.querySelectorAll('.answer_item');
+        const totalItems = answerItems.length;
+        
+        if (totalItems > 0) {
+          // Calculate which item should be active based on progress
+          // Divide progress into equal segments for each item
+          const segmentSize = 1 / totalItems;
+          const activeIndex = Math.min(
+            Math.floor(p / segmentSize),
+            totalItems - 1
+          );
+          
+          // Only toggle if we're moving to a different item
+          const currentActiveItem = document.querySelector('.answer_drop.is-active');
+          const currentActiveIndex = Array.from(answerItems).findIndex(
+            item => item.querySelector('.answer_drop') === currentActiveItem
+          );
+          
+          if (currentActiveIndex !== activeIndex) {
+            toggleDropdown(activeIndex);
+          }
+        }
+        
+      },
     })
     .to(".track", {
       x: -getSectionPosition(8),
@@ -1234,26 +1267,37 @@ function countPrice() {
 
 //#region FAQ
 
+// Function to toggle dropdown that can be called from anywhere
+function toggleDropdown(dropdownIndex) {
+  const items = document.querySelectorAll(".answer_item");
+  if (items.length === 0 || dropdownIndex >= items.length) return;
+  
+  const item = items[dropdownIndex];
+  const dropElement = item.querySelector(".answer_drop");
+  
+  // Close all other dropdowns first
+  document.querySelectorAll(".answer_drop.is-active").forEach((drop) => {
+    if (drop !== dropElement) {
+      drop.classList.remove("is-active");
+      gsap.to(drop, {
+        height: 0,
+        duration: 0.3,
+      });
+    }
+  });
+
+  // Toggle clicked dropdown
+  dropElement.classList.toggle("is-active");
+  gsap.to(dropElement, {
+    height: dropElement.classList.contains("is-active") ? "auto" : 0,
+    duration: 0.3,
+  });
+}
+
+// Add click event listeners to each dropdown item
 document.querySelectorAll(".answer_item").forEach((item, index) => {
   item.addEventListener("click", () => {
-    // Close all other dropdowns first
-    document.querySelectorAll(".answer_drop.is-active").forEach((drop) => {
-      if (drop !== item.querySelector(".answer_drop")) {
-        drop.classList.remove("is-active");
-        gsap.to(drop, {
-          height: 0,
-          duration: 0.3,
-        });
-      }
-    });
-
-    // Toggle clicked dropdown
-    const dropElement = item.querySelector(".answer_drop");
-    dropElement.classList.toggle("is-active");
-    gsap.to(dropElement, {
-      height: dropElement.classList.contains("is-active") ? "auto" : 0,
-      duration: 0.3,
-    });
+    toggleDropdown(index);
   });
 });
 
@@ -1277,6 +1321,9 @@ if (firstDropElement) {
 // Инициализация медиа-запросов однократно
 function initMediaQueries() {
   mm.revert(); // Очистка предыдущих медиа-запросов
+
+
+
 
 
   mm.add("(min-width: 480px)", () => {
