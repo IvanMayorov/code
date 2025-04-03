@@ -225,6 +225,16 @@ gsap.set(".section_title_box", { opacity: 1 });
 // #region Desktop ___________________________________________________________________________________________________________
 function initDesktopAnimations() {
 
+  const links = document.querySelectorAll("[data-link]");
+  links.forEach((link, index) => {
+    const label = link.getAttribute("data-link");
+    link.addEventListener("click", () => {
+      gsap.to(window, {
+        scrollTo: tl.scrollTrigger.labelToScroll(label),
+        duration: 0.5,
+      });
+    });
+  });
 
   // flamesBox.style.height = `${distanceFromTop}px`;
 // Burger hover effect
@@ -1378,3 +1388,4 @@ fireAnimation.addEventListener('DOMLoaded', () => {
   fireLastStepHeight = Math.min(flames.offsetHeight + flamesMarginBottomValue, window.innerHeight - document.querySelector('.footer').offsetHeight)
   initMediaQueries();
 });
+
