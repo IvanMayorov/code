@@ -51,6 +51,31 @@ const tlGrid = gsap.timeline({
   }   
 })
 
+gsap.from('.s3-container .char', {
+  opacity: 0,
+  filter: 'blur(10px)',
+  duration: 0.7,
+  stagger: 0.05,
+  scrollTrigger: {
+    trigger: '.s3-container',
+    start: 'top 70%',
+    end: 'bottom 20%',
+    // markers: true,
+  }
+})
+
+gsap.from('.s6-container .char', {
+  opacity: 0,
+  filter: 'blur(10px)',
+  duration: 0.7,
+  stagger: 0.05,
+  scrollTrigger: {
+    trigger: '.s6-container',
+    start: 'top 70%',
+    end: 'bottom 20%',
+    // markers: true,
+  }
+})
 
 tlGrid.from('.s4-container .char', {
   opacity: 0,
@@ -273,7 +298,10 @@ const swiperPress = new Swiper(".swiper-press", {
         },
 });
 
+
 //#region Tetris Game Implementation
+
+
 const title = document.querySelector('.hero_title');
 // Game configuration
 const EMPTY_CELL = 'empty';
