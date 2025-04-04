@@ -1,215 +1,220 @@
+var Webflow = Webflow || [];
+Webflow.push(function(){
 // Split text animation for elements with data-split attribute
-document.addEventListener('DOMContentLoaded', () => {
-
-    // Calculate the distance from the element being animated to its container
-    function calculateDistanceFromTop(elementSelector, containerSelector) {
-      const container = document.querySelector(containerSelector);
-      const element = document.querySelector(elementSelector);
-      
-      if (!container || !element) {
-        console.error(`Elements not found: ${containerSelector} or ${elementSelector}`);
-        return 0;
-      }
-      
-      // Get the positions relative to the viewport
-      const containerRect = container.getBoundingClientRect();
-      const elementRect = element.getBoundingClientRect();
-      
-      // Calculate the distance between the top of container and the top of element
-      const distance = elementRect.bottom - containerRect.top;
-      // console.log(distance);
-      return distance +5;
-    }
-
-
-  // Find all elements with data-split attribute
-  const splitElements = document.querySelectorAll('[data-split]');
-  
-  // Process each element
-  splitElements.forEach(element => {
-    // Create the SplitText instance
-    const splitText = new SplitText(element, {
-      type: 'chars, words',
-      charsClass: 'char',
-      wordsClass: 'word',
-    });
+  console.log('DOMContentLoaded');
+  // Calculate the distance from the element being animated to its container
+  function calculateDistanceFromTop(elementSelector, containerSelector) {
+    const container = document.querySelector(containerSelector);
+    const element = document.querySelector(elementSelector);
     
-    // Store the split instance on the element for potential later use
-    // element.splitText = splitText;
-    // Create a timeline for animations
- 
-  });
-
-
-  const tlGrid = gsap.timeline({        
-    scrollTrigger: {
-      trigger: '.s4-heading-wrap',
-      start: 'top 70%',
-      end: 'bottom 20%',
-      markers: true,
-    }   
-  })
-
-
-  tlGrid.from('.s4-container .char', {
-    opacity: 0,
-    filter: 'blur(10px)',
-    duration: 0.7,
-    // ease: 'power2.out',
-    stagger: 0.05,
-  })
-  tlGrid.from('.s4-container .text-18, .s4-container .button', {
-    opacity: 0,
-    filter: 'blur(10px)',
-    duration: 0.7,
-    stagger: 0.4,
-  }, ">-=0.7")
-  tlGrid.from('.cell', {
-    opacity: 0,
-    filter: 'blur(10px)',
-    duration: 0.7,
-    ease: 'power2.out',
-    stagger: {
-      each: 0.05,
-      from: "random"
-    },
-
-  }, ">-=0.5").from('.character', {
-    opacity: 0,
-    filter: 'blur(10px)',
-    duration: 0.7,
-    ease: 'power2.out',
-    stagger: {
-      each: 0.05,
-      from: "random"
-    },
-
-  }, ">-=0.4")
-
-
-  const tl = gsap.timeline({
-    // scrollTrigger: {
-    //   trigger: element,
-    //   start: 'top 80%',
-    //   toggleActions: 'play none none none'
-    // },
-    paused: true
-  });
-  
-  // Add animations to the timeline
-  tl.from('.section-tag', {
-    opacity: 0,
-    y: 40,
-    filter: 'blur(10px)',
-    duration: 0.7,
-    ease: 'power2.out',
-  })
-  .from('.section-2 .char', {
-    opacity: 0,
-    // y: 20,
-    stagger: 0.04,
-    duration: 0.7,
-    filter: 'blur(10px)',
-    ease: 'power2.out',
-  }, "-=0.4")
- 
-  ; // Start slightly before the first animation ends
-
-
-
-  const tl2 = gsap.timeline({
-    scrollTrigger: {
-      trigger: '.section-2',
-      start: '0% top',
-      end: '100% bottom',
-      scrub: 2,
-      // markers: true,
+    if (!container || !element) {
+      console.error(`Elements not found: ${containerSelector} or ${elementSelector}`);
+      return 0;
     }
+    
+    // Get the positions relative to the viewport
+    const containerRect = container.getBoundingClientRect();
+    const elementRect = element.getBoundingClientRect();
+    
+    // Calculate the distance between the top of container and the top of element
+    const distance = elementRect.bottom - containerRect.top;
+    // console.log(distance);
+    return distance +5;
+  }
+
+
+// Find all elements with data-split attribute
+const splitElements = document.querySelectorAll('[data-split]');
+
+// Process each element
+splitElements.forEach(element => {
+  // Create the SplitText instance
+  const splitText = new SplitText(element, {
+    type: 'chars, words',
+    charsClass: 'char',
+    wordsClass: 'word',
   });
   
+  // Store the split instance on the element for potential later use
+  // element.splitText = splitText;
+  // Create a timeline for animations
 
-    tl2.from('.s2-heading-wrap', {
-      // opacity: 0,
-      y: '100%',
-      duration: 0.3,
-      ease: 'power2.out',
-    })
-  tl2.add(() => {
-    tl.play();
-  }, "<")
-  tl2.from('.s2-square-box1', {
-    // opacity: 0,
-    y: -calculateDistanceFromTop('.s2-square-box1', '.section-2'),
-    duration: 0.5,
-    ease: 'power2.out',
-  })
-  
-  tl2.from('.s2-square-box2', {
-    // opacity: 0,
-    y: -calculateDistanceFromTop('.s2-square-box2', '.section-2'),
-    duration: 0.5,
-    ease: 'power2.out',
-  }, "-=0.3")
-  
-  tl2.from('.s2-square-box3', { 
-    // opacity: 0,
-    y: -calculateDistanceFromTop('.s2-square-box3', '.section-2'),
-    duration: 0.5,
-    ease: 'power2.out',
-  }, "-=0.3")
-  
-  tl2.from('.s2-square-box4', {
-    // opacity: 0,
-    y: -calculateDistanceFromTop('.s2-square-box4', '.section-2'),
-    duration: 0.5,
-    ease: 'power2.out',
-  }, "-=0.3")
-  
-  tl2.from('.s2-box-content', {
-    opacity: 0,
-    xPercent: 50,
-    duration: 0.5,
-    stagger: 0.1,
-    ease: 'power2.out',
-  }, "-=0.2")
-  
-const backersTl = gsap.timeline({
+});
+
+
+const tlGrid = gsap.timeline({        
   scrollTrigger: {
-    trigger: '.backers_section',
+    trigger: '.s4-heading-wrap',
     start: 'top 70%',
     end: 'bottom 20%',
-    // markers: true,
-  }
+    markers: true,
+  }   
 })
-backersTl.from('.backers_section .char', {
+
+
+tlGrid.from('.s4-container .char', {
   opacity: 0,
   filter: 'blur(10px)',
   duration: 0.7,
+  // ease: 'power2.out',
   stagger: 0.05,
+})
+tlGrid.from('.s4-container .text-18, .s4-container .button', {
+  opacity: 0,
+  filter: 'blur(10px)',
+  duration: 0.7,
+  stagger: 0.4,
+}, ">-=0.7")
+tlGrid.from('.cell', {
+  opacity: 0,
+  filter: 'blur(10px)',
+  duration: 0.7,
+  ease: 'power2.out',
+  stagger: {
+    each: 0.05,
+    from: "random"
+  },
+
+}, ">-=0.5").from('.character', {
+  opacity: 0,
+  filter: 'blur(10px)',
+  duration: 0.7,
+  ease: 'power2.out',
+  stagger: {
+    each: 0.05,
+    from: "random"
+  },
+
+}, ">-=0.4")
+
+
+const tl = gsap.timeline({
+  // scrollTrigger: {
+  //   trigger: element,
+  //   start: 'top 80%',
+  //   toggleActions: 'play none none none'
+  // },
+  paused: true
+});
+
+// Add animations to the timeline
+tl.from('.section-tag', {
+  opacity: 0,
+  y: 40,
+  filter: 'blur(10px)',
+  duration: 0.7,
+  ease: 'power2.out',
+})
+.from('.section-2 .char', {
+  opacity: 0,
+  // y: 20,
+  stagger: 0.04,
+  duration: 0.7,
+  filter: 'blur(10px)',
+  ease: 'power2.out',
+}, "-=0.4")
+
+; // Start slightly before the first animation ends
+
+
+
+const tl2 = gsap.timeline({
+  scrollTrigger: {
+    trigger: '.section-2',
+    start: '0% top',
+    end: '100% bottom',
+    scrub: 2,
+    // markers: true,
+  }
+});
+
+
+  tl2.from('.s2-heading-wrap', {
+    // opacity: 0,
+    y: '100%',
+    duration: 0.3,
+    ease: 'power2.out',
+  })
+tl2.add(() => {
+  tl.play();
+}, "<")
+tl2.from('.s2-square-box1', {
+  // opacity: 0,
+  y: -calculateDistanceFromTop('.s2-square-box1', '.section-2'),
+  duration: 0.5,
+  ease: 'power2.out',
+})
+
+tl2.from('.s2-square-box2', {
+  // opacity: 0,
+  y: -calculateDistanceFromTop('.s2-square-box2', '.section-2'),
+  duration: 0.5,
+  ease: 'power2.out',
+}, "-=0.3")
+
+tl2.from('.s2-square-box3', { 
+  // opacity: 0,
+  y: -calculateDistanceFromTop('.s2-square-box3', '.section-2'),
+  duration: 0.5,
+  ease: 'power2.out',
+}, "-=0.3")
+
+tl2.from('.s2-square-box4', {
+  // opacity: 0,
+  y: -calculateDistanceFromTop('.s2-square-box4', '.section-2'),
+  duration: 0.5,
+  ease: 'power2.out',
+}, "-=0.3")
+
+tl2.from('.s2-box-content', {
+  opacity: 0,
+  xPercent: 50,
+  duration: 0.5,
+  stagger: 0.1,
+  ease: 'power2.out',
+}, "-=0.2")
+
+const backersTl = gsap.timeline({
+scrollTrigger: {
+  trigger: '.backers_section',
+  start: 'top 70%',
+  end: 'bottom 20%',
+  // markers: true,
+}
+})
+backersTl.from('.backers_section .char', {
+opacity: 0,
+filter: 'blur(10px)',
+duration: 0.7,
+stagger: 0.05,
 });
 
 // Animate all s5-box elements individually
 const s5Boxes = document.querySelectorAll('.s5-box');
 s5Boxes.forEach((box, index) => {
-  // console.log(document.querySelector(`.s5-box:nth-child(${index + 1})`));
-  backersTl.from(box, {
-    y: '-100vh',
-    // opacity: 0,
-    // filter: 'blur(10px)',
-    duration: 0.7,
+// console.log(document.querySelector(`.s5-box:nth-child(${index + 1})`));
+backersTl.from(box, {
+  y: '-100vh',
+  // opacity: 0,
+  // filter: 'blur(10px)',
+  duration: 0.7,
 
-  }, ">-=0.5");
+}, ">-=0.5");
 });
 
 
-});
+
+  }); 
+
+
+
 
 
 //#region Swipers 
 const swiperGames = new Swiper(".swiper-games", {
   // Optional parameters
   slidesPerView: 'auto',
-  spaceBetween: '16rem',
+  spaceBetween: 16,
   centeredSlides: false,
   mousewheel: {
     forceToAxis: true
