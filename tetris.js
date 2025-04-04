@@ -47,7 +47,7 @@ const tlGrid = gsap.timeline({
     trigger: '.s4-heading-wrap',
     start: 'top 70%',
     end: 'bottom 20%',
-    markers: true,
+    // markers: true,
   }   
 })
 
@@ -177,7 +177,7 @@ tl2.from('.s2-box-content', {
 const backersTl = gsap.timeline({
 scrollTrigger: {
   trigger: '.backers_section',
-  start: 'top 70%',
+  start: 'top 50%',
   end: 'bottom 20%',
   // markers: true,
 }
@@ -195,8 +195,8 @@ s5Boxes.forEach((box, index) => {
 // console.log(document.querySelector(`.s5-box:nth-child(${index + 1})`));
 backersTl.from(box, {
   y: '-100vh',
-  // opacity: 0,
-  // filter: 'blur(10px)',
+  opacity: 0,
+  filter: 'blur(10px)',
   duration: 0.7,
 
 }, ">-=0.5");
@@ -587,6 +587,7 @@ function drawPiece() {
 // Restart the game
 function restartGame() {
   // Clear any existing game interval
+  title.innerHTML = 'PixelVerse';
   if (gameInterval) {
     clearInterval(gameInterval);
   }
