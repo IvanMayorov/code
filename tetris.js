@@ -303,6 +303,9 @@ const swiperPress = new Swiper(".swiper-press", {
 
 
 const title = document.querySelector('.hero_title');
+const gradient = document.querySelector('.hero-gradient-overlay');
+const titleBox = document.querySelector('.hero-content');
+
 // Game configuration
 const EMPTY_CELL = 'empty';
 const COLORS = [
@@ -457,7 +460,8 @@ function newPiece() {
     gameOver = true;
     clearInterval(gameInterval);
     title.innerHTML = 'Try again';
-    
+    titleBox.classList.add('is-top');
+    gradient.classList.add('is-top');
     // alert('Game Over!');
   }
 }
@@ -616,6 +620,8 @@ function drawPiece() {
 function restartGame() {
   // Clear any existing game interval
   title.innerHTML = 'PixelVerse';
+  titleBox.classList.remove('is-top');
+  gradient.classList.remove('is-top');
   if (gameInterval) {
     clearInterval(gameInterval);
   }
