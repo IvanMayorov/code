@@ -301,7 +301,6 @@ const swiperPress = new Swiper(".swiper-press", {
 
 //#region Tetris Game Implementation
 
-
 const title = document.querySelector('.hero_title');
 const gradient = document.querySelector('.hero-gradient-overlay');
 const titleBox = document.querySelector('.hero-content');
@@ -370,10 +369,30 @@ let gameOver = false;
 let gameInterval = null;
 let cellSize = 0;
 let ROWS = 20; // Default value, will be calculated dynamically
-const COLS = 21; // 21 cells wide as requested
+let COLS = 21; // Default for desktop, will be 12 for mobile
+let gameInitialized = false; // Flag to track initialization
 
 // DOM elements
 const gameBoard = document.querySelector('#tetris-board');
+
+// Initialize the board and UI after DOM is fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('Tetris initialization starting');
+  setTimeout(initializeTetris, 100); // Small delay to ensure DOM is ready
+});
+
+// Main initialization function
+function initializeTetris() {
+  console.log('Tetris initializing...');
+  if (!gameBoard) {
+    console.error('Game board not found!');
+    return;
+  }
+  
+  startGame();
+  gameInitialized = true;
+  console.log('Tetris initialization complete');
+}
 
 // Calculate cell size and number of rows based on viewport height
 function calculateBoardDimensions() {
@@ -381,29 +400,170 @@ function calculateBoardDimensions() {
   const viewportWidth = document.documentElement.clientWidth;
   const viewportHeight = window.innerHeight;
   
-  // Allow fractional cell sizes for better fitting
+  // Set number of columns based on device width
+  COLS = viewportWidth <= 479 ? 12 : 21;
+  
+  // Calculate cell size to fit the viewport width precisely
   cellSize = viewportWidth / COLS;
   
-  // Calculate maximum number of rows that can fit in 100vh
+  // Ensure the board height doesn't exceed 100vh
   const maxRows = Math.floor(viewportHeight / cellSize);
-  ROWS = Math.min(maxRows, 20); // Limit to 20 rows maximum
+  ROWS = Math.min(20, maxRows);
   
-  gameBoard.style.width = `100%`;
-  gameBoard.style.height = `${ROWS * cellSize}px`;
+  const boardHeight = ROWS * cellSize;
   
-  // Position the game board at the bottom of the viewport
+  // Set board dimensions - use exact viewport width to avoid rounding issues
+  gameBoard.style.width = `${viewportWidth}px`;
+  gameBoard.style.height = `${boardHeight}px`;
+  gameBoard.style.maxHeight = '100vh';
+  
+  // Center the board horizontally and position at bottom
   gameBoard.style.position = 'absolute';
   gameBoard.style.bottom = '0';
-  gameBoard.style.left = '0';
+  gameBoard.style.left = '50%';
+  gameBoard.style.transform = 'translateX(-50%)';
+  
+  console.log(`Board dimensions: ${COLS}x${ROWS}, cell size: ${cellSize}px`);
 }
 
 // Initialize the game board
 function initBoard() {
   board = [];
+  // First fill the entire board with empty cells
   for (let y = 0; y < ROWS; y++) {
     board[y] = [];
     for (let x = 0; x < COLS; x++) {
       board[y][x] = EMPTY_CELL;
+    }
+  }
+  
+  // Fill both visible bottom rows and near-bottom rows for desktop
+  // Calculate rows to fill - the bottom rows and rows that are 70% down the board
+  const rowsToFill = [
+    ROWS - 1,            // Bottom row
+    ROWS - 2,            // Second from bottom
+    Math.floor(ROWS * 0.7),  // Row at 70% down the board
+    Math.floor(ROWS * 0.7) + 1  // Row at 70% down the board + 1
+  ];
+  
+  // Filter out duplicates and ensure valid indices
+  const uniqueRows = [...new Set(rowsToFill)].filter(index => index >= 0 && index < ROWS);
+  
+  // Place actual Tetris pieces in the selected rows
+  const pieceDefinitions = [
+    // I piece horizontal (4x1)
+    {
+      width: 4,
+      height: 1,
+      pattern: [[1, 1, 1, 1]]
+    },
+    // O piece (2x2)
+    {
+      width: 2,
+      height: 2,
+      pattern: [
+        [1, 1],
+        [1, 1]
+      ]
+    },
+    // T piece (3x2)
+    {
+      width: 3,
+      height: 2,
+      pattern: [
+        [0, 1, 0],
+        [1, 1, 1]
+      ]
+    },
+    // L piece (2x2) - shortened for better fitting
+    {
+      width: 2,
+      height: 2,
+      pattern: [
+        [1, 0],
+        [1, 1]
+      ]
+    },
+    // J piece (2x2) - shortened for better fitting
+    {
+      width: 2,
+      height: 2,
+      pattern: [
+        [0, 1],
+        [1, 1]
+      ]
+    },
+    // S piece (3x2)
+    {
+      width: 3,
+      height: 2,
+      pattern: [
+        [0, 1, 1],
+        [1, 1, 0]
+      ]
+    },
+    // Z piece (3x2)
+    {
+      width: 3,
+      height: 2,
+      pattern: [
+        [1, 1, 0],
+        [0, 1, 1]
+      ]
+    }
+  ];
+  
+  // Filter pieces to only use height 1 or 2
+  const filteredPieces = pieceDefinitions.filter(piece => piece.height <= 2);
+  
+  // Process pairs of adjacent rows
+  for (let i = 0; i < uniqueRows.length; i += 2) {
+    if (i + 1 >= uniqueRows.length) continue; // Skip if no pair
+    
+    const topRow = uniqueRows[i];
+    const bottomRow = uniqueRows[i+1];
+    
+    // Place pieces side by side starting from the left
+    let currentX = 0;
+    while (currentX < COLS) {
+      // Choose a random piece that will fit in the remaining space
+      let availablePieces = filteredPieces.filter(p => currentX + p.width <= COLS);
+      
+      // If no pieces fit, just place a single block
+      if (availablePieces.length === 0) {
+        if (currentX < COLS) {
+          board[bottomRow][currentX] = Math.floor(Math.random() * COLORS.length);
+          if (Math.random() > 0.5) { // 50% chance to place in top row too
+            board[topRow][currentX] = Math.floor(Math.random() * COLORS.length);
+          }
+        }
+        currentX++;
+        continue;
+      }
+      
+      // Select a random piece
+      const piece = availablePieces[Math.floor(Math.random() * availablePieces.length)];
+      const colorIndex = Math.floor(Math.random() * COLORS.length);
+      
+      // Place the piece
+      for (let pieceY = 0; pieceY < piece.height; pieceY++) {
+        // Calculate the actual row on the board
+        const boardY = (pieceY === 0) ? topRow : bottomRow;
+        
+        for (let pieceX = 0; pieceX < piece.width; pieceX++) {
+          if (piece.pattern[pieceY][pieceX] === 1) {
+            const boardX = currentX + pieceX;
+            
+            // Place the block if it's within board bounds
+            if (boardX >= 0 && boardX < COLS) {
+              board[boardY][boardX] = colorIndex;
+            }
+          }
+        }
+      }
+      
+      // Move to the position after this piece (with a small gap sometimes)
+      currentX += piece.width + (Math.random() < 0.3 ? 1 : 0);
     }
   }
 }
@@ -616,6 +776,20 @@ function drawPiece() {
   }
 }
 
+// Start the game
+function startGame() {
+  console.log('Starting game...');
+  calculateBoardDimensions();
+  // Make sure the board is initialized with shapes before first render
+  initBoard();
+  createBoardDivs();
+  newPiece();
+  // Draw the initial state including the bottom rows with shapes
+  updateBoard();
+  drawPiece();
+  gameInterval = setInterval(moveDown, 500);
+}
+
 // Restart the game
 function restartGame() {
   // Clear any existing game interval
@@ -633,6 +807,9 @@ function restartGame() {
   initBoard();
   createBoardDivs();
   newPiece();
+  // Make sure to update the board to show bottom shapes
+  updateBoard();
+  drawPiece();
   gameInterval = setInterval(moveDown, 500);
 }
 
@@ -673,6 +850,59 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
+// Add touch controls for mobile
+let touchStartX = null;
+let touchStartY = null;
+const MIN_SWIPE_DISTANCE = 30; // Minimum distance for a swipe to be registered
+
+gameBoard.addEventListener('touchstart', (e) => {
+  if (gameOver) return;
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+  e.preventDefault(); // Prevent scrolling while touching the game board
+});
+
+gameBoard.addEventListener('touchmove', (e) => {
+  if (gameOver) return;
+  e.preventDefault(); // Prevent scrolling while touching the game board
+});
+
+gameBoard.addEventListener('touchend', (e) => {
+  if (gameOver || touchStartX === null || touchStartY === null) return;
+  
+  const touchEndX = e.changedTouches[0].clientX;
+  const touchEndY = e.changedTouches[0].clientY;
+  
+  const deltaX = touchEndX - touchStartX;
+  const deltaY = touchEndY - touchStartY;
+  
+  // Determine if the swipe was primarily horizontal or vertical
+  if (Math.abs(deltaX) > Math.abs(deltaY)) {
+    // Horizontal swipe
+    if (Math.abs(deltaX) >= MIN_SWIPE_DISTANCE) {
+      if (deltaX > 0) {
+        moveRight();
+      } else {
+        moveLeft();
+      }
+    }
+  } else {
+    // Vertical swipe
+    if (Math.abs(deltaY) >= MIN_SWIPE_DISTANCE) {
+      if (deltaY > 0) {
+        dropPiece(); // Swipe down for hard drop
+      } else {
+        rotatePiece(); // Swipe up to rotate
+        drawPiece();
+      }
+    }
+  }
+  
+  touchStartX = null;
+  touchStartY = null;
+  e.preventDefault();
+});
+
 // Add click event listener to title to restart the game
 title.addEventListener('click', restartGame);
 
@@ -684,15 +914,8 @@ window.addEventListener('resize', () => {
   drawPiece();
 });
 
-// Start the game
-function startGame() {
-  initBoard();
-  createBoardDivs();
-  newPiece();
-  gameInterval = setInterval(moveDown, 500);
-}
-
 // Initialize the game
 startGame();
 
+//#endregion Tetris Game Implementation
 //#endregion Tetris Game Implementation
