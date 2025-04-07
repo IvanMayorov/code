@@ -1,5 +1,23 @@
 var Webflow = Webflow || [];
 Webflow.push(function(){
+
+  gsap.from('[data-footer-item]', {
+    opacity: 0,
+    y: '-50vh',
+    stagger:{
+      each: 0.2,
+      from: 'random'
+    },
+
+    duration: 1,
+    scrollTrigger: {
+      trigger: '.footer-section',
+      start: 'top 40%',
+      end: 'bottom 20%',
+      // markers: true,
+    }
+  });
+
 // Split text animation for elements with data-split attribute
   console.log('DOMContentLoaded');
   // Calculate the distance from the element being animated to its container
@@ -114,11 +132,11 @@ tlGrid.from('.cell', {
 
 
 const tl = gsap.timeline({
-  // scrollTrigger: {
-  //   trigger: element,
-  //   start: 'top 80%',
-  //   toggleActions: 'play none none none'
-  // },
+  scrollTrigger: {
+    trigger: '.s2-container',
+    start: 'top 60%',
+    toggleActions: 'play none none none'
+  },
   paused: true
 });
 
@@ -154,21 +172,21 @@ const tl2 = gsap.timeline({
 });
 
 
-  tl2.from('.s2-heading-wrap', {
-    // opacity: 0,
-    y: '100%',
-    duration: 0.3,
-    ease: 'power2.out',
-  })
-tl2.add(() => {
-  tl.play();
-}, "<")
+  // tl2.from('.s2-heading-wrap', {
+  //   // opacity: 0,
+  //   y: '100%',
+  //   duration: 0.3,
+  //   ease: 'power2.out',
+  // })
+// tl2.add(() => {
+//   tl.play();
+// })
 tl2.from('.s2-square-box1', {
   // opacity: 0,
   y: -calculateDistanceFromTop('.s2-square-box1', '.section-2'),
   duration: 0.5,
   ease: 'power2.out',
-})
+}, )
 
 tl2.from('.s2-square-box2', {
   // opacity: 0,
@@ -207,12 +225,17 @@ scrollTrigger: {
   // markers: true,
 }
 })
+
+backersTl.from('.s5-container', {
+  opacity: 0,
+})
+
 backersTl.from('.backers_section .char', {
 opacity: 0,
 filter: 'blur(10px)',
 duration: 0.7,
 stagger: 0.05,
-});
+}, "<");
 
 // Animate all s5-box elements individually
 const s5Boxes = document.querySelectorAll('.s5-box');
@@ -224,7 +247,7 @@ backersTl.from(box, {
   filter: 'blur(10px)',
   duration: 0.7,
 
-}, ">-=0.5");
+}, ">-=0.6");
 });
 
 
@@ -264,9 +287,19 @@ const swiperGames = new Swiper(".swiper-games", {
         }
 });
 
+// Add click event listener to elements with data-nexus attribute
+document.querySelectorAll('[data-nexus]').forEach(element => {
+  element.addEventListener('click', function() {
+    // Slide to the second slide (index 1) of swiperGames
+    if (swiperGames) {
+      swiperGames.slideTo(1);
+    }
+  });
+});
+
+
 const swiperGames2 = new Swiper(".swiper-games2", {
-  // Optional parameters
-  direction: "horizontal",
+
   // loop: true,
   nested: true,
   slidesPerView: 'auto',
@@ -274,13 +307,48 @@ const swiperGames2 = new Swiper(".swiper-games2", {
   autoplay: {
             delay: 2000,  
         },
-  navigation: {
-            nextEl: ".swiper-games2-next",
-            prevEl: ".swiper-games2-prev",
-        },
+  // navigation: {
+  //           nextEl: ".swiper-games2-next",
+  //           prevEl: ".swiper-games2-prev",
+  //       },
 
+  on: {
+            slideChange: function() {
+                const paginationItems = document.querySelectorAll('.pagination_inner');
+                if (paginationItems.length) {
+                    // Reset all progress lines
+                    paginationItems.forEach(item => {
+                        const progressLine = item.querySelector('.pagination_progress_line');
+                        if (progressLine) {
+                            progressLine.style.width = '0%';
+                        }
+                    });
+                    
+                    // Fill all previous pagination items completely
+                    for (let i = 0; i < this.activeIndex; i++) {
+                        if (paginationItems[i]) {
+                            const progressLine = paginationItems[i].querySelector('.pagination_progress_line');
+                            if (progressLine) {
+                                progressLine.style.width = '100%';
+                            }
+                        }
+                    }
+                }
+            },
+            autoplayTimeLeft: function(swiper, time, progress) {
+                const paginationItems = document.querySelectorAll('.pagination_inner');
+                if (paginationItems.length && this.activeIndex < paginationItems.length) {
+                    const currentItem = paginationItems[this.activeIndex];
+                    const progressLine = currentItem.querySelector('.pagination_progress_line');
+                    if (progressLine) {
+                        // Calculate width based on remaining time (100% - progress)
+                        const width = (1 - progress) * 100;
+                        progressLine.style.width = `${width}%`;
+                    }
+                }
+            }
+  },
   speed: 300,
-
 });
 
 const swiperPress = new Swiper(".swiper-press", {
