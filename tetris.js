@@ -488,11 +488,11 @@ function calculateBoardDimensions() {
   gameBoard.style.height = `${boardHeight}px`;
   gameBoard.style.maxHeight = `100dvh`;
   
-  // Center the board horizontally and position at bottom
-  gameBoard.style.position = 'absolute';
-  gameBoard.style.bottom = '0';
-  gameBoard.style.left = '50%';
-  gameBoard.style.transform = 'translateX(-50%)';
+  // // Center the board horizontally and position at bottom
+  // gameBoard.style.position = 'absolute';
+  // gameBoard.style.bottom = '0';
+  // gameBoard.style.left = '50%';
+  // gameBoard.style.transform = 'translateX(-50%)';
   
   // Make sure cells are crisp on high-DPI displays
   gameBoard.style.zIndex = '1'; // Ensure board is above other elements
