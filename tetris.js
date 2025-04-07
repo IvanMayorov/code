@@ -474,8 +474,10 @@ function calculateBoardDimensions() {
   // Calculate cell size to fit the viewport width precisely
   cellSize = viewportWidth / COLS;
   
-  // Ensure the board height doesn't exceed 100vh
-  const maxRows = Math.floor(viewportHeight / cellSize);
+  // Ensure the board height doesn't exceed the visible area
+  // For mobile, reserve additional space for navigation elements
+  const mobileNavOffset = viewportWidth <= 479 ? 70 : 0; // Add space for mobile navigation
+  const maxRows = Math.floor((viewportHeight - mobileNavOffset) / cellSize);
   ROWS = Math.min(20, maxRows);
   
   const boardHeight = ROWS * cellSize;
@@ -483,7 +485,7 @@ function calculateBoardDimensions() {
   // Set board dimensions - use exact viewport width to avoid rounding issues
   gameBoard.style.width = `${viewportWidth}px`;
   gameBoard.style.height = `${boardHeight}px`;
-  gameBoard.style.maxHeight = '100vh';
+  gameBoard.style.maxHeight = `calc(100vh - ${mobileNavOffset}px)`;
   
   // Center the board horizontally and position at bottom
   gameBoard.style.position = 'absolute';
@@ -491,7 +493,10 @@ function calculateBoardDimensions() {
   gameBoard.style.left = '50%';
   gameBoard.style.transform = 'translateX(-50%)';
   
-  console.log(`Board dimensions: ${COLS}x${ROWS}, cell size: ${cellSize}px`);
+  // Make sure cells are crisp on high-DPI displays
+  gameBoard.style.zIndex = '1'; // Ensure board is above other elements
+  
+  console.log(`Board dimensions: ${COLS}x${ROWS}, cell size: ${cellSize}px, viewport: ${viewportWidth}x${viewportHeight}`);
 }
 
 // Initialize the game board
@@ -506,12 +511,12 @@ function initBoard() {
   }
   
   // Fill both visible bottom rows and near-bottom rows for desktop
-  // Calculate rows to fill - the bottom rows and rows that are 70% down the board
+  // Calculate rows to fill - only the bottom rows
   const rowsToFill = [
     ROWS - 1,            // Bottom row
     ROWS - 2,            // Second from bottom
-    Math.floor(ROWS * 0.7),  // Row at 70% down the board
-    Math.floor(ROWS * 0.7) + 1  // Row at 70% down the board + 1
+    // Math.floor(ROWS * 0.7),  // Удаляем эту строку
+    // Math.floor(ROWS * 0.7) + 1  // Удаляем эту строку
   ];
   
   // Filter out duplicates and ensure valid indices
@@ -650,6 +655,13 @@ function createBoardDivs() {
       cell.style.position = 'absolute';
       cell.style.top = `${y * cellSize}px`;
       cell.style.left = `${x * cellSize}px`;
+      
+      // Add border for better visibility on mobile
+      if (document.documentElement.clientWidth <= 479) {
+        cell.style.boxSizing = 'border-box';
+        cell.style.border = '1px solid rgba(255,255,255,0.1)';
+      }
+      
       gameBoard.appendChild(cell);
     }
   }
