@@ -476,16 +476,17 @@ function calculateBoardDimensions() {
   
   // Ensure the board height doesn't exceed the visible area
   // For mobile, reserve additional space for navigation elements
-  const mobileNavOffset = viewportWidth <= 479 ? 70 : 0; // Add space for mobile navigation
-  const maxRows = Math.floor((viewportHeight - mobileNavOffset) / cellSize);
-  ROWS = Math.min(20, maxRows);
+  // const mobileNavOffset = viewportWidth <= 479 ? 70 : 0; // Add space for mobile navigation
+  const maxRows = Math.floor((viewportHeight) / cellSize);
+  // ROWS = Math.min(20, maxRows);
+  ROWS = maxRows;
   
   const boardHeight = ROWS * cellSize;
   
   // Set board dimensions - use exact viewport width to avoid rounding issues
   gameBoard.style.width = `${viewportWidth}px`;
   gameBoard.style.height = `${boardHeight}px`;
-  gameBoard.style.maxHeight = `calc(100vh - ${mobileNavOffset}px)`;
+  gameBoard.style.maxHeight = `100dvh`;
   
   // Center the board horizontally and position at bottom
   gameBoard.style.position = 'absolute';
@@ -496,7 +497,6 @@ function calculateBoardDimensions() {
   // Make sure cells are crisp on high-DPI displays
   gameBoard.style.zIndex = '1'; // Ensure board is above other elements
   
-  console.log(`Board dimensions: ${COLS}x${ROWS}, cell size: ${cellSize}px, viewport: ${viewportWidth}x${viewportHeight}`);
 }
 
 // Initialize the game board
@@ -656,11 +656,6 @@ function createBoardDivs() {
       cell.style.top = `${y * cellSize}px`;
       cell.style.left = `${x * cellSize}px`;
       
-      // Add border for better visibility on mobile
-      if (document.documentElement.clientWidth <= 479) {
-        cell.style.boxSizing = 'border-box';
-        cell.style.border = '1px solid rgba(255,255,255,0.1)';
-      }
       
       gameBoard.appendChild(cell);
     }
