@@ -265,6 +265,8 @@ backersTl.from(box, {
 
 
 //#region Swipers 
+//________________________________________________________________________________________________________________________
+
 const swiperGames = new Swiper(".swiper-games", {
   // Optional parameters
   slidesPerView: 'auto',
@@ -310,9 +312,9 @@ const swiperGames2 = new Swiper(".swiper-games2", {
   nested: true,
   slidesPerView: 'auto',
   spaceBetween: 0,
-  // autoplay: {
-  //           delay: 2000,  
-  //       },
+  autoplay: {
+            delay: 2000,  
+        },
   // navigation: {
   //           nextEl: ".swiper-games2-next",
   //           prevEl: ".swiper-games2-prev",
