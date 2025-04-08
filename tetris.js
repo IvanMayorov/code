@@ -160,17 +160,21 @@ tl.from('.section-tag', {
 ; // Start slightly before the first animation ends
 
 
+//#region Section 2
+// Check if we're on desktop (not mobile)
+const isDesktop = window.innerWidth > 768; // Common breakpoint for desktop
 
-const tl2 = gsap.timeline({
-  scrollTrigger: {
-    trigger: '.section-2',
-    start: '0% top',
-    end: '100% bottom',
-    scrub: 2,
-    // markers: true,
-  }
-});
-
+// Only create and run the animation on desktop
+if (isDesktop) {
+  const tl2 = gsap.timeline({
+    scrollTrigger: {
+      trigger: '.section-2',
+      start: '0% top',
+      end: '100% bottom',
+      scrub: 2,
+      // markers: true,
+    }
+  });
 
   // tl2.from('.s2-heading-wrap', {
   //   // opacity: 0,
@@ -178,44 +182,46 @@ const tl2 = gsap.timeline({
   //   duration: 0.3,
   //   ease: 'power2.out',
   // })
-// tl2.add(() => {
-//   tl.play();
-// })
-tl2.from('.s2-square-box1', {
-  // opacity: 0,
-  y: -calculateDistanceFromTop('.s2-square-box1', '.section-2'),
-  duration: 0.5,
-  ease: 'power2.out',
-}, )
+  // tl2.add(() => {
+  //   tl.play();
+  // })
+  tl2.from('.s2-square-box1', {
+    // opacity: 0,
+    y: -calculateDistanceFromTop('.s2-square-box1', '.section-2'),
+    duration: 0.5,
+    ease: 'power2.out',
+  }, )
 
-tl2.from('.s2-square-box2', {
-  // opacity: 0,
-  y: -calculateDistanceFromTop('.s2-square-box2', '.section-2'),
-  duration: 0.5,
-  ease: 'power2.out',
-}, "-=0.3")
+  tl2.from('.s2-square-box2', {
+    // opacity: 0,
+    y: -calculateDistanceFromTop('.s2-square-box2', '.section-2'),
+    duration: 0.5,
+    ease: 'power2.out',
+  }, "-=0.3")
 
-tl2.from('.s2-square-box3', { 
-  // opacity: 0,
-  y: -calculateDistanceFromTop('.s2-square-box3', '.section-2'),
-  duration: 0.5,
-  ease: 'power2.out',
-}, "-=0.3")
+  tl2.from('.s2-square-box3', { 
+    // opacity: 0,
+    y: -calculateDistanceFromTop('.s2-square-box3', '.section-2'),
+    duration: 0.5,
+    ease: 'power2.out',
+  }, "-=0.3")
 
-tl2.from('.s2-square-box4', {
-  // opacity: 0,
-  y: -calculateDistanceFromTop('.s2-square-box4', '.section-2'),
-  duration: 0.5,
-  ease: 'power2.out',
-}, "-=0.3")
+  tl2.from('.s2-square-box4', {
+    // opacity: 0,
+    y: -calculateDistanceFromTop('.s2-square-box4', '.section-2'),
+    duration: 0.5,
+    ease: 'power2.out',
+  }, "-=0.3")
 
-tl2.from('.s2-box-content', {
-  opacity: 0,
-  xPercent: 50,
-  duration: 0.5,
-  stagger: 0.1,
-  ease: 'power2.out',
-}, "-=0.2")
+  tl2.from('.s2-box-content', {
+    opacity: 0,
+    xPercent: 50,
+    duration: 0.5,
+    stagger: 0.1,
+    ease: 'power2.out',
+  }, "-=0.2")
+}
+//#endregion
 
 const backersTl = gsap.timeline({
 scrollTrigger: {
@@ -888,6 +894,31 @@ function restartGame() {
   gameInterval = setInterval(moveDown, 500);
 }
 
+const leftButton = document.querySelector('.left_btn');
+const rightButton = document.querySelector('.right_btn');
+const downButton = document.querySelector('.bottom_btn');
+const rotateButton = document.querySelector('.top_btn');
+
+leftButton.addEventListener('click', () => {
+  moveLeft();
+});
+
+rightButton.addEventListener('click', () => {
+  moveRight();
+});
+
+downButton.addEventListener('click', () => {
+  moveDown();
+});
+
+rotateButton.addEventListener('click', () => {
+  rotatePiece();
+  drawPiece();
+});
+
+
+
+
 // Handle keyboard controls
 document.addEventListener('keydown', (e) => {
   if (gameOver) return;
@@ -981,13 +1012,10 @@ gameBoard.addEventListener('touchend', (e) => {
 // Add click event listener to title to restart the game
 title.addEventListener('click', restartGame);
 
-// Handle window resize
-window.addEventListener('resize', () => {
-  calculateBoardDimensions();
-  createBoardDivs();
-  updateBoard();
-  drawPiece();
-});
+// calculateBoardDimensions();
+// createBoardDivs();
+// updateBoard();
+// drawPiece();
 
 // Initialize the game
 startGame();
