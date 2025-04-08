@@ -121,7 +121,7 @@ tlGrid.from('.cell', {
     from: "random"
   },
 
-}, ">-=0.5").from('.character', {
+}, "+0.6").from('.character', {
   opacity: 0,
   filter: 'blur(10px)',
   duration: 0.7,
