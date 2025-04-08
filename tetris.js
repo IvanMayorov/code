@@ -899,19 +899,74 @@ const rightButton = document.querySelector('.right_btn');
 const downButton = document.querySelector('.bottom_btn');
 const rotateButton = document.querySelector('.top_btn');
 
-leftButton.addEventListener('click', () => {
-  moveLeft();
+// Disable dragging on control buttons to prevent unwanted behavior
+[leftButton, rightButton, downButton, rotateButton].forEach(button => {
+  if (button) {
+    button.addEventListener('dragstart', e => e.preventDefault());
+    button.style.userSelect = 'none';
+    button.style.webkitUserSelect = 'none';
+    button.setAttribute('draggable', 'false');
+  }
 });
 
-rightButton.addEventListener('click', () => {
-  moveRight();
+// Variables to track button press state and intervals
+let leftInterval = null;
+let rightInterval = null;
+let downInterval = null;
+
+// Helper function to handle button press events
+function setupButtonControls(button, action, interval) {
+  // Handle click for single press
+  button.addEventListener('click', (e) => {
+    e.preventDefault();
+    action();
+  });
+  
+  // Handle touch start for continuous action
+  button.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    if (interval.current) clearInterval(interval.current);
+    
+    // Execute action immediately
+    action();
+    
+    // Then set up interval for repeated execution
+    interval.current = setInterval(action, 100);
+  });
+  
+  // Handle touch end to stop continuous action
+  button.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    if (interval.current) {
+      clearInterval(interval.current);
+      interval.current = null;
+    }
+  });
+  
+  // Handle touch cancel to stop continuous action
+  button.addEventListener('touchcancel', (e) => {
+    e.preventDefault();
+    if (interval.current) {
+      clearInterval(interval.current);
+      interval.current = null;
+    }
+  });
+}
+
+// Set up controls for each button
+setupButtonControls(leftButton, moveLeft, { current: leftInterval });
+setupButtonControls(rightButton, moveRight, { current: rightInterval });
+setupButtonControls(downButton, moveDown, { current: downInterval });
+
+// For rotate button, we don't need continuous rotation
+rotateButton.addEventListener('click', (e) => {
+  e.preventDefault();
+  rotatePiece();
+  drawPiece();
 });
 
-downButton.addEventListener('click', () => {
-  moveDown();
-});
-
-rotateButton.addEventListener('click', () => {
+rotateButton.addEventListener('touchstart', (e) => {
+  e.preventDefault();
   rotatePiece();
   drawPiece();
 });
