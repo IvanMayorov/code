@@ -310,9 +310,9 @@ const swiperGames2 = new Swiper(".swiper-games2", {
   nested: true,
   slidesPerView: 'auto',
   spaceBetween: 0,
-  autoplay: {
-            delay: 2000,  
-        },
+  // autoplay: {
+  //           delay: 2000,  
+  //       },
   // navigation: {
   //           nextEl: ".swiper-games2-next",
   //           prevEl: ".swiper-games2-prev",
@@ -373,7 +373,8 @@ const swiperPress = new Swiper(".swiper-press", {
 });
 
 
-//#region Tetris Game Implementation
+//#region Tetris
+//________________________________________________________________________________________________________________________
 
 const title = document.querySelector('.hero_title');
 const gradient = document.querySelector('.hero-gradient-overlay');
@@ -445,6 +446,7 @@ let cellSize = 0;
 let ROWS = 20; // Default value, will be calculated dynamically
 let COLS = 21; // Default for desktop, will be 12 for mobile
 let gameInitialized = false; // Flag to track initialization
+let gamePaused = false; // Flag to track pause state
 
 // DOM elements
 const gameBoard = document.querySelector('#tetris-board');
@@ -857,6 +859,39 @@ function drawPiece() {
   }
 }
 
+// Pause the game
+function pauseGame() {
+  if (!gameOver && !gamePaused) {
+    clearInterval(gameInterval);
+    gamePaused = true;
+ 
+    
+    console.log('Game paused');
+  }
+}
+
+// Resume the game
+function resumeGame() {
+  if (!gameOver && gamePaused) {
+    gameInterval = setInterval(moveDown, 500);
+    gamePaused = false;
+
+    
+
+    
+    console.log('Game resumed');
+  }
+}
+
+// Toggle pause state
+function togglePause() {
+  if (gamePaused) {
+    resumeGame();
+  } else {
+    pauseGame();
+  }
+}
+
 // Start the game
 function startGame() {
   console.log('Starting game...');
@@ -883,6 +918,9 @@ function restartGame() {
   
   // Reset game state
   gameOver = false;
+  gamePaused = false;
+  
+
   
   // Reinitialize the game
   initBoard();
@@ -982,30 +1020,41 @@ document.addEventListener('keydown', (e) => {
     case 'ArrowLeft':
     case 'a':
     case 'A':
-      moveLeft();
+      if (!gamePaused) moveLeft();
       e.preventDefault();
       break;
     case 'ArrowRight':
     case 'd':
     case 'D':
-      moveRight();
+      if (!gamePaused) moveRight();
       e.preventDefault();
       break;
     case 'ArrowDown':
     case 's':
     case 'S':
-      moveDown();
+      if (!gamePaused) moveDown();
       e.preventDefault(); // Prevent page scrolling when pressing down arrow
       break;
     case 'ArrowUp':
     case 'w':
     case 'W':
-      rotatePiece();
-      drawPiece();
+      if (!gamePaused) {
+        rotatePiece();
+        drawPiece();
+      }
       e.preventDefault();
       break;
     case ' ':
-      dropPiece();
+      if (!gamePaused) dropPiece();
+      e.preventDefault();
+      break;
+    case 'p':
+    case 'P':
+      togglePause();
+      e.preventDefault();
+      break;
+    case 'Escape':
+      togglePause();
       e.preventDefault();
       break;
   }
@@ -1042,19 +1091,21 @@ gameBoard.addEventListener('touchend', (e) => {
     // Horizontal swipe
     if (Math.abs(deltaX) >= MIN_SWIPE_DISTANCE) {
       if (deltaX > 0) {
-        moveRight();
+        if (!gamePaused) moveRight();
       } else {
-        moveLeft();
+        if (!gamePaused) moveLeft();
       }
     }
   } else {
     // Vertical swipe
     if (Math.abs(deltaY) >= MIN_SWIPE_DISTANCE) {
       if (deltaY > 0) {
-        dropPiece(); // Swipe down for hard drop
+        if (!gamePaused) dropPiece(); // Swipe down for hard drop
       } else {
-        rotatePiece(); // Swipe up to rotate
-        drawPiece();
+        if (!gamePaused) {
+          rotatePiece(); // Swipe up to rotate
+          drawPiece();
+        }
       }
     }
   }
@@ -1067,6 +1118,8 @@ gameBoard.addEventListener('touchend', (e) => {
 // Add click event listener to title to restart the game
 title.addEventListener('click', restartGame);
 
+
+
 // calculateBoardDimensions();
 // createBoardDivs();
 // updateBoard();
@@ -1076,4 +1129,38 @@ title.addEventListener('click', restartGame);
 startGame();
 
 //#endregion Tetris Game Implementation
-//#endregion Tetris Game Implementation
+
+// Add scroll event listener to pause the game on mobile devices
+if (window.innerWidth <= 768) { // Common breakpoint for mobile devices
+  let scrollTimeout;
+  let lastScrollPosition = window.scrollY;
+  
+  window.addEventListener('scroll', function() {
+    // If the game is running (not paused and not over), pause it
+    if (!gamePaused && !gameOver) {
+      pauseGame();
+      
+      // Clear any existing timeout
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout);
+      }
+    }
+    
+    // Store current scroll position
+    lastScrollPosition = window.scrollY;
+  });
+  
+  // Check if user returned to the top of the page
+  window.addEventListener('scroll', function() {
+    if (scrollTimeout) {
+      clearTimeout(scrollTimeout);
+    }
+    
+    scrollTimeout = setTimeout(function() {
+      // If user is near the top of the page and game is paused, resume it
+      if (window.scrollY < 100 && gamePaused && !gameOver) {
+        resumeGame();
+      }
+    }, 500);
+  });
+}
