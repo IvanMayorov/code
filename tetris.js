@@ -1138,37 +1138,37 @@ startGame();
 
 //#endregion Tetris Game Implementation
 
-// Add scroll event listener to pause the game on mobile devices
-if (window.innerWidth <= 768) { // Common breakpoint for mobile devices
-  let scrollTimeout;
-  let lastScrollPosition = window.scrollY;
+// // Add scroll event listener to pause the game on mobile devices
+// if (window.innerWidth <= 768) { // Common breakpoint for mobile devices
+//   let scrollTimeout;
+//   let lastScrollPosition = window.scrollY;
   
-  window.addEventListener('scroll', function() {
-    // If the game is running (not paused and not over), pause it
-    if (!gamePaused && !gameOver) {
-      pauseGame();
+//   window.addEventListener('scroll', function() {
+//     // If the game is running (not paused and not over), pause it
+//     if (!gamePaused && !gameOver) {
+//       pauseGame();
       
-      // Clear any existing timeout
-      if (scrollTimeout) {
-        clearTimeout(scrollTimeout);
-      }
-    }
+//       // Clear any existing timeout
+//       if (scrollTimeout) {
+//         clearTimeout(scrollTimeout);
+//       }
+//     }
     
-    // Store current scroll position
-    lastScrollPosition = window.scrollY;
-  });
+//     // Store current scroll position
+//     lastScrollPosition = window.scrollY;
+//   });
   
-  // Check if user returned to the top of the page
-  window.addEventListener('scroll', function() {
-    if (scrollTimeout) {
-      clearTimeout(scrollTimeout);
-    }
+//   // Check if user returned to the top of the page
+//   window.addEventListener('scroll', function() {
+//     if (scrollTimeout) {
+//       clearTimeout(scrollTimeout);
+//     }
     
-    scrollTimeout = setTimeout(function() {
-      // If user is near the top of the page and game is paused, resume it
-      if (window.scrollY < 100 && gamePaused && !gameOver) {
-        resumeGame();
-      }
-    }, 500);
-  });
-}
+//     scrollTimeout = setTimeout(function() {
+//       // If user is near the top of the page and game is paused, resume it
+//       if (window.scrollY < 100 && gamePaused && !gameOver) {
+//         resumeGame();
+//       }
+//     }, 500);
+//   });
+// }
