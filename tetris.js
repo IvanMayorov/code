@@ -59,16 +59,6 @@ splitElements.forEach(element => {
 
 });
 
-
-const tlGrid = gsap.timeline({        
-  scrollTrigger: {
-    trigger: '.s4-heading-wrap',
-    start: 'top 70%',
-    end: 'bottom 20%',
-    // markers: true,
-  }   
-})
-
 gsap.from('.s3-container .char', {
   opacity: 0,
   filter: 'blur(10px)',
@@ -94,6 +84,19 @@ gsap.from('.s6-container .char', {
     // markers: true,
   }
 })
+
+//#region Grid
+//________________________________________________________________________________________________________________________
+
+const tlGrid = gsap.timeline({        
+  scrollTrigger: {
+    trigger: '.s4-heading-wrap',
+    start: 'top 90%',
+    end: 'bottom 20%',
+    // markers: true,
+  }   
+})
+
 
 tlGrid.from('.s4-container .char', {
   opacity: 0,
@@ -222,6 +225,9 @@ if (isDesktop) {
   }, "-=0.2")
 }
 //#endregion
+
+//#region Backers
+//________________________________________________________________________________________________________________________
 
 const backersTl = gsap.timeline({
 scrollTrigger: {
