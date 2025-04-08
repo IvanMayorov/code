@@ -2,6 +2,7 @@
 const soundButtons = document.querySelectorAll("[data-sound]");
 let audio = null;
 
+
 soundButtons.forEach(button => {
   button.addEventListener("click", () => {
     const soundButtonIcon = button.querySelector('.sound_button');
@@ -20,6 +21,8 @@ soundButtons.forEach(button => {
       audio.play();
       soundButtonIcon.style.display = 'none';
       soundButtonIcon.nextElementSibling.style.display = 'block';
+      audio.loop = true;
+      audio.volume = 0.5;
     }
   });
 });
@@ -74,10 +77,12 @@ let fireLastStepHeight ;
 const fireAnimation = lottie.loadAnimation({
   container: document.querySelector(".flames"),
   renderer: "svg",
+
   loop: true,
   autoplay: true,
   path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/67e4f42cc34467f09b8f3481_fire.json",
 });
+fireAnimation.setSpeed(1.5);
 
 
 //Hero
