@@ -54,7 +54,7 @@ document.querySelector('[data-eagle]').addEventListener('click', function() {
 });
 
 document.querySelector('.wrp-ribbon').addEventListener('click', function() {
-		navigator.clipboard.writeText('1234').then(() => {
+		navigator.clipboard.writeText('Bt3yR5VcsysFU33YQuNRTtZtjXie9z3XYpy3F9nNpump').then(() => {
 				    document.querySelector('.copied').style.display = 'flex';
       setTimeout(() => {
               document.querySelector('.copied').style.display = 'none';
