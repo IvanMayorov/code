@@ -346,6 +346,7 @@ cookieIcon.addEventListener("mouseleave", () => {
   const projectsSection = document.querySelector(".projects_section");
   const boardSection = document.querySelector(".board_section");
   const footerHeight = document.querySelector(".footer").offsetHeight;
+  const processCardWidth = document.querySelector(".process_card").offsetWidth;
 
   const servicesSectionHeight =
     document.querySelector(".services_section .bigtitle_row")?.offsetHeight ||
@@ -571,19 +572,46 @@ cookieIcon.addEventListener("mouseleave", () => {
       scratchLottie.play();
     }, "process")
     .to(".process_track", {
-      x: -processTrack.offsetWidth - 1 * remSize,
+      // x: -processTrack.offsetWidth - 1 * remSize,
+      x: -processCardWidth - 1 * remSize,
       ease: "none",
-      duration: 3,
+      duration: 1,
     })
-    .to(
-      ".process_left_col",
-      {
-        opacity: 0,
+ 
+      .to(".process_card:nth-child(1) ~ .process_card", {
+        x: -processCardWidth - 1 * remSize,
         ease: "none",
-        duration: 0,
-      },
-      "<+=0.7"
-    )
+        duration: 1,
+      })
+      .to(
+        ".process_left_col",
+        {
+          opacity: 0,
+          ease: "none",
+          duration: 0,
+        }, "<"
+      )
+      .to(".process_card:nth-child(2) ~ .process_card", {
+        x: -processCardWidth*2 - 2 * remSize,
+        ease: "none",
+        duration: 1,
+      })
+      .to(".process_card:nth-child(3) ~ .process_card", {
+        x: -processCardWidth*3 - 3 * remSize,
+        ease: "none",
+        duration: 1,
+      })
+      .to(
+        ".process_right_box",
+        {
+          opacity: 1,
+          ease: "none",
+          duration: 0,
+        },
+        "<"
+      )
+
+   
     .to(".track", {
       x: -getSectionPosition(5),
       ease: "none",
@@ -594,15 +622,7 @@ cookieIcon.addEventListener("mouseleave", () => {
         updateTitle("5", p, "in");
       },
     })
-    .to(
-      ".process_right_box",
-      {
-        opacity: 1,
-        ease: "none",
-        duration: 0,
-      },
-      "<-=0.7"
-    )
+ 
     .addLabel("projects")
     .to(".projects_section", {
       y: -calculatedProjectsHeight,
