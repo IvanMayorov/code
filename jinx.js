@@ -347,6 +347,10 @@ cookieIcon.addEventListener("mouseleave", () => {
   const boardSection = document.querySelector(".board_section");
   const footerHeight = document.querySelector(".footer").offsetHeight;
   const processCardWidth = document.querySelector(".process_card").offsetWidth;
+  const plansCardWidth = document.querySelector(".plans_card.is-first").offsetWidth;
+  // const plansSectionWidth = document.querySelector(".plans_section").offsetWidth;
+  const planCards = gsap.utils.toArray("[data-plans-card]");
+
 
   const servicesSectionHeight =
     document.querySelector(".services_section .bigtitle_row")?.offsetHeight ||
@@ -648,7 +652,34 @@ cookieIcon.addEventListener("mouseleave", () => {
         updateTitle("6", p, "in", 0.5);
       },
     })
+
     .addLabel("plans")
+    // .to(".plans_section", {
+    //   x: -plansSectionWidth,
+    //   ease: "none",
+    //   duration: 2,
+    // })
+    .to("[data-plans-card], [data-plans-form]", {
+      x: - (plansCardWidth*3 + 3 * remSize),
+      ease: "none",
+      duration: 2,
+    })
+    .to("[data-plans-form]", {
+      opacity: 0,
+      ease: "none",
+      duration: 0.66,
+    }, "<")
+    .to(planCards[0], {
+      opacity: 0,
+      ease: "none",
+      duration: 0.66,
+    }, '>')
+    .to(planCards[1], {
+      opacity: 0,
+      ease: "none",
+      duration: 0.66,
+    }, '>')
+    
     .to(".track", {
       x: -getSectionPosition(7),
       ease: "none",
@@ -659,6 +690,11 @@ cookieIcon.addEventListener("mouseleave", () => {
         updateTitle("7", p, "in", 0.75);
       },
     })
+    // .to(".plans_card.is-first", {
+    //   x: plansSectionWidth,
+    //   ease: "none",
+    //   duration: 2,
+    // }, "<")
     .addLabel("answers")
     .to(".answers_box_left", {
       y: -answersLeftBoxHeight + answersBoxHeight + answerGap,
@@ -796,7 +832,7 @@ function updateBigtitleRows(progress, rows, activeRows, wraps) {
       //   createLottieAnimation(lottie, lottie.getAttribute('data-lottie'));
       // }
       // Find the matching lottie animation for this row
-      const matchingLottie = lottieAnimationsServices.find(anim => anim.rowIndex === i);
+      const matchingLottie = lottieAnimationsServices.find(anim => anim.rowIndex === i + 1);
       if (matchingLottie && matchingLottie.animation) {
         // Play the animation if it exists
         matchingLottie.animation.play(0);
