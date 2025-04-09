@@ -18,12 +18,12 @@
 
 // // Disable lag smoothing in GSAP to prevent any delay in scroll animations
 // gsap.ticker.lagSmoothing(0);
-gsap.registerPlugin(ScrollSmoother) 
+// gsap.registerPlugin(ScrollSmoother) 
 
-ScrollSmoother.create({
-  smooth: 1.5,
-  effects: true,
-});
+// ScrollSmoother.create({
+//   smooth: 1.5,
+//   effects: true,
+// });
 
 
 // Sound
