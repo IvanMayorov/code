@@ -493,7 +493,7 @@ cookieIcon.addEventListener("mouseleave", () => {
     scrollTrigger: {
       trigger: ".section",
       pin: true,
-      scrub: 1,
+      scrub: true,
       end: getSectionPosition(9),
       // markers: true
     },
