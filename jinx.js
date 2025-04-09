@@ -349,7 +349,7 @@ cookieIcon.addEventListener("mouseleave", () => {
   const processCardWidth = document.querySelector(".process_card").offsetWidth;
   const plansCardWidth = document.querySelector(".plans_card.is-first").offsetWidth;
   // const plansSectionWidth = document.querySelector(".plans_section").offsetWidth;
-  const planCards = gsap.utils.toArray("[data-plans-card]");
+  const planCards = gsap.utils.toArray(".plans_slider > *");
 
 
   const servicesSectionHeight =
@@ -659,22 +659,24 @@ cookieIcon.addEventListener("mouseleave", () => {
     //   ease: "none",
     //   duration: 2,
     // })
-    .to("[data-plans-card], [data-plans-form]", {
+    .to(planCards, {
       x: - (plansCardWidth*3 + 3 * remSize),
       ease: "none",
       duration: 2,
     })
-    .to("[data-plans-form]", {
+    .to(planCards[0], {
       opacity: 0,
+
       ease: "none",
       duration: 0.66,
     }, "<")
-    .to(planCards[0], {
+    .to(planCards[1], {
       opacity: 0,
+
       ease: "none",
       duration: 0.66,
     }, '>')
-    .to(planCards[1], {
+    .to(planCards[2], {
       opacity: 0,
       ease: "none",
       duration: 0.66,
@@ -1400,12 +1402,12 @@ function initMediaQueries() {
   mm.add("(min-width: 480px)", () => {
     initDesktopAnimations();
     console.log("initDesktopAnimations");
-    window.addEventListener('load', () => {
-      distanceFromTop = logo.getBoundingClientRect().bottom + window.scrollY;
-      // console.log(distanceFromTop);
-      // flamesBox.style.height = `${distanceFromTop}px`;
-      gsap.set(flamesBox, { height: `${distanceFromTop}px` });
-    });
+    // window.addEventListener('load', () => {
+    //   distanceFromTop = logo.getBoundingClientRect().bottom + window.scrollY;
+    //   // console.log(distanceFromTop);
+    //   // flamesBox.style.height = `${distanceFromTop}px`;
+    //   gsap.set(flamesBox, { height: `${distanceFromTop}px` });
+    // });
   
     return () => {
       /* cleanup function */
