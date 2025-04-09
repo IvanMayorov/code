@@ -1,23 +1,24 @@
-// // Initialize a new Lenis instance for smooth scrolling
-// const lenis = new Lenis({
-//   // lerp: 0.1,
-//   // wheelMultiplier: 0.7,
-//   // gestureOrientation: "vertical",
-//   // normalizeWheel: false,
-//   // smoothTouch: false,
-// });
+// Initialize a new Lenis instance for smooth scrolling
+const lenis = new Lenis({
+  // lerp: 0.1,
+  // wheelMultiplier: 0.7,
+  // gestureOrientation: "vertical",
+  // normalizeWheel: false,
+  // smoothTouch: false,
+});
 
-// // Synchronize Lenis scrolling with GSAP's ScrollTrigger plugin
-// lenis.on('scroll', ScrollTrigger.update);
+// Synchronize Lenis scrolling with GSAP's ScrollTrigger plugin
+lenis.on('scroll', ScrollTrigger.update);
 
-// // Add Lenis's requestAnimationFrame (raf) method to GSAP's ticker
-// // This ensures Lenis's smooth scroll animation updates on each GSAP tick
-// gsap.ticker.add((time) => {
-//   lenis.raf(time * 1000); // Convert time from seconds to milliseconds
-// });
+// Add Lenis's requestAnimationFrame (raf) method to GSAP's ticker
+// This ensures Lenis's smooth scroll animation updates on each GSAP tick
+gsap.ticker.add((time) => {
+  lenis.raf(time * 1000); // Convert time from seconds to milliseconds
+});
 
-// // Disable lag smoothing in GSAP to prevent any delay in scroll animations
-// gsap.ticker.lagSmoothing(0);
+// Disable lag smoothing in GSAP to prevent any delay in scroll animations
+gsap.ticker.lagSmoothing(0);
+
 // gsap.registerPlugin(ScrollSmoother) 
 
 // ScrollSmoother.create({
@@ -498,7 +499,7 @@ cookieIcon.addEventListener("mouseleave", () => {
     scrollTrigger: {
       trigger: ".section",
       pin: true,
-      scrub: 1.5,
+      scrub: true,
       end: getSectionPosition(9),
       // markers: true
     },
