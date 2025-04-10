@@ -1,44 +1,44 @@
-// Function to animate fire images in sequence without GSAP (looped animation)
-function animateFireImages() {
-  // Get all fire images
-  const fireImages = document.querySelectorAll('.fire_img');
-  console.log(fireImages);
-  // If no images found, exit the function
-  if (!fireImages.length) return;
+// // Function to animate fire images in sequence without GSAP (looped animation)
+// function animateFireImages() {
+//   // Get all fire images
+//   const fireImages = document.querySelectorAll('.fire_img');
+//   console.log(fireImages);
+//   // If no images found, exit the function
+//   if (!fireImages.length) return;
   
-  // Hide all images initially
-  fireImages.forEach(img => {
-    img.style.display = 'none';
-  });
+//   // Hide all images initially
+//   fireImages.forEach(img => {
+//     img.style.display = 'none';
+//   });
   
-  // Calculate time per image (total 4 seconds divided by number of images)
-  const timePerImage = 4000 / fireImages.length; // in milliseconds
+//   // Calculate time per image (total 4 seconds divided by number of images)
+//   const timePerImage = 4000 / fireImages.length; // in milliseconds
   
-  let currentIndex = 0;
+//   let currentIndex = 0;
   
-  // Function to show the next image
-  function showNextImage() {
-    // Hide all images
-    fireImages.forEach(img => {
-      img.style.display = 'none';
-    });
+//   // Function to show the next image
+//   function showNextImage() {
+//     // Hide all images
+//     fireImages.forEach(img => {
+//       img.style.display = 'none';
+//     });
     
-    // Show current image
-    fireImages[currentIndex].style.display = 'block';
+//     // Show current image
+//     fireImages[currentIndex].style.display = 'block';
     
-    // Update index for next iteration (loop through images)
-    currentIndex = (currentIndex + 1) % fireImages.length;
+//     // Update index for next iteration (loop through images)
+//     currentIndex = (currentIndex + 1) % fireImages.length;
     
-    // Schedule next image (continuous loop)
-    setTimeout(showNextImage, timePerImage);
-  }
+//     // Schedule next image (continuous loop)
+//     setTimeout(showNextImage, timePerImage);
+//   }
   
-  // Start the animation loop
-  showNextImage();
-}
+//   // Start the animation loop
+//   showNextImage();
+// }
 
-// Run the looped animation when the document is ready
-document.addEventListener('DOMContentLoaded', animateFireImages);
+// // Run the looped animation when the document is ready
+// document.addEventListener('DOMContentLoaded', animateFireImages);
 
 
 // const options = {
@@ -161,16 +161,16 @@ jokeButton.addEventListener("click", () => {
 
 let fireLastStepHeight ;
 
-// //Fire
-// const fireAnimation = lottie.loadAnimation({
-//   container: document.querySelector(".flames"),
-//   renderer: "svg",
+//Fire
+const fireAnimation = lottie.loadAnimation({
+  container: document.querySelector(".flames"),
+  renderer: "canvas",
 
-//   loop: true,
-//   autoplay: true,
-//   path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/67e4f42cc34467f09b8f3481_fire.json",
-// });
-// fireAnimation.setSpeed(1.5);
+  loop: true,
+  autoplay: true,
+  path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/67e4f42cc34467f09b8f3481_fire.json",
+});
+fireAnimation.setSpeed(1.5);
 
 
 //Hero
@@ -1528,10 +1528,10 @@ window.addEventListener('resize', () => {
   }
 });
 
-// // Событие срабатывает когда Lottie анимация полностью загружена
-// fireAnimation.addEventListener('DOMLoaded', () => {
-//   // Ваш код здесь
-//   fireLastStepHeight = Math.min(flames.offsetHeight + flamesMarginBottomValue, window.innerHeight - document.querySelector('.footer').offsetHeight)
-//   initMediaQueries();
-// });
+// Событие срабатывает когда Lottie анимация полностью загружена
+fireAnimation.addEventListener('DOMLoaded', () => {
+  // Ваш код здесь
+  fireLastStepHeight = Math.min(flames.offsetHeight + flamesMarginBottomValue, window.innerHeight - document.querySelector('.footer').offsetHeight)
+  initMediaQueries();
+});
 
