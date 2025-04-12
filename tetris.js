@@ -749,10 +749,10 @@ function updateBoard() {
       const cell = document.getElementById(`cell-${y}-${x}`);
       if (board[y][x] === EMPTY_CELL) {
         cell.style.backgroundColor = 'transparent';
-        // cell.style.backdropFilter = 'none';
+        cell.style.backdropFilter = 'none';
       } else {
         cell.style.backgroundColor = COLORS[board[y][x]];
-        // cell.style.backdropFilter = 'blur(5px)';
+        cell.style.backdropFilter = 'blur(5px)';
       }
     }
   }
@@ -923,7 +923,7 @@ function drawPiece() {
           const cell = document.getElementById(`cell-${boardY}-${boardX}`);
           if (cell) {
             cell.style.backgroundColor = COLORS[currentPiece.color];
-            // cell.style.backdropFilter = 'blur(5px)';
+            cell.style.backdropFilter = 'blur(5px)';
           }
         }
       }
