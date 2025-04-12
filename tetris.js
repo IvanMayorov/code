@@ -1,21 +1,24 @@
 var Webflow = Webflow || [];
 Webflow.push(function(){
-
-  gsap.from('[data-footer-item]', {
-    opacity: 0,
-    y: '-50vh',
-    stagger:{
-      each: 0.2,
-      from: 'random'
-    },
-
-    duration: 1,
-    scrollTrigger: {
-      trigger: '.footer-section',
-      start: 'top 40%',
-      end: 'bottom 20%',
-      // markers: true,
-    }
+  // Only create and run the footer animation on desktop
+  const footerAnimation = gsap.matchMedia();
+  
+  footerAnimation.add("(min-width: 768px)", () => {
+    gsap.from('[data-footer-item]', {
+      opacity: 0,
+      y: '-50vh',
+      stagger: {
+        each: 0.2,
+        from: 'random'
+      },
+      duration: 1,
+      scrollTrigger: {
+        trigger: '.footer-section',
+        start: 'top 40%',
+        end: 'bottom 20%',
+        // markers: true,
+      }
+    });
   });
 
 // Split text animation for elements with data-split attribute
@@ -223,7 +226,68 @@ if (isDesktop) {
     stagger: 0.1,
     ease: 'power2.out',
   }, "-=0.2")
+} else {
+  //#region Mobile
+  // Create individual timelines for each s2-square-box
+  const s2Boxes = document.querySelectorAll('.s2-square-box');
+  
+  s2Boxes.forEach((box, index) => {
+
+    // Create individual timeline for each box
+    const boxTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: box,
+        start: '0% 80%',
+        end: '100% 50%',
+        // markers: true,
+      }
+    });
+    
+    // Animation for the box
+      boxTl.from(box.querySelector('.s2-color-box'), {
+      opacity: 0,
+      xPercent: -50,
+      duration: 0.5,
+      ease: 'power2.out',
+    });
+    
+    // Animation for the content inside the box
+    boxTl.from(box.querySelectorAll('.s2-box-content > *'), {
+      opacity: 0,
+      xPercent: 50,
+      filter: 'blur(10px)',
+      duration: 0.5,
+      stagger: 0.1,
+      ease: 'power2.out',
+    }, "<+=.2");
+  });
+
+  function animateWithBlur(selector, triggerSelector) {
+    gsap.from(selector, {
+      opacity: 0,
+      filter: 'blur(10px)',
+      yPercent: 10,
+      duration: 1,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: triggerSelector || selector,
+        start: '0% 80%',
+        end: '100% 50%',
+        // markers: true,
+      }
+    });
+  }
+  
+  // Use the function for s3-content
+  animateWithBlur('.s3-slide1-right', '.s3-slide1-right');
+  animateWithBlur('.s3-slide1-left', '.s3-slide1-left');
+  animateWithBlur('.s3-slide2-content', '.s3-slide2-content');
+  animateWithBlur('.maxw-222-mob', '.maxw-222-mob');
+  animateWithBlur('.s6-content', '.s6-content');
+  // animateWithBlur('.s3-content', '.s3-section');
+
 }
+
 //#endregion
 
 //#region Backers
@@ -940,10 +1004,10 @@ function restartGame() {
   gameInterval = setInterval(moveDown, 500);
 }
 
-const leftButton = document.querySelector('.left_btn');
-const rightButton = document.querySelector('.right_btn');
-const downButton = document.querySelector('.bottom_btn');
-const rotateButton = document.querySelector('.top_btn');
+const leftButton = document.querySelector('.joystick_arrow.left');
+const rightButton = document.querySelector('.joystick_arrow.right');
+const downButton = document.querySelector('.joystick_arrow.bottom');
+const rotateButton = document.querySelector('.joystick_arrow.top');
 
 // Disable dragging on control buttons to prevent unwanted behavior
 [leftButton, rightButton, downButton, rotateButton].forEach(button => {
