@@ -589,9 +589,10 @@ cookieIcon.addEventListener("mouseleave", () => {
         },
         onReverseComplete: () => {
           progress = 0;
+          console.log('onReverseComplete');
         },
       },
-      0
+      0.1
     )
     .addLabel("benefits")
     // Add Lottie animation for benefits section
@@ -1276,6 +1277,7 @@ function openMenu() {
 }
 
 function closeMenu() {
+  console.log(progress);
   if (window.innerWidth > 479) {
     if (progress === 0) {
       gsap.to(flamesBox, {
