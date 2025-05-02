@@ -173,6 +173,8 @@ const fireAnimation = lottie.loadAnimation({
 fireAnimation.setSpeed(1.5);
 
 
+
+
 //Hero
 lottie.loadAnimation({
   container: document.querySelector(".hero_lottie"),
@@ -192,7 +194,71 @@ const benefitsLottie = lottie.loadAnimation({
   path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/67de874bff0309089a98e25b_scratch-qddRu.json", // Update with your actual JSON path
 });
 
-//Benefits
+//Benefits Label
+const benefitsLabel = lottie.loadAnimation({
+  container: document.querySelector(".benefits_label"),
+  renderer: "svg",
+  loop: false,
+  autoplay: false,
+  path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/68146f194dd86b56fbde0eaf_benefits_label-FQvG1.json",
+});
+
+//Manifest Label
+const manifestLabel = lottie.loadAnimation({
+  container: document.querySelector(".manifest_label"),
+  renderer: "svg",
+  loop: false,
+  autoplay: false,
+  path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/681477fe3163f4f6126f0cb8_manifest_label-Pxk2x.json",
+});
+
+//Services Label
+const servicesLabel = lottie.loadAnimation({
+  container: document.querySelector(".services_label"),
+  renderer: "svg",
+  loop: false,
+  autoplay: false,
+  path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/68148608064b80892684b202_services_label-xVIqh.json",
+});
+
+// Group all label animations for easier management
+const labelAnimations = {
+  benefits: benefitsLabel,
+  manifest: manifestLabel,
+  services: servicesLabel,
+};
+
+// Function to play all label animations
+function backAllLabelAnimation() {
+  // Loop through all animations in the labelAnimations object
+  Object.values(labelAnimations).forEach(animation => {
+    if (animation) {
+      animation.setSpeed(3);
+      animation.setDirection(-1);
+      // Play the animation
+      animation.play();
+    }
+  });
+}
+
+// Function to reset all label animations
+function resetAllLabelAnimations(speed = 3) {
+  // Loop through all animations in the labelAnimations object
+  Object.values(labelAnimations).forEach(animation => {
+    if (animation) {
+      // Set faster speed and reverse direction for quick reset
+      animation.setSpeed(speed);
+      animation.setDirection(-1);
+      // Play the animation in reverse to reset it
+      animation.play();
+    }
+  });
+}
+
+
+
+
+//Scratches
 const scratchLottie = lottie.loadAnimation({
   container: document.querySelector(".scratches-2"), // Make sure this element exists
   renderer: "svg",
@@ -561,6 +627,19 @@ cookieIcon.addEventListener("mouseleave", () => {
       scrub: true,
       end: getSectionPosition(9),
       // markers: true
+      // onUpdate: self => {
+      //   const currentTime = tl.time();
+      //   const labels = tl.labels;
+      //   let activeLabel = null;
+  
+      //   for (let label in labels) {
+      //     if (currentTime >= labels[label]) {
+      //       activeLabel = label;
+      //     }
+      //   }
+  
+      //   console.log("Текущий активный label:", activeLabel);
+      // }
     },
   });
 
@@ -569,15 +648,35 @@ cookieIcon.addEventListener("mouseleave", () => {
   // console.log(distanceFromTop);
   gsap.set(flamesBox, { height: `${distanceFromTop}px` });
 
+  tl.addLabel("hero")
   tl.to(".track", {
     x: -getSectionPosition(1),
     ease: "none",
     duration: 1,
     onUpdate() {
       updateTitle("1", this.progress(), "in");
+
+    const progress = this.progress();
+    if (progress > 0.5 ) {
+      benefitsLabel.setSpeed(1);
+      benefitsLabel.setDirection(1);
+      benefitsLabel.play();
+    } else {
+      backAllLabelAnimation();
+    }
     },
   })
-
+//   .add(() => {
+//     backAllLabelAnimation();
+// }, "-=0.6")
+//   .add(() => {
+//       benefitsLabel.setSpeed(1);
+//       benefitsLabel.setDirection(1);
+//       benefitsLabel.play();
+//   }, "-=0.5")
+//   .add(() => {
+//     backAllLabelAnimation();
+// }, "+=0.8")
     .to(
       ".flames_box",
       {
@@ -622,6 +721,18 @@ cookieIcon.addEventListener("mouseleave", () => {
         const p = this.progress();
         updateTitle("1", p, "out");
         updateTitle("2", p, "in");
+        if (this.progress() > 0.5) {
+          manifestLabel.setSpeed(1);
+          manifestLabel.setDirection(1);
+          manifestLabel.play();
+        } else {
+          backAllLabelAnimation();
+        }
+        if (this.progress() < 0.3) {
+          benefitsLabel.setSpeed(1);
+          benefitsLabel.setDirection(1);
+          benefitsLabel.play();
+        } 
       },
     })
     .addLabel("manifest")
@@ -630,9 +741,22 @@ cookieIcon.addEventListener("mouseleave", () => {
       ease: "none",
       duration: 3,
       onUpdate() {
-        const p = this.progress();
-        updateTitle("2", p, "out", 0.8);
-        updateTitle("3", p, "in", 0.9);
+        // const p = this.progress();
+        // updateTitle("2", p, "out", 0.8);
+        // updateTitle("3", p, "in", 0.9);
+        if (this.progress() > 0.9) {
+          servicesLabel.setSpeed(1);
+          servicesLabel.setDirection(1);
+          servicesLabel.play();
+        } else {
+          backAllLabelAnimation();
+        }
+        if (this.progress() < 0.8) {
+          manifestLabel.setSpeed(1);
+          manifestLabel.setDirection(1);
+          manifestLabel.play();
+        }
+
       },
     })
     .addLabel("services")
