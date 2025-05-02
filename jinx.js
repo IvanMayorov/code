@@ -241,19 +241,20 @@ function backAllLabelAnimation() {
   });
 }
 
-// Function to reset all label animations
-function resetAllLabelAnimations(speed = 3) {
+
+function isAnyLabelAnimationPlaying() {
   // Loop through all animations in the labelAnimations object
-  Object.values(labelAnimations).forEach(animation => {
-    if (animation) {
-      // Set faster speed and reverse direction for quick reset
-      animation.setSpeed(speed);
-      animation.setDirection(-1);
-      // Play the animation in reverse to reset it
-      animation.play();
+  return Object.values(labelAnimations).some(animation => {
+    // Check if animation exists and is currently playing
+    if (animation && animation.isLoaded) {
+      // Animation is playing if it's not paused and not stopped
+      // We can check this by examining the animation's playingSegments and isPaused properties
+      return animation.isPaused === false && animation.currentFrame !== 0;
     }
+    return false;
   });
 }
+
 
 
 
@@ -680,7 +681,7 @@ cookieIcon.addEventListener("mouseleave", () => {
     .to(
       ".flames_box",
       {
-        height: document.querySelector('.label').offsetHeight,
+        height: document.querySelector('.lottie_labels').offsetHeight,
         ease: "none",
         duration: 0.5,
         onComplete: () => {
