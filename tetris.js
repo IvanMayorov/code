@@ -582,141 +582,11 @@ function calculateBoardDimensions() {
 // Initialize the game board
 function initBoard() {
   board = [];
-  // First fill the entire board with empty cells
+  // Fill the entire board with empty cells
   for (let y = 0; y < ROWS; y++) {
     board[y] = [];
     for (let x = 0; x < COLS; x++) {
       board[y][x] = EMPTY_CELL;
-    }
-  }
-  
-  // Fill both visible bottom rows and near-bottom rows for desktop
-  // Calculate rows to fill - only the bottom rows
-  const rowsToFill = [
-    ROWS - 1,            // Bottom row
-    ROWS - 2,            // Second from bottom
-    // Math.floor(ROWS * 0.7),  // Удаляем эту строку
-    // Math.floor(ROWS * 0.7) + 1  // Удаляем эту строку
-  ];
-  
-  // Filter out duplicates and ensure valid indices
-  const uniqueRows = [...new Set(rowsToFill)].filter(index => index >= 0 && index < ROWS);
-  
-  // Place actual Tetris pieces in the selected rows
-  const pieceDefinitions = [
-    // I piece horizontal (4x1)
-    {
-      width: 4,
-      height: 1,
-      pattern: [[1, 1, 1, 1]]
-    },
-    // O piece (2x2)
-    {
-      width: 2,
-      height: 2,
-      pattern: [
-        [1, 1],
-        [1, 1]
-      ]
-    },
-    // T piece (3x2)
-    {
-      width: 3,
-      height: 2,
-      pattern: [
-        [0, 1, 0],
-        [1, 1, 1]
-      ]
-    },
-    // L piece (2x2) - shortened for better fitting
-    {
-      width: 2,
-      height: 2,
-      pattern: [
-        [1, 0],
-        [1, 1]
-      ]
-    },
-    // J piece (2x2) - shortened for better fitting
-    {
-      width: 2,
-      height: 2,
-      pattern: [
-        [0, 1],
-        [1, 1]
-      ]
-    },
-    // S piece (3x2)
-    {
-      width: 3,
-      height: 2,
-      pattern: [
-        [0, 1, 1],
-        [1, 1, 0]
-      ]
-    },
-    // Z piece (3x2)
-    {
-      width: 3,
-      height: 2,
-      pattern: [
-        [1, 1, 0],
-        [0, 1, 1]
-      ]
-    }
-  ];
-  
-  // Filter pieces to only use height 1 or 2
-  const filteredPieces = pieceDefinitions.filter(piece => piece.height <= 2);
-  
-  // Process pairs of adjacent rows
-  for (let i = 0; i < uniqueRows.length; i += 2) {
-    if (i + 1 >= uniqueRows.length) continue; // Skip if no pair
-    
-    const topRow = uniqueRows[i];
-    const bottomRow = uniqueRows[i+1];
-    
-    // Place pieces side by side starting from the left
-    let currentX = 0;
-    while (currentX < COLS) {
-      // Choose a random piece that will fit in the remaining space
-      let availablePieces = filteredPieces.filter(p => currentX + p.width <= COLS);
-      
-      // If no pieces fit, just place a single block
-      if (availablePieces.length === 0) {
-        if (currentX < COLS) {
-          board[bottomRow][currentX] = Math.floor(Math.random() * COLORS.length);
-          if (Math.random() > 0.5) { // 50% chance to place in top row too
-            board[topRow][currentX] = Math.floor(Math.random() * COLORS.length);
-          }
-        }
-        currentX++;
-        continue;
-      }
-      
-      // Select a random piece
-      const piece = availablePieces[Math.floor(Math.random() * availablePieces.length)];
-      const colorIndex = Math.floor(Math.random() * COLORS.length);
-      
-      // Place the piece
-      for (let pieceY = 0; pieceY < piece.height; pieceY++) {
-        // Calculate the actual row on the board
-        const boardY = (pieceY === 0) ? topRow : bottomRow;
-        
-        for (let pieceX = 0; pieceX < piece.width; pieceX++) {
-          if (piece.pattern[pieceY][pieceX] === 1) {
-            const boardX = currentX + pieceX;
-            
-            // Place the block if it's within board bounds
-            if (boardX >= 0 && boardX < COLS) {
-              board[boardY][boardX] = colorIndex;
-            }
-          }
-        }
-      }
-      
-      // Move to the position after this piece (with a small gap sometimes)
-      currentX += piece.width + (Math.random() < 0.3 ? 1 : 0);
     }
   }
 }
@@ -968,11 +838,11 @@ function togglePause() {
 function startGame() {
   console.log('Starting game...');
   calculateBoardDimensions();
-  // Make sure the board is initialized with shapes before first render
+  // Initialize empty board
   initBoard();
   createBoardDivs();
   newPiece();
-  // Draw the initial state including the bottom rows with shapes
+  // Draw the initial state
   updateBoard();
   drawPiece();
   gameInterval = setInterval(moveDown, 500);
@@ -998,7 +868,7 @@ function restartGame() {
   initBoard();
   createBoardDivs();
   newPiece();
-  // Make sure to update the board to show bottom shapes
+  // Update the board
   updateBoard();
   drawPiece();
   gameInterval = setInterval(moveDown, 500);
