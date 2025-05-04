@@ -519,6 +519,8 @@ let ROWS = 20; // Default value, will be calculated dynamically
 let COLS = 21; // Default for desktop, will be 12 for mobile
 let gameInitialized = false; // Flag to track initialization
 let gamePaused = false; // Flag to track pause state
+let prevShapeIndex = null; // Добавьте это в раздел переменных
+let prevColorIndex = null; // Добавьте это в раздел переменных
 
 // DOM elements
 const gameBoard = document.querySelector('#tetris-board');
@@ -630,9 +632,22 @@ function updateBoard() {
 
 // Create a new random piece
 function newPiece() {
-  const shapeIndex = Math.floor(Math.random() * SHAPES.length);
+  let shapeIndex, colorIndex;
+
+  // Выбираем фигуру, отличную от предыдущей
+  do {
+    shapeIndex = Math.floor(Math.random() * SHAPES.length);
+  } while (shapeIndex === prevShapeIndex);
+
+  // Выбираем цвет, отличный от предыдущего
+  do {
+    colorIndex = Math.floor(Math.random() * COLORS.length);
+  } while (colorIndex === prevColorIndex);
+
+  prevShapeIndex = shapeIndex;
+  prevColorIndex = colorIndex;
+
   const shape = SHAPES[shapeIndex];
-  const colorIndex = Math.floor(Math.random() * COLORS.length); // Random color from available colors
   currentPiece = {
     shape: shape,
     color: colorIndex,
