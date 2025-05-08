@@ -165,7 +165,6 @@ let fireLastStepHeight ;
 const fireAnimation = lottie.loadAnimation({
   container: document.querySelector(".flames"),
   renderer: "canvas",
-
   loop: true,
   autoplay: true,
   path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/67e4f42cc34467f09b8f3481_fire.json",
@@ -240,6 +239,14 @@ function backAllLabelAnimation() {
     }
   });
 }
+// Function to stop all label animations and reset them to frame 0
+function stopAllLabelAnimations() {
+  // Loop through all animations in the labelAnimations object
+  Object.values(labelAnimations).forEach(animation => {
+    animation.goToAndStop(0, true);
+  });
+}
+
 
 
 function isAnyLabelAnimationPlaying() {
@@ -783,6 +790,7 @@ cookieIcon.addEventListener("mouseleave", () => {
         const p = this.progress();
         updateTitle("3", p, "out");
         updateTitle("4", p, "in");
+
       },
     })
     .addLabel("process")
@@ -979,6 +987,9 @@ cookieIcon.addEventListener("mouseleave", () => {
           // },
           
         })
+    .add(() => {
+      flamesBox.style.maxHeight = `${flames.offsetHeight * 0.7}px`;
+    }, "<")
     .to(".flames_box", {
       // height: `${flames.offsetHeight + flamesMarginBottomValue}px`,
       height: fireLastStepHeight,
@@ -992,7 +1003,11 @@ cookieIcon.addEventListener("mouseleave", () => {
       // },
     }, "<")
     .addLabel("contacts")
-    .to(navLogo, { opacity: 1, duration: 0.3 }, "<0.1");
+ 
+    .to(navLogo, { opacity: 1, duration: 0.3 }, "<0.1")
+    .add(() => {
+      stopAllLabelAnimations()
+    })
 
     
   navLinks.forEach((link, index) => {
@@ -1336,10 +1351,17 @@ const mobileMask = document.querySelector(".mobile_mask");
 const flames = document.querySelector(".flames");
 // Get the computed style of the flames element to find its margin-bottom
 const flamesStyle = window.getComputedStyle(flames);
-const flamesMarginBottom = flamesStyle.marginBottom;
+// Extract the last value from the transform matrix
+const flamesMarginBottom = flamesStyle.transform;
+// Parse the matrix to get the last value (vertical translation)
+const flamesTranslateY = flamesStyle.transform.match(/matrix\([^)]+\)/)?.[0]
+  .split(',')
+  .map(val => parseFloat(val.trim()))
+  .pop() || 0;
+
 
 // Alternative way to get the margin-bottom value
-const flamesMarginBottomValue = parseInt(flamesStyle.marginBottom, 10);
+const flamesMarginBottomValue = parseInt(flamesTranslateY, 10);
 
 
 
@@ -1506,6 +1528,8 @@ document
 
     pricePeriod = "monthly";
     countPrice();
+    document.querySelector("[data-switcher]").children[0].classList.add("is-active");
+    document.querySelector("[data-switcher]").children[1].classList.remove("is-active");
   });
 document
   .querySelector("[data-switcher]")
@@ -1514,6 +1538,8 @@ document
 
     pricePeriod = "quarterly";
     countPrice();
+    document.querySelector("[data-switcher]").children[0].classList.remove("is-active");
+    document.querySelector("[data-switcher]").children[1].classList.add("is-active");
   });
 
 document.querySelectorAll(".switcher").forEach((switcher) => {
@@ -1541,6 +1567,22 @@ function countPrice() {
       pricePeriod === "monthly"
         ? priceMultipliers.monthly
         : priceMultipliers.quarterly;
+    finalPrice *= !isActive ? priceMultipliers.inactive : 1;
+    finalPrice *= isLabelActive ? priceMultipliers.label : 1;
+
+    const formattedPrice = finalPrice
+      .toFixed(0)
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    element.textContent = formattedPrice;
+  });
+
+  document.querySelectorAll("[data-bundle]").forEach((element, index) => {
+    let finalPrice = prices[index];
+
+    finalPrice *=
+      pricePeriod === "monthly"
+        ? priceMultipliers.monthly * 3
+        : priceMultipliers.quarterly * 3;
     finalPrice *= !isActive ? priceMultipliers.inactive : 1;
     finalPrice *= isLabelActive ? priceMultipliers.label : 1;
 
