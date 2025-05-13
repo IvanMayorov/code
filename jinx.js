@@ -85,7 +85,9 @@ gsap.ticker.lagSmoothing(0);
 //   effects: true,
 // });
 
-
+const remSize = parseFloat(
+  getComputedStyle(document.documentElement).fontSize
+);
 // Sound
 const soundButtons = document.querySelectorAll("[data-sound]");
 let audio = null;
@@ -196,7 +198,7 @@ const benefitsLottie = lottie.loadAnimation({
 //Benefits Label
 const benefitsLabel = lottie.loadAnimation({
   container: document.querySelector(".benefits_label"),
-  renderer: "svg",
+  renderer: "canvas",
   loop: false,
   autoplay: false,
   path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/68146f194dd86b56fbde0eaf_benefits_label-FQvG1.json",
@@ -205,7 +207,7 @@ const benefitsLabel = lottie.loadAnimation({
 //Manifest Label
 const manifestLabel = lottie.loadAnimation({
   container: document.querySelector(".manifest_label"),
-  renderer: "svg",
+  renderer: "canvas",
   loop: false,
   autoplay: false,
   path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/681477fe3163f4f6126f0cb8_manifest_label-Pxk2x.json",
@@ -214,10 +216,55 @@ const manifestLabel = lottie.loadAnimation({
 //Services Label
 const servicesLabel = lottie.loadAnimation({
   container: document.querySelector(".services_label"),
-  renderer: "svg",
+  renderer: "canvas",
   loop: false,
   autoplay: false,
   path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/68148608064b80892684b202_services_label-xVIqh.json",
+});
+
+//Process Label
+const processLabel = lottie.loadAnimation({
+  container: document.querySelector(".process_label"),
+  renderer: "canvas",
+  loop: false,
+  autoplay: false,
+  path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/681cbb16001b784d7d8f4201_process_label-sk1PM.json",
+});
+
+//Projects Label
+const projectsLabel = lottie.loadAnimation({
+  container: document.querySelector(".projects_label"),
+  renderer: "canvas",
+  loop: false,
+  autoplay: false,
+  path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/682223822306064bb407a26d_projects-jNY2o.json",
+});
+
+//Plans Label
+const plansLabel = lottie.loadAnimation({
+  container: document.querySelector(".plans_label"),
+  renderer: "canvas",
+  loop: false,
+  autoplay: false,
+  path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/68222382f75c06e8c882a8c8_plans-SRaVI.json",
+});
+
+//Answers Label
+const answersLabel = lottie.loadAnimation({
+  container: document.querySelector(".answers_label"),
+  renderer: "canvas",
+  loop: false,
+  autoplay: false,
+  path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/682223829c40e640b2942c8f_answers-jiNP1.json",
+});
+
+//Pinboard Label
+const pinboardLabel = lottie.loadAnimation({
+  container: document.querySelector(".pinboard_label"),
+  renderer: "canvas",
+  loop: false,
+  autoplay: false,
+  path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/68222382aac5f71fa2951fde_pinboard-Gbj7A.json",
 });
 
 // Group all label animations for easier management
@@ -225,9 +272,59 @@ const labelAnimations = {
   benefits: benefitsLabel,
   manifest: manifestLabel,
   services: servicesLabel,
+  process: processLabel,
+  projects: projectsLabel,
+  plans: plansLabel,
+  answers: answersLabel,
+  pinboard: pinboardLabel,
 };
 
-// Function to play all label animations
+// Function to play a specific label animation
+function playLabelAnimation(labelName, speed = 1, direction = 1) {
+  const animation = labelAnimations[labelName];
+  if (animation) {
+    animation.setSpeed(speed);
+    animation.setDirection(direction);
+    animation.play();
+
+  }
+  // Update the active navigation link based on the label name
+  const labelToSelectorMap = {
+    benefits: 1,
+    manifest: 2,
+    services: 3,
+    process: 4,
+    projects: 5,
+    plans: 6,
+    answers: 7,
+    pinboard: 8
+  };
+  
+  // Get the selector number from the label name and update the navigation
+  const selectorNumber = labelToSelectorMap[labelName];
+  if (selectorNumber) {
+    updateActiveNavLink(selectorNumber);
+  }
+}
+
+// Function to update active navigation link
+function updateActiveNavLink(selector) {
+  // Remove 'is-active' class from all navigation links
+  document.querySelectorAll(`.nav_links_box a`).forEach((link) => {
+    link.classList.remove("is-active");
+  });
+  
+  // Add 'is-active' class to the specified navigation link
+  const navLink = document.querySelector(
+    `.nav_links_box a:nth-of-type(${selector})`
+  );
+  
+  if (navLink) {
+    navLink.classList.add("is-active");
+  }
+}
+
+
 function backAllLabelAnimation() {
   // Loop through all animations in the labelAnimations object
   Object.values(labelAnimations).forEach(animation => {
@@ -239,28 +336,7 @@ function backAllLabelAnimation() {
     }
   });
 }
-// Function to stop all label animations and reset them to frame 0
-function stopAllLabelAnimations() {
-  // Loop through all animations in the labelAnimations object
-  Object.values(labelAnimations).forEach(animation => {
-    animation.goToAndStop(0, true);
-  });
-}
 
-
-
-function isAnyLabelAnimationPlaying() {
-  // Loop through all animations in the labelAnimations object
-  return Object.values(labelAnimations).some(animation => {
-    // Check if animation exists and is currently playing
-    if (animation && animation.isLoaded) {
-      // Animation is playing if it's not paused and not stopped
-      // We can check this by examining the animation's playingSegments and isPaused properties
-      return animation.isPaused === false && animation.currentFrame !== 0;
-    }
-    return false;
-  });
-}
 
 
 
@@ -529,9 +605,7 @@ cookieIcon.addEventListener("mouseleave", () => {
 
   const answerGap = (container.offsetHeight - answersBoxHeight) / 2;
 
-  const remSize = parseFloat(
-    getComputedStyle(document.documentElement).fontSize
-  );
+
 
   const navLogo = document.querySelector(".nav_logo");
 
@@ -574,6 +648,19 @@ cookieIcon.addEventListener("mouseleave", () => {
     }
   };
 
+  const animateMenu = (selector) => {
+    const navLink = document.querySelector(
+      `.nav_links_box a:nth-of-type(${selector})`
+    );
+
+    if (navLink) {
+      document.querySelectorAll(`.nav_links_box a`).forEach((link) => {
+        link.classList.remove("is-active");
+      });
+      navLink.classList.add("is-active");
+    }
+  };
+
   const animateLabelOut = (selector) => {
     const label = document.querySelector(`.label:nth-of-type(${selector})`);
     const navLink = document.querySelector(
@@ -589,13 +676,13 @@ cookieIcon.addEventListener("mouseleave", () => {
     }
   };
 
-  function updateTitle(selector, progress, direction, threshold = 0.5) {
-    const action =
-      progress > threshold === (direction === "in")
-        ? animateLabelIn
-        : animateLabelOut;
-    action(selector);
-  }
+  // function updateTitle(selector, progress, direction, threshold = 0.5) {
+  //   const action =
+  //     progress > threshold === (direction === "in")
+  //       ? animateLabelIn
+  //       : animateLabelOut;
+  //   action(selector);
+  // }
 
   function getSectionPosition(index) {
     const sections = document.querySelectorAll(".track > *");
@@ -627,13 +714,16 @@ cookieIcon.addEventListener("mouseleave", () => {
 
   const calculatedServicesHeight = totalServicesHeight - servicesSectionHeight;
   const calculatedProjectsHeight = totalProjectsHeight - projectsSectionHeight;
-
+  // #region Timeline
   tl = gsap.timeline({
     scrollTrigger: {
       trigger: ".section",
       pin: true,
       scrub: true,
       end: getSectionPosition(9),
+      onRefresh: () => {
+        backAllLabelAnimation();
+      },
       // markers: true
       // onUpdate: self => {
       //   const currentTime = tl.time();
@@ -657,20 +747,21 @@ cookieIcon.addEventListener("mouseleave", () => {
   gsap.set(flamesBox, { height: `${distanceFromTop}px` });
 
   tl.addLabel("hero")
+ 
   tl.to(".track", {
     x: -getSectionPosition(1),
     ease: "none",
     duration: 1,
     onUpdate() {
-      updateTitle("1", this.progress(), "in");
+      // updateTitle("1", this.progress(), "in");
 
     const progress = this.progress();
     if (progress > 0.5 ) {
-      benefitsLabel.setSpeed(1);
-      benefitsLabel.setDirection(1);
-      benefitsLabel.play();
+      playLabelAnimation('benefits');
+      benefitsLottie.play();
     } else {
       backAllLabelAnimation();
+      updateActiveNavLink(0);
     }
     },
   })
@@ -702,11 +793,12 @@ cookieIcon.addEventListener("mouseleave", () => {
       0.1
     )
     .addLabel("benefits")
+
     // Add Lottie animation for benefits section
-    .add(() => {
-      // Create a new Lottie animation when we reach the benefits section
-      benefitsLottie.play();
-    }, "benefits")
+    // .add(() => {
+    //   // Create a new Lottie animation when we reach the benefits section
+    //   benefitsLottie.play();
+    // }, "benefits")
     .to(".benefits_col:first-child", {
       y: `-${firstBenefitColHeight - bSquare}px`,
       ease: "none",
@@ -727,19 +819,15 @@ cookieIcon.addEventListener("mouseleave", () => {
       duration: 1,
       onUpdate() {
         const p = this.progress();
-        updateTitle("1", p, "out");
-        updateTitle("2", p, "in");
+        // updateTitle("1", p, "out");
+        // updateTitle("2", p, "in");
         if (this.progress() > 0.5) {
-          manifestLabel.setSpeed(1);
-          manifestLabel.setDirection(1);
-          manifestLabel.play();
+          playLabelAnimation('manifest');
         } else {
           backAllLabelAnimation();
         }
         if (this.progress() < 0.3) {
-          benefitsLabel.setSpeed(1);
-          benefitsLabel.setDirection(1);
-          benefitsLabel.play();
+          playLabelAnimation('benefits');
         } 
       },
     })
@@ -753,16 +841,12 @@ cookieIcon.addEventListener("mouseleave", () => {
         // updateTitle("2", p, "out", 0.8);
         // updateTitle("3", p, "in", 0.9);
         if (this.progress() > 0.9) {
-          servicesLabel.setSpeed(1);
-          servicesLabel.setDirection(1);
-          servicesLabel.play();
+          playLabelAnimation('services');
         } else {
           backAllLabelAnimation();
         }
         if (this.progress() < 0.8) {
-          manifestLabel.setSpeed(1);
-          manifestLabel.setDirection(1);
-          manifestLabel.play();
+          playLabelAnimation('manifest');
         }
 
       },
@@ -774,6 +858,8 @@ cookieIcon.addEventListener("mouseleave", () => {
       duration: 3,
       onUpdate() {
         const p = this.progress();
+
+
         updateBigtitleRows(
           p,
           bigtitleRowsServices,
@@ -788,20 +874,29 @@ cookieIcon.addEventListener("mouseleave", () => {
       duration: 1,
       onUpdate() {
         const p = this.progress();
-        updateTitle("3", p, "out");
-        updateTitle("4", p, "in");
+        if (p > 0.9) {
+          playLabelAnimation('process');
+          
+        } else {
+          backAllLabelAnimation();
+        }
+        if (p < 0.8) {
+          playLabelAnimation('services');
+        }
+        if (p > 0.5) {
+          scratchLottie.play();
+        }
 
       },
     })
     .addLabel("process")
-    .add(() => {
-      scratchLottie.play();
-    }, "process")
+
     .to(".process_track", {
       // x: -processTrack.offsetWidth - 1 * remSize,
       x: -processCardWidth - 1 * remSize,
       ease: "none",
       duration: 1,
+
     })
  
       .to(".process_card:nth-child(1) ~ .process_card", {
@@ -844,9 +939,15 @@ cookieIcon.addEventListener("mouseleave", () => {
       duration: 1,
       onUpdate() {
         const p = this.progress();
-        updateTitle("4", p, "out");
-        updateTitle("5", p, "in");
-      },
+        if (p > 0.5) {
+          playLabelAnimation('projects');
+        } else {
+          backAllLabelAnimation();
+        }
+        if (p < 0.4) {
+          playLabelAnimation('process');
+        }
+      }
     })
  
     .addLabel("projects")
@@ -870,9 +971,15 @@ cookieIcon.addEventListener("mouseleave", () => {
       duration: 1,
       onUpdate() {
         const p = this.progress();
-        updateTitle("5", p, "out", 0.5);
-        updateTitle("6", p, "in", 0.5);
-      },
+        if (p > 0.5) {
+          playLabelAnimation('plans');
+        } else {
+          backAllLabelAnimation();
+        }
+        if (p < 0.4) {
+          playLabelAnimation('projects');
+        }
+      }
     })
 
     .addLabel("plans")
@@ -910,8 +1017,14 @@ cookieIcon.addEventListener("mouseleave", () => {
       duration: 2,
       onUpdate() {
         const p = this.progress();
-        updateTitle("6", p, "out", 0.7);
-        updateTitle("7", p, "in", 0.75);
+        if (p > 0.5) {
+          playLabelAnimation('answers');
+        } else {
+          backAllLabelAnimation();
+        }
+        if (p < 0.4) {
+          playLabelAnimation('plans');
+        }
       },
     })
     // .to(".plans_card.is-first", {
@@ -923,7 +1036,7 @@ cookieIcon.addEventListener("mouseleave", () => {
     .to(".answers_box_left", {
       y: -answersLeftBoxHeight + answersBoxHeight + answerGap,
       ease: "none",
-      duration: 1,
+      duration: 2,
       onUpdate() {
         const p = this.progress();
         // Count the number of answer items in the container
@@ -958,8 +1071,14 @@ cookieIcon.addEventListener("mouseleave", () => {
       duration: 1,
       onUpdate() {
         const p = this.progress();
-        updateTitle("7", p, "out", 0.5);
-        updateTitle("8", p, "in", 0.55);
+        if (p > 0.5) {
+          playLabelAnimation('pinboard');
+        } else {
+          backAllLabelAnimation();
+        }
+        if (p < 0.4) {
+          playLabelAnimation('answers');
+        }
       },
     })
     .addLabel("board")
@@ -967,11 +1086,17 @@ cookieIcon.addEventListener("mouseleave", () => {
       x: -(getSectionPosition(9) - firstSection.offsetWidth),
       ease: "none",
       duration: 2,
-      onUpdate() {
-        const p = this.progress();
-        updateTitle("8", p, "out", 0.9);
-        updateTitle("9", p, "in", 0.9);
-      },
+      // onUpdate() {
+      //   const p = this.progress();
+      //   if (p > 0.5) {
+      //     playLabelAnimation('contacts');
+      //   } else {
+      //     backAllLabelAnimation();
+      //   }
+      //   if (p < 0.55) {
+      //     playLabelAnimation('board');
+      //   }
+      // },
       onComplete: () => {
         console.log(fireLastStepHeight);
       },
@@ -980,34 +1105,28 @@ cookieIcon.addEventListener("mouseleave", () => {
       y: -footerHeight,
       ease: "none",
       duration: 0.5,
-      // onComplete: () => {
-        //   gsap.to(flamesBox, {
-          //     height: fireLastStepHeight,
-          //   });
-          // },
+ 
           
         })
-    .add(() => {
-      flamesBox.style.maxHeight = `${flames.offsetHeight * 0.7}px`;
-    }, "<")
+    // .add(() => {
+    //   flamesBox.style.maxHeight = `${flames.offsetHeight * 0.7}px`;
+    // }, "<")
     .to(".flames_box", {
       // height: `${flames.offsetHeight + flamesMarginBottomValue}px`,
       height: fireLastStepHeight,
-
-      // ease: "none",
-      // duration: 0.5,
-      // onStart: () => {
-      //   console.log(
-      //     fireLastStepHeight
-      //   );
-      // },
+      ease: "none",
+      duration: 0.5,
+      onStart: () => {
+        backAllLabelAnimation();
+      },
+      onReverseComplete: () => {
+        playLabelAnimation('pinboard');
+      }
     }, "<")
+    
     .addLabel("contacts")
  
     .to(navLogo, { opacity: 1, duration: 0.3 }, "<0.1")
-    .add(() => {
-      stopAllLabelAnimations()
-    })
 
     
   navLinks.forEach((link, index) => {
@@ -1026,7 +1145,7 @@ cookieIcon.addEventListener("mouseleave", () => {
       closeMenu();
       gsap.to(window, {
         scrollTo: tl.scrollTrigger.labelToScroll(sections[index]),
-        duration: 0.5,
+        duration: 1,
       });
     });
   });
@@ -1363,6 +1482,7 @@ const flamesTranslateY = flamesStyle.transform.match(/matrix\([^)]+\)/)?.[0]
 // Alternative way to get the margin-bottom value
 const flamesMarginBottomValue = parseInt(flamesTranslateY, 10);
 
+fireLastStepHeight = Math.min(flames.offsetHeight + flamesMarginBottomValue, window.innerHeight - document.querySelector('.footer').offsetHeight, 47 * remSize)
 
 
 
@@ -1505,27 +1625,27 @@ const handleOutsideClick = (event) => {
 
 //#region PRICES
 let pricePeriod = "quarterly";
-// const initialTrial = parseInt(
-//   document.querySelectorAll("[data-price]")[0].textContent.replace(",", "")
-// );
-const initialSingle = parseInt(
-  document.querySelectorAll("[data-price]")[0].textContent.replace(",", "")
-);
-const initialDouble = parseInt(
-  document.querySelectorAll("[data-price]")[1].textContent.replace(",", "")
-);
-const initialTrouble = parseInt(
-  document.querySelectorAll("[data-price]")[2].textContent.replace(",", "")
-);
 
-const prices = [ initialSingle, initialDouble, initialTrouble];
+const pricesTable = {
+  monthly: {
+    normal:     [5200, 10400, 20800],
+    cat:        [4200, 8400, 16800],
+    white:      [5700, 11400, 22800],
+    white_cat:  [4700, 9400, 18800]
+  },
+  quarterly: {
+    normal:     [4400, 8800, 17600],
+    cat:        [3500, 7000, 14000],
+    white:      [4800, 9600, 19200],
+    white_cat:  [4000, 8000, 16000]
+  }
+};
 
 const activeElement = document.querySelector(".plans_swither_active");
 document
   .querySelector("[data-switcher]")
   .children[0].addEventListener("click", () => {
     activeElement.style.transform = "translateX(-100%)";
-
     pricePeriod = "monthly";
     countPrice();
     document.querySelector("[data-switcher]").children[0].classList.add("is-active");
@@ -1535,14 +1655,13 @@ document
   .querySelector("[data-switcher]")
   .children[1].addEventListener("click", () => {
     activeElement.style.transform = "translateX(0%)";
-
     pricePeriod = "quarterly";
     countPrice();
     document.querySelector("[data-switcher]").children[0].classList.remove("is-active");
     document.querySelector("[data-switcher]").children[1].classList.add("is-active");
   });
 
-document.querySelectorAll(".switcher").forEach((switcher) => {
+document.querySelectorAll("[data-price-toggle]").forEach((switcher) => {
   switcher.addEventListener("click", () => {
     switcher.querySelector(".head-switcher").classList.toggle("is-active");
     countPrice();
@@ -1550,49 +1669,26 @@ document.querySelectorAll(".switcher").forEach((switcher) => {
 });
 
 function countPrice() {
-  const isActive = document.querySelector("[data-cat] .is-active") !== null;
-  const isLabelActive =
-    document.querySelector("[data-label] .is-active") !== null;
-  const priceMultipliers = {
-    monthly: 1.15,
-    quarterly: 1,
-    inactive: 1.2,
-    label: 1.1,
-  };
+  // Определяем выбранный тип пакета
+  let type = 'normal';
+  if (document.querySelector("[data-cat] .is-active")) type = 'cat';
+  if (document.querySelector("[data-label] .is-active")) type = 'white';
+  if (document.querySelector("[data-cat] .is-active") && document.querySelector("[data-label] .is-active")) type = 'white_cat';
 
+  // Берём нужный массив цен
+  const prices = pricesTable[pricePeriod][type];
+
+  // Вставляем значения в соответствующие элементы
   document.querySelectorAll("[data-price]").forEach((element, index) => {
-    let finalPrice = prices[index];
-
-    finalPrice *=
-      pricePeriod === "monthly"
-        ? priceMultipliers.monthly
-        : priceMultipliers.quarterly;
-    finalPrice *= !isActive ? priceMultipliers.inactive : 1;
-    finalPrice *= isLabelActive ? priceMultipliers.label : 1;
-
-    const formattedPrice = finalPrice
-      .toFixed(0)
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    element.textContent = formattedPrice;
+    element.textContent = prices[index].toLocaleString();
   });
 
   document.querySelectorAll("[data-bundle]").forEach((element, index) => {
-    let finalPrice = prices[index];
-
-    finalPrice *=
-      pricePeriod === "monthly"
-        ? priceMultipliers.monthly * 3
-        : priceMultipliers.quarterly * 3;
-    finalPrice *= !isActive ? priceMultipliers.inactive : 1;
-    finalPrice *= isLabelActive ? priceMultipliers.label : 1;
-
-    const formattedPrice = finalPrice
-      .toFixed(0)
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    element.textContent = formattedPrice;
+    element.textContent = (prices[index] * 3).toLocaleString();
   });
 }
 
+countPrice()
 //#endregion PRICES
 
 //#region FAQ
@@ -1624,12 +1720,12 @@ function toggleDropdown(dropdownIndex) {
   });
 }
 
-// Add click event listeners to each dropdown item
-document.querySelectorAll(".answer_item").forEach((item, index) => {
-  item.addEventListener("click", () => {
-    toggleDropdown(index);
-  });
-});
+// // Add click event listeners to each dropdown item
+// document.querySelectorAll(".answer_item").forEach((item, index) => {
+//   item.addEventListener("click", () => {
+//     toggleDropdown(index);
+//   });
+// });
 
 gsap.set(".answer_drop", { height: 0 });
 
@@ -1696,11 +1792,10 @@ window.addEventListener('resize', () => {
     }, 250);
   }
 });
-
-// Событие срабатывает когда Lottie анимация полностью загружена
-fireAnimation.addEventListener('DOMLoaded', () => {
-  // Ваш код здесь
-  fireLastStepHeight = Math.min(flames.offsetHeight + flamesMarginBottomValue, window.innerHeight - document.querySelector('.footer').offsetHeight)
-  initMediaQueries();
-});
+// // Событие срабатывает когда Lottie анимация полностью загружена
+// fireAnimation.addEventListener('DOMLoaded', () => {
+//   // Ваш код здесь
+//   fireLastStepHeight = Math.min(flames.offsetHeight + flamesMarginBottomValue, window.innerHeight - document.querySelector('.footer').offsetHeight, 47 * remSize)
+//   initMediaQueries();
+// });
 
