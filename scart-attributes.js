@@ -226,3 +226,4 @@ function updatePrice(card) {
   
     return descr
 }
+ 

@@ -1,0 +1,14 @@
+{
+  "name": "js-minify-watcher",
+  "version": "1.0.0",
+  "description": "Автоматическая минификация JS-файлов в папку min при сохранении.",
+  "main": "index.js",
+  "scripts": {
+    "watch-js": "chokidar '*.js' -i 'min/*' -c 'npm run minify -- {path}'",
+    "minify": "node minify.js"
+  },
+  "devDependencies": {
+    "chokidar-cli": "^3.0.0",
+    "terser": "^5.0.0"
+  }
+} 
