@@ -166,7 +166,7 @@ let fireLastStepHeight ;
 //Fire
 const fireAnimation = lottie.loadAnimation({
   container: document.querySelector(".flames"),
-  renderer: "svg",
+  renderer: "canvas",
   loop: true,
   autoplay: true,
   path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/68515e0799fe0f81f09b8d7c_Fire-wueJy.json",
