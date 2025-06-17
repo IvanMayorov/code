@@ -166,10 +166,11 @@ let fireLastStepHeight ;
 //Fire
 const fireAnimation = lottie.loadAnimation({
   container: document.querySelector(".flames"),
-  renderer: "canvas",
+  renderer: "svg",
   loop: true,
   autoplay: true,
-  path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/67e4f42cc34467f09b8f3481_fire.json",
+  path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/68515e0799fe0f81f09b8d7c_Fire-wueJy.json",
+
 });
 fireAnimation.setSpeed(1.5);
 
