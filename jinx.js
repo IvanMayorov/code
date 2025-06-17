@@ -169,7 +169,7 @@ const fireAnimation = lottie.loadAnimation({
   renderer: "canvas",
   loop: true,
   autoplay: true,
-  path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/68515e0799fe0f81f09b8d7c_Fire-wueJy.json",
+  path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/6851a5a63a4abe0654cc6de0_fire-optimized.json",
 
 });
 fireAnimation.setSpeed(1.5);
