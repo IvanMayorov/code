@@ -1,4 +1,3 @@
-
 const message = document.querySelector(".email_message");
 const form = document.querySelector("form[name='email-form-3']");
 const input = form.querySelector("input[type='email']");
@@ -16,8 +15,12 @@ const nonBusinessDomains = [
 function isBusinessEmail(email) {
   if (!email || !email.includes('@')) return false;
   
+  // Check basic email format
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return false;
+  
   const domain = email.split('@')[1].toLowerCase();
-  return !nonBusinessDomains.includes(domain);
+  // Check if domain ends with a dot or is in the non-business list
+  return !nonBusinessDomains.includes(domain) && !domain.endsWith('.');
 }
 
 // Add input validation
@@ -32,6 +35,3 @@ input.addEventListener('input', () => {
     input.setCustomValidity('');
   }
 });
-
-
-

@@ -49,7 +49,8 @@ function addToCard(element) {
     let title = element.querySelector('[data-scart=title]').innerText;
     let img = element.querySelector('[data-scart=img]').src;
     let price = parseInt(element.querySelector('[data-scart=price]').innerText.replace(/[^0-9.]/gim, ""));
-    let product = new ProdObj(title, img, price, updatePrice(element));
+    console.log(price);
+    let product = new ProdObj(title, img, price, );
     let jProd = JSON.stringify(product);
     
  
@@ -68,10 +69,10 @@ function addToCard(element) {
 
 function createIdObject(curRow) {
     let titleRow = curRow.querySelector('[data-scart=title]').innerText;
-    let description = curRow.querySelector('[data-scart=description]').innerText;
+    let description = curRow.querySelector('[data-scart=description]')?.innerText || '';
     let imgRow = curRow.querySelector('[data-scart=img]').src;
     let priceRow = parseInt(curRow.querySelector('[data-scart=price]').innerText.replace(/[^0-9.]/gim, ""));
-    let productRow = new ProdObj(titleRow, imgRow, priceRow, description);
+    let productRow = new ProdObj(titleRow, imgRow, priceRow);
     let strCartRow = JSON.stringify(productRow);
     return strCartRow;
 
@@ -79,8 +80,9 @@ function createIdObject(curRow) {
 
 document.onclick = (e) => {
     if (e.target.getAttribute('data-scart') == 'remove') {
-   
+        console.log('remove')
         let curRow = e.target.closest('[data-scart=row]');
+        console.log(sCart[createIdObject(curRow)])
         delete sCart[createIdObject(curRow)];
         localStorage.setItem('sCart', JSON.stringify(sCart));
         refreshCart();
@@ -88,6 +90,7 @@ document.onclick = (e) => {
     } else if (e.target.getAttribute('data-scart') == 'minus') {
         let key = createIdObject(e.target.closest('[data-scart=row]'));
         if (sCart[key] > 1) {
+            console.log('minus')
             sCart[key] -= 1;
             localStorage.setItem('sCart', JSON.stringify(sCart));
             refreshCart();
@@ -117,7 +120,9 @@ function refreshCart() {
                 localStorage.removeItem('sCart');
             }
             rowCart.querySelector('[data-scart=title]').innerText = good.title;
-            rowCart.querySelector('[data-scart=description]').innerText = good.description;
+            // if (good.description) {
+            //     rowCart.querySelector('[data-scart=description]').innerText = good.description;
+            // }
             rowCart.querySelector('[data-scart=img]').src = good.img;
             result += good.price * sCart[key];
             rowCart.querySelector('[data-scart=price]').innerHTML = String(good.price).replace(/\B(?=(\d{3})+(?!\d))/g, "&thinsp;");
@@ -192,7 +197,7 @@ document.querySelectorAll('[data-scart=options-box] > div').forEach(element => {
 
 scartgoods.forEach(card => {
     card.setAttribute('data-initial-price', card.querySelector('[data-scart=price]').textContent.replace(/\s/g, ''))
-    updatePrice(card)
+    // updatePrice(card)
     
 });
 
@@ -214,7 +219,9 @@ function updatePrice(card) {
 
     })
     card.querySelector('[data-scart=price]').innerHTML = String(Math.round(sum*discount)).replace(/\B(?=(\d{3})+(?!\d))/g, "&thinsp;")
-
+    const oldPrice = card.querySelector('[data-scart=old-price]')
+    // console.log('oldPrice', oldPrice)
+  
     if (discount < 1) {
         card.querySelector('[data-scart=old-price]').innerHTML = String(sum).replace(/\B(?=(\d{3})+(?!\d))/g, "&thinsp;")
         card.querySelector('[data-scart=old-price]').parentElement.style.visibility = "visible"

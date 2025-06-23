@@ -6,7 +6,7 @@ Webflow.push(function(){
   //     root: null,
   //     rootMargin: '0px',
   //     threshold: 0.5
-  // };
+  // }; 
 
   // const callback = (entries) => {
   //     entries.forEach(entry => {

@@ -121,6 +121,7 @@ soundButtons.forEach(button => {
 const logo = document.querySelector('.logo-jinx');
 const footerLogo = document.querySelector('.nav_logo')
 const flamesBox = document.querySelector('.flames_box');
+const benefitsSection = document.querySelector(".benefits_section");
 let distanceFromTop = logo.getBoundingClientRect().bottom + window.scrollY;
 // flamesBox.style.height = `${distanceFromTop}px`;
 
@@ -466,6 +467,7 @@ let navMenuButtonWidth = navMenuButton.offsetWidth;
 
 gsap.set(".section_title_box", { opacity: 1 });
 
+
 // #region Desktop ___________________________________________________________________________________________________________
 function initDesktopAnimations() {
 
@@ -577,7 +579,7 @@ cookieIcon.addEventListener("mouseleave", () => {
   });
 
   const firstSection = document.querySelector(".main_section");
-  const benefitsSection = document.querySelector(".benefits_section");
+  
   const manifestSection = document.querySelector(".mnfst_section");
   const servicesSection = document.querySelector(".services_section");
   const processSection = document.querySelector(".process_section");
@@ -1218,6 +1220,8 @@ const processTrack = document.querySelector(".process_track");
 const processCards = document.querySelectorAll(".process_card");
 
 function initMobileAnimations() {
+
+
   // alert('mobile');
 
   // Сбросить все ScrollTrigger
@@ -1236,6 +1240,24 @@ function initMobileAnimations() {
 
   const planSlider = document.querySelector(".plans_slider");
   const plansSlides = document.querySelectorAll(".plans_slider > *");
+
+  const benefitsTimeline = gsap.timeline({
+    scrollTrigger: {
+      trigger: benefitsSection,
+      start: "top 10%",
+      end: "bottom 90%",
+      scrub: 1,
+      markers: true,
+    }
+  });
+
+  benefitsTimeline
+    .to(".benefits_title_box", 
+      { x: "-30rem", duration: 1, ease: "none" },
+    )
+    .to(".benefits_card", 
+      { x: "0", duration: 1, ease: "none" }, '<'
+    )
   // plansSlides.forEach(slide => {
   //   // Create a wrapper div with swiper-slide class
   //   const wrapper = document.createElement('div');
@@ -1545,7 +1567,7 @@ function openMenu() {
 }
 
 function closeMenu() {
-  console.log(progress);
+  console.log('closeMenu');
   if (window.innerWidth > 479) {
     if (progress === 0) {
       gsap.to(flamesBox, {
@@ -1554,9 +1576,10 @@ function closeMenu() {
       });
     } else {
       gsap.to(flamesBox, {
-        height: document.querySelector('.label').offsetHeight,
+        height: document.querySelector('.lottie_labels').offsetHeight,
         duration: 0.5,
       });
+      console.log('closeMenu 2');
     }
   }
   const newWidth = "100%";
