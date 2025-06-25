@@ -1247,7 +1247,7 @@ function initMobileAnimations() {
       start: "top 10%",
       end: "bottom 70%",
       scrub: 1,
-      markers: true,
+      // markers: true,
     }
   });
 
@@ -1393,17 +1393,17 @@ function initMobileAnimations() {
     // Adjust index to start showing images from the second section
     // For the second section (index 1), show the first image (index 0)
     const imageIndex = index > 0 ? index - 1 : null;
+    const labelNames = ['benefits', 'manifest', 'services', 'process', 'projects', 'plans', 'answers', 'pinboard'];
 
     // Skip the first section
     if (imageIndex === null) return;
+    // // Get the corresponding image in the section_title_box
+    // const sectionImage = document.querySelector(
+    //   `.section_title_box img:nth-child(${imageIndex + 1})`
+    // );
 
-    // Get the corresponding image in the section_title_box
-    const sectionImage = document.querySelector(
-      `.section_title_box img:nth-child(${imageIndex + 1})`
-    );
-
-    if (sectionImage) {
-      gsap.set(sectionImage, { yPercent: -150 });
+   
+      // gsap.set(sectionImage, { yPercent: -150 });
 
       // Create ScrollTrigger for each section
       ScrollTrigger.create({
@@ -1412,22 +1412,33 @@ function initMobileAnimations() {
         end: "bottom center",
         onEnter: () => {
           // Show the corresponding image
-          gsap.to(sectionImage, { yPercent: 0, duration: 0.3 });
+          // gsap.to(sectionImage, { yPercent: 0, duration: 0.3 });
+         
+          
+          
+            playLabelAnimation(labelNames[index - 1]);
+          
+          
         },
         onLeave: () => {
+          backAllLabelAnimation();
           // Hide the image when leaving the section
-          gsap.to(sectionImage, { yPercent: -150, duration: 0.3 });
+          // gsap.to(sectionImage, { yPercent: -150, duration: 0.3 });
         },
         onEnterBack: () => {
           // Show the image when scrolling back up
-          gsap.to(sectionImage, { yPercent: 0, duration: 0.3 });
+          
+            playLabelAnimation(labelNames[index - 1]);
+          
+          // gsap.to(sectionImage, { yPercent: 0, duration: 0.3 });
         },
         onLeaveBack: () => {
           // Hide the image when scrolling back up past the section
-          gsap.to(sectionImage, { yPercent: -150, duration: 0.3 });
+          backAllLabelAnimation();
+          // gsap.to(sectionImage, { yPercent: -150, duration: 0.3 });
         },
       });
-    }
+    
   });
   // Add click event listeners to nav links to scroll to corresponding sections in track
 
