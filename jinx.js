@@ -1245,7 +1245,7 @@ function initMobileAnimations() {
     scrollTrigger: {
       trigger: benefitsSection,
       start: "top 10%",
-      end: "bottom 90%",
+      end: "bottom 70%",
       scrub: 1,
       markers: true,
     }
@@ -1256,7 +1256,13 @@ function initMobileAnimations() {
       { x: "-30rem", duration: 1, ease: "none" },
     )
     .to(".benefits_card", 
-      { x: "0", duration: 1, ease: "none" }, '<'
+      { x: "0", duration: 1, ease: "none" }, '<0.5'
+    )
+    .to(".benefits_square_wrap", 
+      { x: "-29.2rem", duration: 1, ease: "none" }, '<0.5'
+    )
+    .to(".benefits_descr", 
+      { x: "0", duration: 1, ease: "none" }, '<0.5'
     )
   // plansSlides.forEach(slide => {
   //   // Create a wrapper div with swiper-slide class
