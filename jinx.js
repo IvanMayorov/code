@@ -1325,11 +1325,14 @@ function initMobileAnimations() {
       {
         opacity: 0,
         width: 0,
+        // ease: "none",
+        // duration: 0.3,
       },
       {
         opacity: 1,
         width: "auto",
         duration: 0.3,
+        // ease: "none",
         scrollTrigger: {
           trigger: row,
           start: "top 50%",
