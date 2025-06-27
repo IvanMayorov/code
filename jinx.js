@@ -203,6 +203,14 @@ const benefitsLottie = lottie.loadAnimation({
   path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/67de874bff0309089a98e25b_scratch-qddRu.json", // Update with your actual JSON path
 });
 
+const comingSoon = lottie.loadAnimation({
+  container: document.querySelector(".board_coming"), // Make sure this element exists
+  renderer: "svg",
+  loop: false,
+  autoplay: false,
+  path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/685e94ae3ee655e469776d0b_coming-wJCLU.json", // Update with your actual JSON path
+});
+
 //Benefits Label
 const benefitsLabel = lottie.loadAnimation({
   container: document.querySelector(".benefits_label"),
@@ -1095,17 +1103,11 @@ cookieIcon.addEventListener("mouseleave", () => {
       x: -(getSectionPosition(9) - firstSection.offsetWidth),
       ease: "none",
       duration: 2,
-      // onUpdate() {
-      //   const p = this.progress();
-      //   if (p > 0.5) {
-      //     playLabelAnimation('contacts');
-      //   } else {
-      //     backAllLabelAnimation();
-      //   }
-      //   if (p < 0.55) {
-      //     playLabelAnimation('board');
-      //   }
-      // },
+      onStart: () => {
+        comingSoon.play();
+      },
+
+  
       onComplete: () => {
         console.log(fireLastStepHeight);
       },
