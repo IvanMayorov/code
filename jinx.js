@@ -107,7 +107,7 @@ soundButtons.forEach(button => {
 
     } else {
       // If no audio or audio is paused, create and play
-      audio = new Audio("https://res.cloudinary.com/do7m7foqv/video/upload/v1742898919/Ava_Low_-_Them_Thieves_Looped_v2_kbv2gx.mp3");
+      audio = new Audio("https://res.cloudinary.com/do7m7foqv/video/upload/v1750862291/Punchy_Fashion_Groove_Loop-2_m3aoub.mp3");
       audio.play();
       soundButtonIcon.style.display = 'none';
       soundButtonIcon.nextElementSibling.style.display = 'block';
@@ -138,6 +138,8 @@ iconCatLink.addEventListener("click", () => {
 const jokeButton = document.querySelector("[data-joke]");
 const jokeInitial = document.querySelector(".joke_initial");
 const jokeFinal = document.querySelector(".joke_box");
+const jokeFinalImg = document.querySelector(".joke_final")
+const fires = document.querySelectorAll("[data-fire]");
 let isFirstClick = true;
 let clickCount = 0;
 
@@ -146,19 +148,23 @@ jokeButton.addEventListener("click", () => {
   
   if (isFirstClick) {
     // First click: Change the button text
-    jokeButton.textContent = "seriously, don't touch it";
+    jokeButton.querySelector("div").textContent = "seriously, don't touch it";
     isFirstClick = false;
   } else if (clickCount === 2) {
     // Second click: Show "please stop"
-    jokeButton.textContent = "please stop";
+    jokeButton.querySelector("div").textContent = "please stop";
   } else if (clickCount === 3) {
     // Third click: Show 10 spaces
-    jokeButton.textContent = " ";
+    jokeButton.querySelector("div").textContent = " ";
+    fires.forEach(fire => {
+      fire.style.display = "block";
+    });
   } else if (clickCount === 4) {
     // Fourth click: Hide the button
     jokeButton.style.display = "none";
     jokeInitial.style.display = "none";
     jokeFinal.style.display = "block";
+    jokeFinalImg.style.display = "block";
   }
 });
 
@@ -1382,7 +1388,7 @@ function initMobileAnimations() {
     scrollTrigger: {
       trigger: ".board_section",
       start: "top 0%",
-      end: "bottom 50%",
+      end: "bottom 100%",
       scrub: 1,
       // markers: true,
     },
@@ -1708,6 +1714,24 @@ document
 document.querySelectorAll("[data-price-toggle]").forEach((switcher) => {
   switcher.addEventListener("click", () => {
     switcher.querySelector(".head-switcher").classList.toggle("is-active");
+    const switcherImages = switcher.querySelectorAll('.plans_swither_img');
+    const activeImage = switcher.querySelector('.plans_swither_img.is-active');
+    
+    if (activeImage) {
+      activeImage.classList.remove('is-active');
+    }
+    
+    if (switcher.querySelector('.head-switcher').classList.contains('is-active')) {
+      // Show second image when active
+      if (switcherImages[1]) {
+        switcherImages[1].classList.add('is-active');
+      }
+    } else {
+      // Show first image when not active
+      if (switcherImages[0]) {
+        switcherImages[0].classList.add('is-active');
+      }
+    }
     countPrice();
   });
 });
@@ -1764,12 +1788,11 @@ function toggleDropdown(dropdownIndex) {
   });
 }
 
-// // Add click event listeners to each dropdown item
-// document.querySelectorAll(".answer_item").forEach((item, index) => {
-//   item.addEventListener("click", () => {
-//     toggleDropdown(index);
-//   });
-// });
+document.querySelectorAll(".answer_item").forEach((item, index) => {
+  item.addEventListener("click", () => {
+    toggleDropdown(index);
+  });
+});
 
 gsap.set(".answer_drop", { height: 0 });
 
