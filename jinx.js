@@ -1547,37 +1547,39 @@ ScrollTrigger.create({
   
   // #region FOOTER
 
-  const footer = document.querySelector(".footer");
+//   const footer = document.querySelector(".footer");
  
   
-gsap.to([mobileMask, document.querySelector('.navbar'), navLinksBox], {
-  y: -footer.offsetHeight,
-  ease: "none",
-  scrollTrigger: {
-    trigger: footer,
-    start: "top bottom",
-    end: "bottom bottom",
-    scrub: 1,
-  }
-});
+// gsap.to([mobileMask, document.querySelector('.navbar'), navLinksBox], {
+//   y: -footer.offsetHeight,
+//   ease: "none",
+//   scrollTrigger: {
+//     trigger: footer,
+//     start: "top bottom",
+//     end: "bottom bottom",
+//     scrub: 1,
+//   }
+// });
 
-gsap.to(".flames_box", {
-  height: '20rem',
+// gsap.to(".flames_box", {
+//   height: '18rem',
 
-  scrollTrigger: {
-    trigger: footer,
-    start: "top 50%",
-    end: "bottom bottom",
-    scrub: 1,
-    immediateRender: false,
-    // markers: true
-  }
-});
-
-} 
+//   scrollTrigger: {
+//     trigger: footer,
+//     start: "top 50%",
+//     end: "bottom bottom",
+//     scrub: 1,
+//     immediateRender: false,
+//     // markers: true
+//   }
+// });
 
 
 // #endregion
+} 
+
+
+
 
 // #region Swipers
 const swiper = new Swiper(".news_slider_wrap", {
