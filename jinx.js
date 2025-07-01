@@ -1551,7 +1551,7 @@ ScrollTrigger.create({
  
   
 gsap.to([mobileMask, document.querySelector('.navbar'), navLinksBox], {
-  y: '-100vh',
+  y: -footer.offsetHeight,
   ease: "none",
   scrollTrigger: {
     trigger: footer,
