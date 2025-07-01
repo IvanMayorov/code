@@ -122,6 +122,10 @@ const logo = document.querySelector('.logo-jinx');
 const footerLogo = document.querySelector('.nav_logo')
 const flamesBox = document.querySelector('.flames_box');
 const benefitsSection = document.querySelector(".benefits_section");
+const mask = document.querySelector(".main_mask");
+const mobileMask = document.querySelector(".mobile_mask");
+
+
 let distanceFromTop = logo.getBoundingClientRect().bottom + window.scrollY;
 // flamesBox.style.height = `${distanceFromTop}px`;
 
@@ -1450,6 +1454,8 @@ function initMobileAnimations() {
   });
   // Add click event listeners to nav links to scroll to corresponding sections in track
 
+
+  
   navLinks.forEach((link, index) => {
     link.addEventListener("click", (e) => {
       e.preventDefault();
@@ -1494,7 +1500,26 @@ function initMobileAnimations() {
       }
     });
   });
-} // #endregion
+
+  const footer = document.querySelector(".footer");
+ 
+  
+gsap.to([mobileMask, document.querySelector('.navbar')], {
+  y: '-100vh',
+  ease: "none",
+  scrollTrigger: {
+    trigger: footer,
+    start: "top bottom",
+    end: "bottom top",
+    scrub: 1,
+    markers: true
+  }
+});
+
+} 
+
+
+// #endregion
 
 // #region Swipers
 const swiper = new Swiper(".news_slider_wrap", {
@@ -1510,14 +1535,13 @@ const swiper = new Swiper(".news_slider_wrap", {
 const navLinksBox = document.querySelector(".nav_links_box");
 const navLinks = gsap.utils.toArray(".nav_links_box a");
 const burger = document.querySelector(".burger_button");
-const mask = document.querySelector(".main_mask");
 const burgerLine = document.querySelectorAll(".burger_line");
 let isOpen = false; // Track the state of the menu
 
 gsap.set(navLinks, { xPercent: 50, autoAlpha: 0 });
 gsap.set(navLinksBox, { pointerEvents: "none" });
 
-const mobileMask = document.querySelector(".mobile_mask");
+
 const flames = document.querySelector(".flames");
 // Get the computed style of the flames element to find its margin-bottom
 const flamesStyle = window.getComputedStyle(flames);
