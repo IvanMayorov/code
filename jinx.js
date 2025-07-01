@@ -57,23 +57,28 @@
 // const sequence = new FastImageSequence(document.querySelector('.flames'), options);
 
 
-// Initialize a new Lenis instance for smooth scrolling
-const lenis = new Lenis({
-  lerp: 0.1,
-  wheelMultiplier: 0.7,
-  // gestureOrientation: "vertical",
-  // normalizeWheel: false,
-  // smoothTouch: false,
-});
+// Initialize Lenis only on desktop (width >= 480px)
+let lenis = null;
 
-// Synchronize Lenis scrolling with GSAP's ScrollTrigger plugin
-lenis.on('scroll', ScrollTrigger.update);
+if (window.innerWidth >= 480) {
+  // Initialize a new Lenis instance for smooth scrolling
+  lenis = new Lenis({
+    lerp: 0.1,
+    wheelMultiplier: 0.7,
+    // gestureOrientation: "vertical",
+    // normalizeWheel: false,
+    // smoothTouch: false,
+  });
 
-// Add Lenis's requestAnimationFrame (raf) method to GSAP's ticker
-// This ensures Lenis's smooth scroll animation updates on each GSAP tick
-gsap.ticker.add((time) => {
-  lenis.raf(time * 1000); // Convert time from seconds to milliseconds
-});
+  // Synchronize Lenis scrolling with GSAP's ScrollTrigger plugin
+  lenis.on('scroll', ScrollTrigger.update);
+
+  // Add Lenis's requestAnimationFrame (raf) method to GSAP's ticker
+  // This ensures Lenis's smooth scroll animation updates on each GSAP tick
+  gsap.ticker.add((time) => {
+    lenis.raf(time * 1000); // Convert time from seconds to milliseconds
+  });
+}
 
 // Disable lag smoothing in GSAP to prevent any delay in scroll animations
 gsap.ticker.lagSmoothing(0);
@@ -1501,6 +1506,8 @@ function initMobileAnimations() {
     });
   });
 
+  // #region FOOTER
+
   const footer = document.querySelector(".footer");
  
   
@@ -1510,9 +1517,8 @@ gsap.to([mobileMask, document.querySelector('.navbar')], {
   scrollTrigger: {
     trigger: footer,
     start: "top bottom",
-    end: "bottom top",
-    scrub: 1,
-    markers: true
+    end: "bottom bottom",
+    scrub: true,
   }
 });
 
