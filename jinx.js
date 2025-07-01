@@ -1557,7 +1557,7 @@ gsap.to([mobileMask, document.querySelector('.navbar'), navLinksBox], {
     trigger: footer,
     start: "top bottom",
     end: "bottom bottom",
-    scrub: true,
+    scrub: 1,
   }
 });
 
@@ -1568,7 +1568,7 @@ gsap.to(".flames_box", {
     trigger: footer,
     start: "top 50%",
     end: "bottom bottom",
-    scrub: true,
+    scrub: 1,
     immediateRender: false,
     // markers: true
   }
