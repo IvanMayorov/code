@@ -1512,7 +1512,7 @@ function initMobileAnimations() {
 ScrollTrigger.create({
   trigger: ".answers_section",
   start: "top center",
-  end: "bottom center",
+  end: "80% center",
   scrub: true,
   onUpdate: (self) => {
     const p = self.progress;
