@@ -129,7 +129,8 @@ const flamesBox = document.querySelector('.flames_box');
 const benefitsSection = document.querySelector(".benefits_section");
 const mask = document.querySelector(".main_mask");
 const mobileMask = document.querySelector(".mobile_mask");
-
+const navLinksBox = document.querySelector(".nav_links_box");
+const flames = document.querySelector(".flames");
 
 let distanceFromTop = logo.getBoundingClientRect().bottom + window.scrollY;
 // flamesBox.style.height = `${distanceFromTop}px`;
@@ -1506,12 +1507,50 @@ function initMobileAnimations() {
     });
   });
 
+// #region ANSWERS
+
+ScrollTrigger.create({
+  trigger: ".answers_section",
+  start: "top center",
+  end: "bottom center",
+  scrub: true,
+  onUpdate: (self) => {
+    const p = self.progress;
+    // Count the number of answer items in the container
+    const answerItems = document.querySelectorAll('.answer_item');
+    const totalItems = answerItems.length;
+    
+    if (totalItems > 0) {
+      // Calculate which item should be active based on progress
+      // Divide progress into equal segments for each item
+      const segmentSize = 1 / totalItems;
+      const activeIndex = Math.min(
+        Math.floor(p / segmentSize),
+        totalItems - 1
+      );
+      
+      // Only toggle if we're moving to a different item
+      const currentActiveItem = document.querySelector('.answer_drop.is-active');
+      const currentActiveIndex = Array.from(answerItems).findIndex(
+        item => item.querySelector('.answer_drop') === currentActiveItem
+      );
+      
+      if (currentActiveIndex !== activeIndex) {
+        toggleDropdown(activeIndex);
+      }
+    }
+  },
+});
+// ... existing code ...
+
+
+  
   // #region FOOTER
 
   const footer = document.querySelector(".footer");
  
   
-gsap.to([mobileMask, document.querySelector('.navbar')], {
+gsap.to([mobileMask, document.querySelector('.navbar'), navLinksBox], {
   y: '-100vh',
   ease: "none",
   scrollTrigger: {
@@ -1519,6 +1558,19 @@ gsap.to([mobileMask, document.querySelector('.navbar')], {
     start: "top bottom",
     end: "bottom bottom",
     scrub: true,
+  }
+});
+
+gsap.to(".flames_box", {
+  height: '20rem',
+
+  scrollTrigger: {
+    trigger: footer,
+    start: "top 50%",
+    end: "bottom bottom",
+    scrub: true,
+    immediateRender: false,
+    // markers: true
   }
 });
 
@@ -1538,7 +1590,7 @@ const swiper = new Swiper(".news_slider_wrap", {
 });
 
 //#region BURGER
-const navLinksBox = document.querySelector(".nav_links_box");
+
 const navLinks = gsap.utils.toArray(".nav_links_box a");
 const burger = document.querySelector(".burger_button");
 const burgerLine = document.querySelectorAll(".burger_line");
@@ -1548,7 +1600,7 @@ gsap.set(navLinks, { xPercent: 50, autoAlpha: 0 });
 gsap.set(navLinksBox, { pointerEvents: "none" });
 
 
-const flames = document.querySelector(".flames");
+
 // Get the computed style of the flames element to find its margin-bottom
 const flamesStyle = window.getComputedStyle(flames);
 // Extract the last value from the transform matrix
