@@ -131,6 +131,15 @@ const mask = document.querySelector(".main_mask");
 const mobileMask = document.querySelector(".mobile_mask");
 const navLinksBox = document.querySelector(".nav_links_box");
 const flames = document.querySelector(".flames");
+const footer = document.querySelector(".footer");
+
+const manifestSection = document.querySelector(".mnfst_section");
+const servicesSection = document.querySelector(".services_section");
+const processSection = document.querySelector(".process_section");
+const processTrack = document.querySelector(".process_track");
+const projectsSection = document.querySelector(".projects_section");
+const boardSection = document.querySelector(".board_section");
+
 
 let distanceFromTop = logo.getBoundingClientRect().bottom + window.scrollY;
 // flamesBox.style.height = `${distanceFromTop}px`;
@@ -604,13 +613,9 @@ cookieIcon.addEventListener("mouseleave", () => {
 
   const firstSection = document.querySelector(".main_section");
   
-  const manifestSection = document.querySelector(".mnfst_section");
-  const servicesSection = document.querySelector(".services_section");
-  const processSection = document.querySelector(".process_section");
-  const processTrack = document.querySelector(".process_track");
-  const projectsSection = document.querySelector(".projects_section");
-  const boardSection = document.querySelector(".board_section");
-  const footerHeight = document.querySelector(".footer").offsetHeight;
+
+  
+  const footerHeight = footer.offsetHeight;
   const processCardWidth = document.querySelector(".process_card").offsetWidth;
   const plansCardWidth = document.querySelector(".plans_card.is-first").offsetWidth;
   // const plansSectionWidth = document.querySelector(".plans_section").offsetWidth;
@@ -1116,40 +1121,51 @@ cookieIcon.addEventListener("mouseleave", () => {
       onStart: () => {
         comingSoon.play();
       },
-
-  
-      onComplete: () => {
-        console.log(fireLastStepHeight);
-      },
     })
-    .to(".navbar, .footer, .main_mask, .nav_links_box", {
-      y: -footerHeight,
-      ease: "none",
-      duration: 0.5,
+    // .to(".navbar, .footer, .main_mask, .nav_links_box", {
+    //   y: -footerHeight,
+    //   ease: "none",
+    //   duration: 0.5,
  
           
-        })
+    //     })
     // .add(() => {
     //   flamesBox.style.maxHeight = `${flames.offsetHeight * 0.7}px`;
     // }, "<")
+
+    
+    .addLabel("contacts")
+ 
+    
+
+  const flamesTimeline = gsap.timeline({
+    scrollTrigger: {
+      trigger: footer,
+      start: "top bottom",
+      end: "bottom bottom",
+      scrub: 1,
+      // markers: true
+    }
+  });
+
+  flamesTimeline
     .to(".flames_box", {
-      // height: `${flames.offsetHeight + flamesMarginBottomValue}px`,
       height: fireLastStepHeight,
       ease: "none",
       duration: 0.5,
+      immediateRender: false,
       onStart: () => {
         backAllLabelAnimation();
       },
       onReverseComplete: () => {
         playLabelAnimation('pinboard');
       }
-    }, "<")
-    
-    .addLabel("contacts")
- 
-    .to(navLogo, { opacity: 1, duration: 0.3 }, "<0.1")
-
-    
+    })
+    .to(navLogo, { 
+      opacity: 1, 
+      duration: 0.3 
+    }, "<0.1");
+  
   navLinks.forEach((link, index) => {
     const sections = [
       "benefits",
@@ -1164,10 +1180,19 @@ cookieIcon.addEventListener("mouseleave", () => {
     ];
     link.addEventListener("click", () => {
       closeMenu();
-      gsap.to(window, {
-        scrollTo: tl.scrollTrigger.labelToScroll(sections[index]),
-        duration: 1,
-      });
+      
+      // If contacts section, scroll to footer
+      if (sections[index] === "contacts") {
+        gsap.to(window, {
+          scrollTo: ".footer",
+          duration: 1,
+        });
+      } else {
+        gsap.to(window, {
+          scrollTo: tl.scrollTrigger.labelToScroll(sections[index]),
+          duration: 1,
+        });
+      }
     });
   });
 
@@ -1234,8 +1259,7 @@ function updateBigtitleRows(progress, rows, activeRows, wraps) {
 
 let mobileSwiper;
 let plansSlider;
-const processTrack = document.querySelector(".process_track");
-const processCards = document.querySelectorAll(".process_card");
+
 
 function initMobileAnimations() {
 
@@ -1253,8 +1277,8 @@ function initMobileAnimations() {
   const bigtitleRows = document.querySelectorAll(".bigtitle_row");
 
   //SWIPERS__________________________________________________________________________________________________________________________
-  const processTrack = document.querySelector(".process_track");
-  const processCards = document.querySelectorAll(".process_card");
+  // const processTrack = document.querySelector(".process_track");
+  // const processCards = document.querySelectorAll(".process_card");
 
   const planSlider = document.querySelector(".plans_slider");
   const plansSlides = document.querySelectorAll(".plans_slider > *");
@@ -1297,25 +1321,73 @@ function initMobileAnimations() {
   //   wrapper.appendChild(slide);
   // });
 
-  processTrack.classList.add("swiper-wrapper");
-  planSlider.classList.add("swiper-wrapper");
+  // #region Swipers
+  // processTrack.classList.add("swiper-wrapper");
+  // planSlider.classList.add("swiper-wrapper");
 
-  function addSwiperSlideClass(cards) {
-    cards.forEach((card) => {
-      card.classList.add("swiper-slide");
-    });
-  }
+  // function addSwiperSlideClass(cards) {
+  //   cards.forEach((card) => {
+  //     card.classList.add("swiper-slide");
+  //   });
+  // }
 
-  addSwiperSlideClass(processCards);
-  addSwiperSlideClass(plansSlides);
+  // addSwiperSlideClass(processCards);
+  // addSwiperSlideClass(plansSlides);
 
-  mobileSwiper = new Swiper(".process_right_col", {
-    spaceBetween: 10,
+  // mobileSwiper = new Swiper(".process_right_col", {
+  //   spaceBetween: 10,
+  // });
+  // plansSlider = new Swiper(".plans_section", {
+  //   // spaceBetween: 10,
+  //   slidesPerView: "auto",
+  // });
+
+
+
+  // #region Process ___________________________________________________________________________________________________________
+
+
+
+  const processLeftCol = document.querySelector(".process_left_col");
+  const processRightBox = document.querySelector(".process_right_box");
+  const processCards = document.querySelectorAll(".process_card");
+
+  gsap.set(processRightBox, {
+    opacity: 0,
   });
-  plansSlider = new Swiper(".plans_section", {
-    // spaceBetween: 10,
-    slidesPerView: "auto",
+
+  const processTimeline = gsap.timeline({
+    scrollTrigger: {
+      trigger: processSection,
+      start: "top top",
+      end: "bottom bottom",
+      scrub: 1,
+      markers: true,
+    }
   });
+
+  processCards.forEach((card, index) => {
+    const cardWidth = card.offsetWidth;
+    const shift = -cardWidth - 1.5 * remSize;
+    processTimeline.to(card, {
+      x: shift,
+      duration: 0.2,
+    }, index * 0.2);
+  });
+  processTimeline.to(processLeftCol, {
+    opacity: 0,
+    duration: 0,
+  }, "<0.1");
+  processTimeline.to(processRightBox, {
+    opacity: 1,
+    duration: 0,
+  }, "<");
+  processTimeline.to(processTrack, {
+    x: "-100vw",
+    duration: 0.2,
+  }, );
+
+  // #endregion
 
 
   // Flames scroll animation
@@ -1547,7 +1619,7 @@ ScrollTrigger.create({
   
   // #region FOOTER
 
-  const footer = document.querySelector(".footer");
+  
  
   
 // gsap.to([mobileMask, document.querySelector('.navbar'), navLinksBox], {
@@ -1585,17 +1657,17 @@ gsap.to(".flames_box", {
   }
 });
 
-gsap.to(".flames_box", {
-  y: '-60%',
+// gsap.to(".flames_box", {
+//   y: '-60%',
 
-  scrollTrigger: {
-    trigger: footer,
-    start: "60% 70%",
-    end: "bottom bottom",
-    scrub: 1,
-    // markers: true
-  }
-});
+//   scrollTrigger: {
+//     trigger: footer,
+//     start: "60% 70%",
+//     end: "bottom bottom",
+//     scrub: 1,
+//     // markers: true
+//   }
+// });
 
 // window.visualViewport.addEventListener('resize', () => {
 //   const height = window.visualViewport.height;
@@ -1661,6 +1733,7 @@ function openMenu() {
     gsap.to(flamesBox, {
       height: 0,
       duration: 0.5,
+      // overwrite: true,
     });
   }
 
