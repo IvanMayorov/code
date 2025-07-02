@@ -1570,10 +1570,42 @@ gsap.to(".flames_box", {
     end: "bottom bottom",
     scrub: 1,
     immediateRender: false,
+    // onUpdate: (self) => {
+    // const mobileFooterLogo = document.querySelector('.mobile_footer_logo');
+    // if (mobileFooterLogo) {
+    //   const rect = mobileFooterLogo.getBoundingClientRect();
+    //   const distanceFromTop = rect.top;
+      
+    //   if (distanceFromTop < 16 * 16) { 
+    //     gsap.to('.flames_box', { height: '10rem', overwrite: true });
+    //   }
+    // }
+    // },
     // markers: true
   }
 });
 
+gsap.to(".flames_box", {
+  y: '-60%',
+
+  scrollTrigger: {
+    trigger: footer,
+    start: "60% 70%",
+    end: "bottom bottom",
+    scrub: 1,
+    // markers: true
+  }
+});
+
+// window.visualViewport.addEventListener('resize', () => {
+//   const height = window.visualViewport.height;
+//   const rect = footer.getBoundingClientRect();
+//   const isFooterVisible = rect.top < window.innerHeight && rect.bottom > 0;
+
+//   if (isFooterVisible) {
+//     console.log('Footer видим. Высота visualViewport:', height);
+//   }
+// });
 
 // #endregion
 } 
