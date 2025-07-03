@@ -210,8 +210,11 @@ lottie.loadAnimation({
   renderer: "svg",
   loop: false,
   autoplay: true,
-  path: "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/67de76d3c963e2fea84cfb4f_main-EUmoj.json",
+  path: window.innerWidth <= 479 
+    ? "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/6866b27b6bafcde2d7f86c0c_Up%20to%20no%20good%20Mobile-S6Vy3.json"
+    : "https://cdn.prod.website-files.com/6762d7172f3ea79ecef9e911/67de76d3c963e2fea84cfb4f_main-EUmoj.json",
 });
+
 
 
 //Benefits
@@ -1229,7 +1232,7 @@ function updateBigtitleRows(progress, rows, activeRows, wraps) {
       //   createLottieAnimation(lottie, lottie.getAttribute('data-lottie'));
       // }
       // Find the matching lottie animation for this row
-      const matchingLottie = lottieAnimationsServices.find(anim => anim.rowIndex === i + 1);
+      const matchingLottie = lottieAnimationsServices.find(anim => anim.rowIndex === i);
       if (matchingLottie && matchingLottie.animation) {
         // Play the animation if it exists
         matchingLottie.animation.play(0);
@@ -1295,6 +1298,9 @@ function initMobileAnimations() {
   });
 
   benefitsTimeline
+    .add(() => {
+      benefitsLottie.play();
+    })
     .to(".benefits_title_box", 
       { x: "-30rem", duration: 1, ease: "none" },
     )
@@ -1331,7 +1337,7 @@ function initMobileAnimations() {
       start: "top top",
       end: "90% bottom",
       scrub: 1,
-      markers: true, 
+      // markers: true, 
     },
   });
 
@@ -1386,6 +1392,17 @@ function initMobileAnimations() {
     opacity: 0,
   });
 
+  gsap.to(processSection, {
+    scrollTrigger: {
+      trigger: processSection,
+      start: "top 10%",
+      end: "bottom 10%",
+      markers: true,
+      onEnter: () => {
+        scratchLottie.play();
+      },
+    }
+  });
   const processTimeline = gsap.timeline({
     scrollTrigger: {
       trigger: processSection,
@@ -1438,39 +1455,36 @@ function initMobileAnimations() {
     });
   }
 
-  bigtitleRows.forEach((row) => {
+  const bigtitleRowsArr = Array.from(bigtitleRows);
+
+  bigtitleRowsArr.forEach((row, idx) => {
     const bigtitleWrap = row.querySelector(".bigtitle_wrap");
+
     gsap.fromTo(
       bigtitleWrap,
       {
         opacity: 0,
         width: 0,
-        // ease: "none",
-        // duration: 0.3,
       },
       {
         opacity: 1,
         width: "auto",
         duration: 0.3,
-        // ease: "none",
         scrollTrigger: {
           trigger: row,
           start: "top 50%",
           end: "bottom 0%",
           toggleActions: "play none none reverse",
-          // toggleClass: {
-          //   targets: row.parentElement,
-          //   className: "is-hovered"
-          // },
           onEnter: () => {
             row.classList.add("is-hovered");
+            const matchingLottie = lottieAnimationsServices.find(anim => anim.rowIndex === idx);
+            if (matchingLottie && matchingLottie.animation) {
+              matchingLottie.animation.play(0);
+            }
           },
-
           onLeaveBack: () => {
             row.classList.remove("is-hovered");
           },
-
-          // markers: true
         },
       }
     );
@@ -1495,6 +1509,8 @@ function initMobileAnimations() {
       );
     }, 0) - boardSection.offsetWidth;
 
+
+
   gsap.to(".board_section > *", {
     x: -totalChildrenWidth,
     ease: "none",
@@ -1505,6 +1521,13 @@ function initMobileAnimations() {
       end: "bottom 100%",
       scrub: 1,
       // markers: true,
+      onUpdate: self => {
+        // self.progress — это число от 0 до 1
+        if (self.progress >= 0.1) {
+          comingSoon.play();
+        }
+
+      }
     },
   });
 
@@ -1759,6 +1782,9 @@ fireLastStepHeight = Math.min(flames.offsetHeight + flamesMarginBottomValue, win
 
 
 function openMenu() {
+  burger.querySelectorAll('*').forEach(child => {
+    child.classList.add('w-variant-baa24fab-48d3-0f32-ef2a-7d7ee7f824f7');
+  });
   if (window.innerWidth > 479) {
     gsap.to(flamesBox, {
       height: 0,
@@ -1767,13 +1793,10 @@ function openMenu() {
     });
   }
 
-  let newY0 = "0.8rem";
-  let newY1 = "-0.8rem";
-  const newWidth = `calc(100% - ${navLinksBox.offsetWidth}px)`;
-  const newRotation0 = 45;
-  const newRotation1 = -45;
 
-  const newOpacity = 1;
+  const newWidth = `calc(100% - ${navLinksBox.offsetWidth}px)`;
+
+  
 
   // Простая проверка ширины экрана
   if (window.innerWidth >= 480) {
@@ -1783,12 +1806,9 @@ function openMenu() {
   } else {
     // Код для мобильных
     mobileMask.classList.add("is-opened");
-    newY0 = "0.5rem";
-    newY1 = "-0.5rem";
+
   }
 
-  gsap.to(burgerLine[0], { rotation: newRotation0, duration: 0.3, y: newY0 });
-  gsap.to(burgerLine[1], { rotation: newRotation1, duration: 0.3, y: newY1 });
   //   gsap.to(navLinksBox, { autoAlpha: newOpacity, duration: 0.3 });
   gsap.set(navLinksBox, { pointerEvents: "auto" });
   // navLinks.forEach(link => {
@@ -1814,7 +1834,10 @@ function openMenu() {
 }
 
 function closeMenu() {
-  console.log('closeMenu');
+  burger.querySelectorAll('*').forEach(child => {
+    child.classList.remove('w-variant-baa24fab-48d3-0f32-ef2a-7d7ee7f824f7');
+  });
+  
   if (window.innerWidth > 479) {
     if (progress === 0) {
       gsap.to(flamesBox, {
@@ -1830,11 +1853,7 @@ function closeMenu() {
     }
   }
   const newWidth = "100%";
-  const newRotation0 = 0;
-  const newRotation1 = 0;
-  const newY0 = "0rem";
-  const newY1 = "0rem";
-  const newOpacity = 0;
+
   // Простая проверка ширины экрана
   if (window.innerWidth >= 480) {
     // Код для десктопа
@@ -1846,8 +1865,7 @@ function closeMenu() {
     }, 400);
   }
 
-  gsap.to(burgerLine[0], { rotation: newRotation0, duration: 0.3, y: newY0 });
-  gsap.to(burgerLine[1], { rotation: newRotation1, duration: 0.3, y: newY1 });
+
   gsap.set(navLinksBox, { pointerEvents: "none" });
   //   gsap.to(navLinksBox, { autoAlpha: newOpacity, delay: 0.5, duration: 0.3 });
 
