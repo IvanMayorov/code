@@ -132,6 +132,7 @@ const mobileMask = document.querySelector(".mobile_mask");
 const navLinksBox = document.querySelector(".nav_links_box");
 const flames = document.querySelector(".flames");
 const footer = document.querySelector(".footer");
+const plansWrap = document.querySelector(".plans_wrap");
 
 const manifestSection = document.querySelector(".mnfst_section");
 const servicesSection = document.querySelector(".services_section");
@@ -1280,8 +1281,8 @@ function initMobileAnimations() {
   // const processTrack = document.querySelector(".process_track");
   // const processCards = document.querySelectorAll(".process_card");
 
-  const planSlider = document.querySelector(".plans_slider");
-  const plansSlides = document.querySelectorAll(".plans_slider > *");
+  // const planSlider = document.querySelector(".plans_slider");
+  // const plansSlides = document.querySelectorAll(".plans_slider > *");
 
   const benefitsTimeline = gsap.timeline({
     scrollTrigger: {
@@ -1306,6 +1307,35 @@ function initMobileAnimations() {
     .to(".benefits_descr", 
       { x: "0", duration: 1, ease: "none" }, '<0.5'
     )
+
+  const plansSlider = document.querySelector(".plans_slider");
+  const plansSliderChildren = plansSlider.children;
+  
+  // Calculate total width of all children including margins
+  const plansSliderWidth = Array.from(plansSliderChildren).reduce((total, child) => {
+    const computedStyle = window.getComputedStyle(child);
+    const marginLeft = parseInt(computedStyle.marginLeft) || 0;
+    const marginRight = parseInt(computedStyle.marginRight) || 0;
+    return total + child.offsetWidth + marginLeft + marginRight;
+  }, 0);
+  
+  // Calculate the shift distance (total children width minus slider width)
+  const shiftDistance = plansSliderWidth - plansSlider.offsetWidth;
+  
+  gsap.to(plansSlider, {
+    x: -shiftDistance,
+    ease: "none",
+    duration: 1,
+    scrollTrigger: {
+      trigger: plansWrap,
+      start: "top top",
+      end: "90% bottom",
+      scrub: 1,
+      markers: true, 
+    },
+  });
+
+
   // plansSlides.forEach(slide => {
   //   // Create a wrapper div with swiper-slide class
   //   const wrapper = document.createElement('div');
@@ -1362,7 +1392,7 @@ function initMobileAnimations() {
       start: "top top",
       end: "bottom bottom",
       scrub: 1,
-      markers: true,
+      // markers: true,
     }
   });
 
