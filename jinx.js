@@ -1397,7 +1397,7 @@ function initMobileAnimations() {
       trigger: processSection,
       start: "top 10%",
       end: "bottom 10%",
-      markers: true,
+      // markers: true,
       onEnter: () => {
         scratchLottie.play();
       },
