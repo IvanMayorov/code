@@ -55,7 +55,17 @@
 // };
 
 // const sequence = new FastImageSequence(document.querySelector('.flames'), options);
+function addWillChange(targets, props = ['transform']) {
+  gsap.utils.toArray(targets).forEach(el => {
+    el.style.willChange = props.join(', ');
+  });
+}
 
+function removeWillChange(targets) {
+  gsap.utils.toArray(targets).forEach(el => {
+    el.style.willChange = '';
+  });
+}
 
 // Initialize Lenis only on desktop (width >= 480px)
 let lenis = null;
@@ -1302,21 +1312,35 @@ function initMobileAnimations() {
   });
 
   benefitsTimeline
-    .add(() => {
-      benefitsLottie.play();
-    })
-    .to(".benefits_title_box", 
-      { x: "-30rem", duration: 1, ease: "none" },
-    )
-    .to(".benefits_card", 
-      { x: "0", duration: 1, ease: "none" }, '<0.5'
-    )
-    .to(".benefits_square_wrap", 
-      { x: "-29.2rem", duration: 1, ease: "none" }, '<0.5'
-    )
-    .to(".benefits_descr", 
-      { x: "0", duration: 1, ease: "none" }, '<0.5'
-    )
+  .add(() => {
+    addWillChange([
+      '.benefits_title_box',
+      '.benefits_card',
+      '.benefits_square_wrap',
+      '.benefits_descr'
+    ]);
+    benefitsLottie.play();
+  })
+  .to(".benefits_title_box", 
+    { x: "-30rem", duration: 1, ease: "none" },
+  )
+  .to(".benefits_card", 
+    { x: "0", duration: 1, ease: "none" }, '<0.5'
+  )
+  .to(".benefits_square_wrap", 
+    { x: "-29.2rem", duration: 1, ease: "none" }, '<0.5'
+  )
+  .to(".benefits_descr", 
+    { x: "0", duration: 1, ease: "none" }, '<0.5'
+  )
+  .add(() => {
+    removeWillChange([
+      '.benefits_title_box',
+      '.benefits_card',
+      '.benefits_square_wrap',
+      '.benefits_descr'
+    ]);
+  });
 
   const plansSlider = document.querySelector(".plans_slider");
   const plansSliderChildren = plansSlider.children;
