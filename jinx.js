@@ -179,12 +179,16 @@ jokeButton.addEventListener("click", () => {
     fires.forEach(fire => {
       fire.style.display = "block";
     });
+    jokeInitial.querySelector(".process_img").style.display = "none";
   } else if (clickCount === 4) {
     // Fourth click: Hide the button
     jokeButton.style.display = "none";
     jokeInitial.style.display = "none";
     jokeFinal.style.display = "block";
     jokeFinalImg.style.display = "block";
+    fires.forEach(fire => {
+      fire.style.display = "none";
+    });
   }
 });
 
@@ -1336,7 +1340,7 @@ function initMobileAnimations() {
       trigger: plansWrap,
       start: "top top",
       end: "90% bottom",
-      scrub: 1,
+      scrub: true,
       // markers: true, 
     },
   });
