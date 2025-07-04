@@ -1284,7 +1284,7 @@ function initMobileAnimations() {
   // весь код для мобильных
   const bigtitleRows = document.querySelectorAll(".bigtitle_row");
 
-  //SWIPERS__________________________________________________________________________________________________________________________
+  //SWIPERS_
   // const processTrack = document.querySelector(".process_track");
   // const processCards = document.querySelectorAll(".process_card");
 
@@ -1296,7 +1296,7 @@ function initMobileAnimations() {
       trigger: benefitsSection,
       start: "top 10%",
       end: "bottom 70%",
-      scrub: 1,
+      scrub: true,
       // markers: true,
     }
   });
@@ -1412,7 +1412,7 @@ function initMobileAnimations() {
       trigger: processSection,
       start: "top top",
       end: "bottom bottom",
-      scrub: 1,
+      scrub: true,
       // markers: true,
     }
   });
@@ -1523,7 +1523,7 @@ function initMobileAnimations() {
       trigger: ".board_section",
       start: "top 0%",
       end: "bottom 100%",
-      scrub: 1,
+      scrub: true,
       // markers: true,
       onUpdate: self => {
         // self.progress — это число от 0 до 1
