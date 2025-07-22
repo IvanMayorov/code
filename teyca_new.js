@@ -11,7 +11,7 @@ const profPrice = dataProfPrice ? parseInt(dataProfPrice.textContent.replace(/\D
 const pricesMonthsBox = document.querySelectorAll('.prices_months_box');
 
 let selectedTariffIdx = 0;
-let selectedMonthIdx = 0;
+let selectedMonthIdx = 3; // Устанавливаем последний период по умолчанию
 
 document.querySelectorAll('.tariff_card').forEach((card, idx) => {
     card.addEventListener('click', function() {
@@ -47,6 +47,8 @@ document.querySelectorAll('.tariff_card').forEach((card, idx) => {
 
 const discounts = [1, 0.9, 0.85, 0.8];
 
+
+
 // Функция для обновления цен
 function updatePrices() {
     const discount = discounts[selectedMonthIdx] !== undefined ? discounts[selectedMonthIdx] : 1;
@@ -81,6 +83,8 @@ if (window.innerWidth > 479) {
             updatePrices();
         });
     });
+
+
 }
 
 
@@ -153,3 +157,12 @@ document.querySelectorAll('.tariff_drop .prices_months_box').forEach(box => {
         drop.style.display = 'none';
     });
 });
+
+// Инициализация цен при загрузке страницы
+updatePrices();
+
+// Устанавливаем визуальное выделение последнего элемента pricesMonthsBox
+if (window.innerWidth > 479 && pricesMonthsBox.length > 0) {
+    pricesMonthsBox.forEach(b => b.classList.remove('is-black'));
+    pricesMonthsBox[3].classList.add('is-black');
+}
