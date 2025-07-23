@@ -189,6 +189,7 @@ jokeButton.addEventListener("click", () => {
     fires.forEach(fire => {
       fire.style.display = "block";
     });
+    jokeButton.classList.add("is-no-hover");
     jokeInitial.querySelector(".process_img").style.display = "none";
   } else if (clickCount === 4) {
     // Fourth click: Hide the button
@@ -1311,7 +1312,7 @@ function initMobileAnimations() {
     }
   });
 
-  benefitsTimeline
+benefitsTimeline
   .add(() => {
     addWillChange([
       '.benefits_title_box',
@@ -1447,6 +1448,7 @@ function initMobileAnimations() {
     processTimeline.to(card, {
       x: shift,
       duration: 0.2,
+      ease: "none",
     }, index * 0.2);
   });
   processTimeline.to(processLeftCol, {
@@ -1460,6 +1462,7 @@ function initMobileAnimations() {
   processTimeline.to(processTrack, {
     x: "-100vw",
     duration: 0.2,
+    ease: "none",
   }, );
 
   // #endregion
@@ -1469,7 +1472,7 @@ function initMobileAnimations() {
 
   if (flames) {
     gsap.to(flamesBox, {
-      height: 20,
+      height: 40,
       duration: 0.3,
       scrollTrigger: {
         trigger: ".section_title_box", // Assuming this is the main container
@@ -2055,11 +2058,11 @@ function toggleDropdown(dropdownIndex) {
   });
 }
 
-document.querySelectorAll(".answer_item").forEach((item, index) => {
-  item.addEventListener("click", () => {
-    toggleDropdown(index);
-  });
-});
+// document.querySelectorAll(".answer_item").forEach((item, index) => {
+//   item.addEventListener("click", () => {
+//     toggleDropdown(index);
+//   });
+// });
 
 gsap.set(".answer_drop", { height: 0 });
 
