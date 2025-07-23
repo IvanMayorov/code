@@ -4,9 +4,10 @@ const dataProfPrice = document.querySelector('[data-prof-price]');
 const dataMobilePrice = document.querySelector('[data-mobile-price]');
 const cardsCount = document.querySelector('.cards_count');
 
-const startPrice = dataStartPrice ? parseInt(dataStartPrice.textContent.replace(/\D/g, ''), 10) : 0;
-const standartPrice = dataStandartPrice ? parseInt(dataStandartPrice.textContent.replace(/\D/g, ''), 10) : 0;
-const profPrice = dataProfPrice ? parseInt(dataProfPrice.textContent.replace(/\D/g, ''), 10) : 0;
+// Используем фиксированные стартовые цены
+const startPrice = 4990;
+const standartPrice = 7490;
+const profPrice = 10980;
 
 const pricesMonthsBox = document.querySelectorAll('.prices_months_box');
 
