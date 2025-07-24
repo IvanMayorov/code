@@ -1283,6 +1283,20 @@ let plansSlider;
 function initMobileAnimations() {
 
 
+  // При клике на элемент с data-link="plans" скроллим к .plans_section
+  document.querySelectorAll('[data-link="plans"]').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      gsap.to(window, {
+        scrollTo: {
+          y: ".plans_section",
+          offsetY: 0
+        },
+        duration: 1,
+        ease: "power2.inOut"
+      });
+    });
+  });
   // alert('mobile');
 
   // Сбросить все ScrollTrigger
@@ -1738,6 +1752,17 @@ gsap.to(".flames_box", {
     // }
     // },
     // markers: true
+  }
+});
+gsap.to(".nav_links_box", {
+  y: '-100%',
+
+  scrollTrigger: {
+    trigger: footer,
+    start: "top bottom",
+    end: "bottom bottom",
+    scrub: 1,
+    immediateRender: false,
   }
 });
 
