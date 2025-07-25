@@ -166,6 +166,7 @@ iconCatLink.addEventListener("click", () => {
 });
 //Joke
 const jokeButton = document.querySelector("[data-joke]");
+const jokeCard = document.querySelector("[data-joke-card]");
 const jokeInitial = document.querySelector(".joke_initial");
 const jokeFinal = document.querySelector(".joke_box");
 const jokeFinalImg = document.querySelector(".joke_final")
@@ -173,7 +174,7 @@ const fires = document.querySelectorAll("[data-fire]");
 let isFirstClick = true;
 let clickCount = 0;
 
-jokeButton.addEventListener("click", () => {
+jokeCard.addEventListener("click", () => {
   clickCount++;
   
   if (isFirstClick) {
@@ -1987,14 +1988,17 @@ const pricesTable = {
 };
 
 const activeElement = document.querySelector(".plans_swither_active");
+const yearDescr = document.querySelectorAll(".plans_price_descr");
 document
   .querySelector("[data-switcher]")
   .children[0].addEventListener("click", () => {
     activeElement.style.transform = "translateX(-100%)";
     pricePeriod = "monthly";
     countPrice();
+    yearDescr.forEach(descr => descr.style.display = "none");
     document.querySelector("[data-switcher]").children[0].classList.add("is-active");
     document.querySelector("[data-switcher]").children[1].classList.remove("is-active");
+    
   });
 document
   .querySelector("[data-switcher]")
@@ -2002,6 +2006,7 @@ document
     activeElement.style.transform = "translateX(0%)";
     pricePeriod = "quarterly";
     countPrice();
+    yearDescr.forEach(descr => descr.style.display = "block");
     document.querySelector("[data-switcher]").children[0].classList.remove("is-active");
     document.querySelector("[data-switcher]").children[1].classList.add("is-active");
   });
