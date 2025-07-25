@@ -1343,11 +1343,17 @@ benefitsTimeline
   .to(".benefits_card", 
     { x: "0", duration: 1, ease: "none" }, '<0.5'
   )
+  .to(".benefits_card[data-right]", 
+    { opacity: 0, duration: 0.1, ease: "none" }, '>-0.1'
+  )
   .to(".benefits_square_wrap", 
     { x: "-29.2rem", duration: 1, ease: "none" }, '<0.5'
   )
+  .to(".benefits_square_wrap[data-left]", 
+    { opacity: 0, duration: 0.1, ease: "none" }, '>-0.1'
+  )
   .to(".benefits_descr", 
-    { x: "0", duration: 1, ease: "none" }, '<0.5'
+    { x: "0.5rem", duration: 1, ease: "none" }, '<0.5'
   )
   .add(() => {
     removeWillChange([
