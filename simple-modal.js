@@ -1,16 +1,31 @@
 
 // Function to prevent body scroll
 function preventBodyScroll() {
+  const scrollY = window.scrollY;
   document.body.style.overflow = 'hidden';
   document.body.style.position = 'fixed';
+  document.body.style.top = `-${scrollY}px`;
   document.body.style.width = '100%';
+  document.body.style.touchAction = 'none';
+  
+  // Store scroll position for restoration
+  document.body.dataset.scrollY = scrollY;
 }
 
 // Function to restore body scroll
 function restoreBodyScroll() {
+  const scrollY = document.body.dataset.scrollY || 0;
   document.body.style.overflow = '';
   document.body.style.position = '';
+  document.body.style.top = '';
   document.body.style.width = '';
+  document.body.style.touchAction = '';
+  
+  // Restore scroll position
+  window.scrollTo(0, parseInt(scrollY));
+  
+  // Clean up
+  delete document.body.dataset.scrollY;
 }
 
 // Function to open modal
