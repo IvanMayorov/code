@@ -1496,9 +1496,9 @@ benefitsTimeline
       height: 40,
       duration: 0.3,
       scrollTrigger: {
-        trigger: ".section_title_box", // Assuming this is the main container
+        trigger: ".main_section", // Assuming this is the main container
         start: "top top",
-        end: "200% top",
+        end: "70% top",
         toggleActions: "play none none reverse",
         scrub: true,
         // markers: true,
