@@ -37,14 +37,21 @@ function openModal(modal) {
 
   // Create overlay
   let overlay = document.createElement('div');
-  overlay.classList.add('simple-modal-overlay');
+  overlay.classList.add('simple-modal-overlay', 'modal-overlay-hidden');
 
   // Show modal
   modal.style.display = 'block';
+  modal.classList.add('modal-content-hidden');
 
   // Append modal to overlay, then overlay to body
   overlay.appendChild(modal);
   document.body.appendChild(overlay);
+
+  // Trigger animation after a small delay
+  requestAnimationFrame(() => {
+    overlay.classList.remove('modal-overlay-hidden');
+    modal.classList.remove('modal-content-hidden');
+  });
 
   // Close modal on overlay click (but not on modal content)
   overlay.addEventListener('click', function (e) {
@@ -65,19 +72,29 @@ function openModal(modal) {
 
 // Function to close modal
 function closeModal(modal, overlay) {
-  if (modal) {
-    modal.style.display = 'none';
-    // Move modal back to its original position in the DOM
-    if (modal.parentNode === overlay) {
-      document.body.appendChild(modal);
+  if (!modal || !overlay) return;
+
+  // Start closing animation
+  overlay.classList.add('modal-overlay-hidden');
+  modal.classList.add('modal-content-hidden');
+
+  // Wait for animation to complete, then remove elements
+  setTimeout(() => {
+    if (modal) {
+      modal.style.display = 'none';
+      modal.classList.remove('modal-content-hidden');
+      // Move modal back to its original position in the DOM
+      if (modal.parentNode === overlay) {
+        document.body.appendChild(modal);
+      }
     }
-  }
-  if (overlay && overlay.parentNode) {
-    overlay.parentNode.removeChild(overlay);
-  }
-  
-  // Restore body scroll
-  restoreBodyScroll();
+    if (overlay && overlay.parentNode) {
+      overlay.parentNode.removeChild(overlay);
+    }
+    
+    // Restore body scroll
+    restoreBodyScroll();
+  }, 300); // Match this with CSS transition duration
 }
 
 // Attach click listeners to all modal triggers
