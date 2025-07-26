@@ -60,14 +60,49 @@ function openModal(modal) {
     }
   });
 
+  // Close modal on ESC key press
+  const escHandler = function (e) {
+    if (e.key === 'Escape') {
+      closeModal(modal, overlay);
+      document.removeEventListener('keydown', escHandler);
+    }
+  };
+  document.addEventListener('keydown', escHandler);
+
   // Optional: close modal on [data-modal-close] click inside modal
-  const closeBtn = modal.querySelector('[data-modal-close]');
+  const closeBtn = modal.querySelector('[data-modal-action="close"]');
   if (closeBtn) {
     closeBtn.addEventListener('click', function handler() {
       closeModal(modal, overlay);
       closeBtn.removeEventListener('click', handler);
+      document.removeEventListener('keydown', escHandler);
     });
   }
+}
+
+// Function to open modal by ID
+function openModalById(modalId) {
+  const modal = document.querySelector('[data-modal-id="' + modalId + '"]');
+  if (modal) {
+    openModal(modal);
+    return true;
+  }
+  console.warn('Modal with ID "' + modalId + '" not found');
+  return false;
+}
+
+// Function to close modal by ID
+function closeModalById(modalId) {
+  const modal = document.querySelector('[data-modal-id="' + modalId + '"]');
+  if (modal) {
+    const overlay = modal.closest('.simple-modal-overlay');
+    if (overlay) {
+      closeModal(modal, overlay);
+      return true;
+    }
+  }
+  console.warn('Modal with ID "' + modalId + '" not found or not open');
+  return false;
 }
 
 // Function to close modal
@@ -97,6 +132,14 @@ function closeModal(modal, overlay) {
   }, 300); // Match this with CSS transition duration
 }
 
+// Global SimpleModal object for easy access
+window.SimpleModal = {
+  open: openModal,
+  openById: openModalById,
+  close: closeModal,
+  closeById: closeModalById
+};
+
 // Attach click listeners to all modal triggers
 document.querySelectorAll('[data-modal-target]').forEach(function (trigger) {
   trigger.addEventListener('click', function (e) {
@@ -106,4 +149,57 @@ document.querySelectorAll('[data-modal-target]').forEach(function (trigger) {
     openModal(modal);
   });
 });
+
+/*
+CSS для модального окна с dvh:
+
+.simple-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100dvh; // Используем dvh вместо vh для лучшей поддержки мобильных устройств
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  padding: 20px;
+  box-sizing: border-box;
+  
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.modal-overlay-hidden {
+  opacity: 0;
+}
+
+.simple-modal-overlay > * {
+  position: relative;
+  margin: auto;
+  z-index: 9999;
+  max-height: 90dvh; // Также используем dvh для максимальной высоты
+  max-width: 90vw;
+  overflow: auto;
+  
+  transform: scale(1);
+  opacity: 1;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.modal-content-hidden {
+  transform: scale(0.8);
+  opacity: 0;
+}
+
+[data-modal-id] {
+  display: none;
+}
+
+[data-modal-close] {
+  cursor: pointer;
+}
+*/
 
