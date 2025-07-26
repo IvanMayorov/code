@@ -4,7 +4,7 @@ const SELECTORS = {
   MODAL_TARGET: '[data-modal-target]',
   MODAL_ID: '[data-modal-id]',
   MODAL_CLOSE: '[data-modal-action="close"]',
-  MODAL_OVERLAY: '.simple-modal-overlay'
+  MODAL_OVERLAY: '.s-modal'
 };
 
 // Кэшированные элементы
@@ -42,7 +42,7 @@ function toggleElementVisibility(element, show = true, className = '') {
   if (!element) return;
   
   if (show) {
-    element.style.display = element.classList.contains('simple-modal-overlay') ? 'flex' : 'block';
+    element.style.display = element.classList.contains('s-modal') ? 'flex' : 'block';
     element.classList.add(className);
     
     // Запускаем анимацию появления
@@ -63,12 +63,17 @@ function toggleElementVisibility(element, show = true, className = '') {
 }
 
 // Основная функция открытия модального окна
-function openModal(modal) {
-  if (!modal || modalState.isOpen) return;
+function openModal(overlay) {
+  if (!overlay || modalState.isOpen) return;
 
-  const overlay = modal.closest(SELECTORS.MODAL_OVERLAY);
-  if (!overlay) {
-    console.warn('Modal is not inside a simple-modal-overlay');
+  if (!overlay.classList.contains('s-modal')) {
+    console.warn('Element is not a s-modal');
+    return;
+  }
+
+  const modal = overlay.querySelector('[data-modal-content]') || overlay.children[0];
+  if (!modal) {
+    console.warn('No modal content found in s-modal');
     return;
   }
 
@@ -104,9 +109,9 @@ function closeModal(modal = modalState.currentModal, overlay = modalState.curren
 
 // Функция открытия модального окна по ID
 function openModalById(modalId) {
-  const modal = document.querySelector(`[data-modal-id="${modalId}"]`);
-  if (modal) {
-    openModal(modal);
+  const overlay = document.querySelector(`.s-modal[data-modal-id="${modalId}"]`);
+  if (overlay) {
+    openModal(overlay);
     return true;
   }
   console.warn(`Modal with ID "${modalId}" not found`);
@@ -115,10 +120,10 @@ function openModalById(modalId) {
 
 // Функция закрытия модального окна по ID
 function closeModalById(modalId) {
-  const modal = document.querySelector(`[data-modal-id="${modalId}"]`);
-  if (modal) {
-    const overlay = modal.closest(SELECTORS.MODAL_OVERLAY);
-    if (overlay) {
+  const overlay = document.querySelector(`.s-modal[data-modal-id="${modalId}"]`);
+  if (overlay) {
+    const modal = overlay.querySelector('[data-modal-content]') || overlay.children[0];
+    if (modal) {
       closeModal(modal, overlay);
       return true;
     }
@@ -142,9 +147,9 @@ function handleModalEvents(event) {
   // Обработка кликов по кнопкам закрытия
   if (target.matches(SELECTORS.MODAL_CLOSE)) {
     event.preventDefault();
-    const modal = target.closest(SELECTORS.MODAL_ID);
-    if (modal) {
-      const overlay = modal.closest(SELECTORS.MODAL_OVERLAY);
+    const overlay = target.closest(SELECTORS.MODAL_OVERLAY);
+    if (overlay) {
+      const modal = overlay.querySelector('[data-modal-content]') || overlay.children[0];
       closeModal(modal, overlay);
     }
     return;
@@ -152,7 +157,7 @@ function handleModalEvents(event) {
 
   // Обработка кликов по overlay для закрытия
   if (target.matches(SELECTORS.MODAL_OVERLAY)) {
-    const modal = target.querySelector(SELECTORS.MODAL_ID);
+    const modal = target.querySelector('[data-modal-content]') || target.children[0];
     if (modal) {
       closeModal(modal, target);
     }
@@ -191,68 +196,71 @@ if (document.readyState === 'loading') {
 }
 
 /*
-CSS для модального окна с dvh:
 
-// Блокировка скролла при открытом модальном окне
-body.modal-open {
-  overflow: hidden;
-  position: fixed;
-  width: 100%;
-  touch-action: none;
-}
 
-.simple-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100dvh;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 9998;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  overflow: auto;
-  padding: 20px;
-  box-sizing: border-box;
+
+.s-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100dvh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9998;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
+    padding: 20px;
+    box-sizing: border-box;
+    
+   
+    opacity: 1;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  }
   
-  opacity: 1;
-  transition: opacity 0.3s ease-in-out;
-}
-
-.modal-overlay-hidden {
-  opacity: 0;
-}
-
-.simple-modal-overlay > * {
-  position: relative;
-  margin: auto;
-  z-index: 9999;
-  max-height: 90dvh;
-  max-width: 90vw;
-  overflow: auto;
   
-  transform: scale(1);
-  opacity: 1;
-  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-}
+  
+  .s-modal > * {
+       position: relative;
+    margin: auto;
+    z-index: 9999;
+   
+    transform: scale(1);
+    opacity: 1;
+      transition:  transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  }
+  
+  .modal-content-hidden {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  
+  .modal-overlay-hidden {
+    opacity: 0;
+  }
+  
 
-.modal-content-hidden {
-  transform: scale(0.8);
-  opacity: 0;
-}
+  [data-modal-id] {
+    display: none;
+  }
+  
 
-[data-modal-id] {
-  display: none;
-}
+  [data-modal-action=close] {
+    cursor: pointer;
+  }
+  
+  body.modal-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    touch-action: none;
+  }
 
-[data-modal-close] {
-  cursor: pointer;
-}
 
 Пример HTML структуры:
-<div class="simple-modal-overlay">
-  <div data-modal-id="modal1" class="modal-content">
+<div class="s-modal" data-modal-id="modal1">
+  <div class="modal-content" data-modal-content>
     <h2>Модальное окно</h2>
     <p>Содержимое модального окна</p>
     <button data-modal-action="close">Закрыть</button>
