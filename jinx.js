@@ -122,12 +122,15 @@ soundButtons.forEach(button => {
 
     } else {
       // If no audio or audio is paused, create and play
-      audio = new Audio("https://res.cloudinary.com/do7m7foqv/video/upload/v1750862291/Punchy_Fashion_Groove_Loop-2_m3aoub.mp3");
-      audio.play();
-      soundButtonIcon.style.display = 'none';
-      soundButtonIcon.nextElementSibling.style.display = 'block';
-      audio.loop = true;
-      audio.volume = 0.5;
+      const audioSrc = document.body.getAttribute('data-audio');
+      if (audioSrc) {
+        audio = new Audio(audioSrc);
+        audio.play();
+        soundButtonIcon.style.display = 'none';
+        soundButtonIcon.nextElementSibling.style.display = 'block';
+        audio.loop = true;
+        audio.volume = 0.5;
+      }
     }
   });
 });
