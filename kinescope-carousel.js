@@ -41,14 +41,32 @@ document.addEventListener('DOMContentLoaded', function() {
 // #region Tabs
 const links = document.querySelectorAll('.ecosystem_tabs_link');
 const panes = document.querySelectorAll('.ecosystem_tabs_pane');
+const tabBoxes = document.querySelectorAll('.ecosystem_tabs_box');
 
 let currentTab = 0;
 const tabCount = Math.min(links.length, panes.length);
-const tabInterval = 2000; // 2 секунды, можно изменить
 
-let tabTimer = null;
-let isPaused = false;
-let isVisible = false; // Флаг видимости
+function fadeOut(element, duration = 300) {
+  element.style.transition = `opacity ${duration}ms`;
+  element.style.opacity = 0;
+  return new Promise(resolve => {
+    setTimeout(() => {
+      element.style.display = 'none';
+      resolve();
+    }, duration);
+  });
+}
+
+function fadeIn(element, duration = 300) {
+  element.style.display = '';
+  // Force reflow to apply transition
+  void element.offsetWidth;
+  element.style.transition = `opacity ${duration}ms`;
+  element.style.opacity = 0;
+  setTimeout(() => {
+    element.style.opacity = 1;
+  }, 10);
+}
 
 function showTab(idx) {
   // Remove 'is-active' from all .ecosystem_tabs_title
@@ -56,93 +74,48 @@ function showTab(idx) {
     title.classList.remove('is-active');
   });
 
-  // Hide all panes
-  panes.forEach(pane => {
-    pane.style.display = 'none';
-  });
-
-  // Show the pane and activate the tab
-  if (panes[idx]) {
-    panes[idx].style.display = '';
+  // Fade out current pane, fade in new pane
+  if (panes[currentTab] && panes[currentTab] !== panes[idx]) {
+    fadeOut(panes[currentTab]).then(() => {
+      if (panes[idx]) {
+        panes[idx].style.opacity = 0;
+        fadeIn(panes[idx]);
+      }
+    });
+  } else if (panes[idx]) {
+    // On first load or if same tab, just show
+    panes.forEach((pane, i) => {
+      pane.style.display = (i === idx) ? '' : 'none';
+      pane.style.opacity = (i === idx) ? 1 : 0;
+    });
   }
+
   if (links[idx]) {
     const title = links[idx].querySelector('.ecosystem_tabs_title');
     if (title) {
       title.classList.add('is-active');
     }
   }
-}
-
-function startTabInterval() {
-  if (tabTimer) clearInterval(tabTimer);
-  if (isPaused || !isVisible) return;
-  tabTimer = setInterval(() => {
-    if (!isPaused && isVisible) {
-      currentTab = (currentTab + 1) % tabCount;
-      showTab(currentTab);
-    }
-  }, tabInterval);
-}
-
-function stopTabInterval() {
-  if (tabTimer) {
-    clearInterval(tabTimer);
-    tabTimer = null;
-  }
+  currentTab = idx;
 }
 
 // Инициализация: показать первую вкладку
 if (tabCount > 0) {
+  panes.forEach((pane, i) => {
+    pane.style.opacity = (i === 0) ? 1 : 0;
+    pane.style.display = (i === 0) ? '' : 'none';
+    pane.style.transition = 'opacity 300ms';
+  });
   showTab(0);
 }
 
-// Автоматическое переключение вкладок по таймеру с поддержкой паузы при наведении
-if (tabCount > 1) {
-  // Навесим обработчики на все контейнеры вкладок
-  panes.forEach(pane => {
-    pane.addEventListener('mouseenter', () => {
-      isPaused = true;
-      stopTabInterval();
-    });
-    pane.addEventListener('mouseleave', () => {
-      isPaused = false;
-      startTabInterval();
+// Переключение вкладок по клику на .ecosystem_tabs_box
+if (tabBoxes.length > 0 && tabCount > 1) {
+  tabBoxes.forEach((box, idx) => {
+    box.addEventListener('click', () => {
+      if (idx !== currentTab) {
+        showTab(idx);
+      }
     });
   });
-
-  // Определяем контейнер для всех вкладок (например, общий родитель)
-  // Если у всех panes один родитель, используем его
-  let tabsContainer = null;
-  if (panes.length > 0) {
-    tabsContainer = panes[0].parentElement;
-    // Проверим, что все panes действительно в одном контейнере
-    if (![...panes].every(p => p.parentElement === tabsContainer)) {
-      tabsContainer = null;
-    }
-  }
-
-  // Если не нашли общий контейнер, используем первый pane как наблюдаемый элемент
-  const observedElement = tabsContainer || panes[0];
-
-  // Создаём Intersection Observer
-  const observer = new window.IntersectionObserver(
-    (entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          isVisible = true;
-          startTabInterval();
-        } else {
-          isVisible = false;
-          stopTabInterval();
-        }
-      });
-    },
-    {
-      threshold: 0.1 // Считаем видимым, если хотя бы 10% видно
-    }
-  );
-
-  if (observedElement) {
-    observer.observe(observedElement);
-  }
 }
