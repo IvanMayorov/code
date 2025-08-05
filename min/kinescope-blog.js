@@ -1,0 +1,1 @@
+const utmButtons=document.querySelectorAll("[data-utm]"),currentSlug=window.location.pathname.split("/").pop()||"home";utmButtons.forEach((t=>{const e=t.getAttribute("href"),u=t.getAttribute("data-utm");if(e&&u){const o=`utm_source=${u}_${currentSlug}`,r=e.includes("?")?"&":"?",n=`${e}${r}${o}`;t.setAttribute("href",n)}}));

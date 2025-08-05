@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modal Test</title>
+    <style>
+        .simple-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9998;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: auto;
+            padding: 20px;
+            box-sizing: border-box;
+            
+            opacity: 1;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .modal-overlay-hidden {
+            opacity: 0;
+        }
+
+        .simple-modal-overlay > * {
+            position: relative;
+            margin: auto;
+            z-index: 9999;
+            max-height: 90vh;
+            max-height: 90dvh;
+            max-width: 90vw;
+            overflow: auto;
+            
+            transform: scale(1);
+            opacity: 1;
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+
+        .modal-content-hidden {
+            transform: scale(0.8);
+            opacity: 0;
+        }
+
+        [data-modal-id] {
+            display: none;
+        }
+
+        [data-modal-close] {
+            cursor: pointer;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            min-width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Modal Test</h1>
+    
+    <button data-modal-target="test-modal">Открыть модальное окно</button>
+
+    <div data-modal-id="test-modal" class="modal-content">
+        <h2>Тестовое модальное окно</h2>
+        <p>Это содержимое модального окна.</p>
+        <button data-modal-close>Закрыть</button>
+    </div>
+
+    <script src="simple-modal.js"></script>
+</body>
+</html> 

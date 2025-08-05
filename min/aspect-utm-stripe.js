@@ -1,0 +1,1 @@
+!function(){const o=new URLSearchParams(window.location.search).get("prefilled_promo_code");o&&document.querySelectorAll("[data-promotion]").forEach((function(t){t.setAttribute("data-promotion",o)}))}();

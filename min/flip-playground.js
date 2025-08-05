@@ -1,0 +1,1 @@
+document.querySelector(".btn").addEventListener("click",(()=>{let e=Flip.getState(".green_box");document.querySelector(".grid").classList.toggle("is-changed");Flip.from(e,{duration:.3,ease:"power1.inOut",stagger:.1,scale:!0})}));

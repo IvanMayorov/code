@@ -1,0 +1,1 @@
+document.addEventListener("DOMContentLoaded",(function(){const e=document.querySelector(".broadcast_text_box");!e||e.children.length<2||setTimeout((function t(){const n=Flip.getState(Array.from(e.children)),o=e.children[0];e.appendChild(o),Flip.from(n,{duration:.6,ease:"power1.inOut",absolute:!0,onComplete:()=>{setTimeout(t,2e3)}})}),2e3)}));
