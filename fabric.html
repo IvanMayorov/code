@@ -112,12 +112,73 @@ downloadBtn.addEventListener('click', ()=>{
   const url = canvas.toDataURL({format:'png', multiplier:2})
   const a = document.createElement('a')
   a.href = url
-  a.download = 'result.png'
+  a.download = 'result@2x.png'
   a.click()
 })
 
 window.addEventListener('resize', resizeCanvas)
 resizeCanvas()
+
+let pinchActive=false
+let pinch0=null
+let obj0=null
+
+function twoTouchesData(ev){
+  if(!ev.touches || ev.touches.length<2) return null
+  const rect = canvas.upperCanvasEl.getBoundingClientRect()
+  const t1 = ev.touches[0], t2 = ev.touches[1]
+  const p1 = { x: t1.clientX - rect.left, y: t1.clientY - rect.top }
+  const p2 = { x: t2.clientX - rect.left, y: t2.clientY - rect.top }
+  const cx = (p1.x + p2.x)/2
+  const cy = (p1.y + p2.y)/2
+  const dx = p2.x - p1.x
+  const dy = p2.y - p1.y
+  const dist = Math.hypot(dx,dy)
+  const angle = Math.atan2(dy,dx)
+  return {cx, cy, dist, angle}
+}
+
+canvas.upperCanvasEl.addEventListener('touchstart', e=>{
+  if(!overlayObj) return
+  if(e.touches.length===2){
+    const d = twoTouchesData(e)
+    if(!d) return
+    pinchActive = true
+    pinch0 = d
+    obj0 = {
+      left: overlayObj.left,
+      top: overlayObj.top,
+      scale: overlayObj.scaleX,
+      angle: overlayObj.angle || 0,
+      cx: d.cx,
+      cy: d.cy
+    }
+    overlayObj.set({ originX:'center', originY:'center' })
+    canvas.setActiveObject(overlayObj)
+    e.preventDefault()
+  }
+},{passive:false})
+
+canvas.upperCanvasEl.addEventListener('touchmove', e=>{
+  if(!pinchActive || !overlayObj) return
+  const d = twoTouchesData(e)
+  if(!d) return
+  const s = obj0.scale * (d.dist / pinch0.dist)
+  const rot = obj0.angle + (d.angle - pinch0.angle) * 180 / Math.PI
+  const nx = obj0.left + (d.cx - obj0.cx)
+  const ny = obj0.top + (d.cy - obj0.cy)
+  overlayObj.set({ scaleX:s, scaleY:s, angle:rot, left:nx, top:ny })
+  canvas.requestRenderAll()
+  e.preventDefault()
+},{passive:false})
+
+canvas.upperCanvasEl.addEventListener('touchend', e=>{
+  if(e.touches.length<2){
+    pinchActive=false
+    pinch0=null
+    obj0=null
+  }
+},{passive:false})
 </script>
 </body>
 </html>
