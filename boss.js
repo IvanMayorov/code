@@ -64,6 +64,19 @@ function loadPredefinedOverlay(overlayUrl, overlayType){
       transparentCorners:false
     })
     
+    // Настройка контролов для этого объекта
+    img.set({
+      cornerSize: 12,
+      cornerColor: '#ffffff',
+      cornerStrokeColor: '#000000',
+      cornerStyle: 'rect',
+      transparentCorners: false,
+      borderColor: '#000000',
+      borderScaleFactor: 2,
+      cornerStrokeWidth: 2,
+      padding: 0
+    })
+    
     // Сохраняем тип оверлея в объекте
     img._overlayType = overlayType
     
