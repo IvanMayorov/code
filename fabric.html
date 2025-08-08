@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fabric.js Overlay Editor</title>
+<style>
+  :root{--bg:#0b0b0c;--fg:#e9e9ec;--muted:#2b2b31;--accent:#6ea8fe}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;display:grid;grid-template-rows:auto 1fr auto;height:100vh}
+  header,footer{padding:12px 16px;border-bottom:1px solid var(--muted)}
+  footer{border-bottom:none;border-top:1px solid var(--muted);display:flex;gap:8px;flex-wrap:wrap}
+  .toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .btn,input[type="file"]::file-selector-button{background:var(--muted);color:var(--fg);border:none;padding:8px 12px;border-radius:10px;cursor:pointer}
+  .btn.primary{background:var(--accent);color:#000}
+  .wrap{display:grid;place-items:center;padding:16px}
+  #stage{width:min(92vw,1200px);height:70vh;background:#111;border-radius:14px;overflow:hidden}
+  canvas{border-radius:14px}
+</style>
+</head>
+<body>
+<header>
+  <div class="toolbar">
+    <label class="btn"><input id="bgInput" type="file" accept="image/*" hidden>Загрузить фото</label>
+    <label class="btn"><input id="ovInput" type="file" accept="image/*" hidden>Загрузить оверлей</label>
+    <button id="center" class="btn">По центру</button>
+    <button id="reset" class="btn">Сброс</button>
+  </div>
+</header>
+
+<div class="wrap"><div id="stage"><canvas id="c"></canvas></div></div>
+
+<footer>
+  <button id="download" class="btn primary">Скачать PNG</button>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/fabric@5.3.0/dist/fabric.min.js"></script>
+<script>
+const elCanvas = document.getElementById('c')
+const stage = document.getElementById('stage')
+const bgInput = document.getElementById('bgInput')
+const ovInput = document.getElementById('ovInput')
+const centerBtn = document.getElementById('center')
+const resetBtn = document.getElementById('reset')
+const downloadBtn = document.getElementById('download')
+
+const canvas = new fabric.Canvas(elCanvas,{preserveObjectStacking:true,backgroundVpt:true,fireRightClick:false,stopContextMenu:true})
+let bgImage = null
+let overlayObj = null
+
+function resizeCanvas(){
+  const w = stage.clientWidth
+  const h = stage.clientHeight
+  canvas.setWidth(w)
+  canvas.setHeight(h)
+  if(bgImage) fitBackground(bgImage)
+  canvas.requestRenderAll()
+}
+
+function fitBackground(img){
+  const cw = canvas.getWidth(), ch = canvas.getHeight()
+  const iw = img.width, ih = img.height
+  const r = Math.min(cw/iw, ch/ih)
+  const w = iw*r, h = ih*r
+  img.set({scaleX:r, scaleY:r, left:(cw-w)/2, top:(ch-h)/2})
+  canvas.setBackgroundImage(img, canvas.requestRenderAll.bind(canvas))
+}
+
+function loadFileAsDataURL(file){
+  return new Promise(res=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.readAsDataURL(file) })
+}
+
+bgInput.addEventListener('change', async e=>{
+  const f = e.target.files[0]; if(!f) return
+  const url = await loadFileAsDataURL(f)
+  fabric.Image.fromURL(url, img=>{
+    bgImage = img
+    fitBackground(bgImage)
+  },{crossOrigin:'anonymous', selectable:false, evented:false})
+})
+
+ovInput.addEventListener('change', async e=>{
+  const f = e.target.files[0]; if(!f) return
+  const url = await loadFileAsDataURL(f)
+  fabric.Image.fromURL(url, img=>{
+    overlayObj && canvas.remove(overlayObj)
+    const cw = canvas.getWidth(), ch = canvas.getHeight()
+    const maxSide = Math.min(cw, ch)*0.6
+    const r = Math.min(maxSide/img.width, maxSide/img.height)
+    img.set({left:cw/2, top:ch/2, originX:'center', originY:'center', scaleX:r, scaleY:r, cornerStyle:'circle', transparentCorners:false})
+    overlayObj = img
+    canvas.add(overlayObj).setActiveObject(overlayObj)
+    canvas.requestRenderAll()
+  },{crossOrigin:'anonymous'})
+})
+
+centerBtn.addEventListener('click', ()=>{
+  if(!overlayObj) return
+  overlayObj.set({left:canvas.getWidth()/2, top:canvas.getHeight()/2, originX:'center', originY:'center'})
+  canvas.setActiveObject(overlayObj)
+  canvas.requestRenderAll()
+})
+
+resetBtn.addEventListener('click', ()=>{
+  canvas.clear()
+  canvas.setBackgroundImage(null, null)
+  overlayObj = null
+  bgImage = null
+  resizeCanvas()
+})
+
+downloadBtn.addEventListener('click', ()=>{
+  const url = canvas.toDataURL({format:'png', multiplier:2})
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'result.png'
+  a.click()
+})
+
+window.addEventListener('resize', resizeCanvas)
+resizeCanvas()
+</script>
+</body>
+</html>
