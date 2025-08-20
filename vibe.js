@@ -1,3 +1,4 @@
+
 // gsap.from('.main_heading-wrap .flex-v-c *, .main_btn-wrap, .main_heading-wrap .flex-h-c, .main_marquee-item_container > *', {
 //   y: 50,
 //   opacity: 0,
@@ -137,6 +138,11 @@
 
 var Webflow = Webflow || [];
 Webflow.push(function(){
+
+  const promoOldPrices = document.querySelectorAll('.old_price');
+  const promoLables = document.querySelectorAll('.promo_label');
+  const promoTexts = document.querySelectorAll('[data-promocode]');
+
   // Получаем форму и лоадер
   const tarifForm = document.querySelector('form[data-name="tarif"]');
   const loader = document.querySelector('.loader');
@@ -147,8 +153,37 @@ function getPromoCodeFromUrl() {
   return params.get('promo') || '';
 }
 
+// Функция для скрытия элементов промокода
+function hidePromoElements() {
+  promoOldPrices.forEach(element => {
+    element.style.display = 'none';
+  });
+  promoLables.forEach(element => {
+    element.style.display = 'none';
+  });
+  promoTexts.forEach(element => {
+    element.style.display = 'none';
+  });
+}
+
+// Функция для показа элементов промокода
+function showPromoElements() {
+  promoOldPrices.forEach(element => {
+    element.style.display = '';
+  });
+  promoLables.forEach(element => {
+    element.style.display = '';
+  });
+  promoTexts.forEach(element => {
+    element.style.display = '';
+  });
+}
+
 // Функция для работы с промокодами
 function applyPromoCode() {
+  // Сначала скрываем все элементы промокода
+  hidePromoElements();
+  
   const promoCode = getPromoCodeFromUrl();
   console.log(promoCode);
   if (!promoCode) {
@@ -175,12 +210,20 @@ function applyPromoCode() {
     if (promoData.promoCodes && promoData.promoCodes[promoCode]) {
       const promoPrice = promoData.promoCodes[promoCode];
       
+      // Показываем элементы промокода
+      showPromoElements();
+      
+      // Подставляем название промокода в элементы promoTexts
+      promoTexts.forEach(element => {
+        element.textContent = promoCode;
+      });
+      
       // Находим все элементы с data-promo-price и обновляем их
       const promoPriceElements = document.querySelectorAll('[data-promo-price]');
       
       // Функция для форматирования цены с тонким пробелом
       function formatPrice(price) {
-        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
       }
       
       const formattedPrice = formatPrice(promoPrice);
@@ -226,11 +269,23 @@ if (tarifForm && loader) {
     for (let [key, value] of formData.entries()) {
       formDataLower[key.toLowerCase()] = value;
     }
+    
+    // Ищем элемент с классом tag_id внутри формы
+    const tagIdElement = tarifForm.querySelector('.tag_id');
+    let tagId = '';
+    if (tagIdElement) {
+      tagId = tagIdElement.textContent.trim() || tagIdElement.innerText.trim();
+      console.log('Найден tag_id:', tagId);
+    } else {
+      console.log('Элемент с классом tag_id не найден в форме');
+    }
+    
     const data = {
       name: formDataLower['name'] || '',
       telegram: formDataLower['telegram'] || '',
       email: formDataLower['email'] || '',
-      price: formDataLower['price'] || ''
+      price: formDataLower['price'] || '',
+      tag_id: tagId
     };
 
     // Также добавляем значение data-product-id из атрибута формы
@@ -247,7 +302,16 @@ if (tarifForm && loader) {
     }
 
     // Выводим data в консоль при отправке
-    console.log('Отправляемые данные:', data);
+    console.log('=== ДАННЫЕ ФОРМЫ ===');
+    console.log('Имя:', data.name);
+    console.log('Telegram:', data.telegram);
+    console.log('Email:', data.email);
+    console.log('Цена:', data.price);
+    console.log('Tag ID:', data.tag_id);
+    console.log('Product ID:', data.product_id);
+    console.log('Промокод:', data.promo || 'не указан');
+    console.log('Полный объект данных:', data);
+    console.log('==================');
 
     // Показываем лоадер
     loader.classList.add('is-visible');
