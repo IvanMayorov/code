@@ -135,15 +135,82 @@
 //   }
 
 
-// Получаем форму и лоадер
-const tarifForm = document.querySelector('form[data-name="tarif"]');
-const loader = document.querySelector('.loader');
+var Webflow = Webflow || [];
+Webflow.push(function(){
+  // Получаем форму и лоадер
+  const tarifForm = document.querySelector('form[data-name="tarif"]');
+  const loader = document.querySelector('.loader');
 
 // Функция для получения параметра promo из GET
 function getPromoCodeFromUrl() {
   const params = new URLSearchParams(window.location.search);
   return params.get('promo') || '';
 }
+
+// Функция для работы с промокодами
+function applyPromoCode() {
+  const promoCode = getPromoCodeFromUrl();
+  console.log(promoCode);
+  if (!promoCode) {
+    return; // Если промокода нет, ничего не делаем
+  }
+
+  // Ищем скрипт с данными промокодов
+  const promoDataScript = document.getElementById('promo-data');
+  if (!promoDataScript) {
+    console.warn('Скрипт с данными промокодов не найден');
+    return;
+  }
+
+  try {
+    // Исправляем JSON - убираем лишнюю запятую и добавляем кавычки к ключам
+    let jsonText = promoDataScript.textContent;
+    // Убираем лишнюю запятую после последнего элемента
+    jsonText = jsonText.replace(/,(\s*})/g, '$1');
+    // Убираем лишнюю запятую после последнего элемента в объекте
+    jsonText = jsonText.replace(/,(\s*]|\s*})/g, '$1');
+    
+    const promoData = JSON.parse(jsonText);
+    
+    if (promoData.promoCodes && promoData.promoCodes[promoCode]) {
+      const promoPrice = promoData.promoCodes[promoCode];
+      
+      // Находим все элементы с data-promo-price и обновляем их
+      const promoPriceElements = document.querySelectorAll('[data-promo-price]');
+      
+      // Функция для форматирования цены с тонким пробелом
+      function formatPrice(price) {
+        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+      }
+      
+      const formattedPrice = formatPrice(promoPrice);
+      
+      promoPriceElements.forEach(element => {
+        // Обновляем текст элемента с форматированной ценой
+        element.textContent = formattedPrice;
+        
+        // Если элемент имеет атрибут data-price, обновляем его тоже (без форматирования)
+        if (element.hasAttribute('data-price')) {
+          element.setAttribute('data-price', promoPrice);
+        }
+        
+        // Если это input с value, обновляем value (без форматирования)
+        if (element.tagName === 'INPUT' && element.type === 'hidden') {
+          element.value = promoPrice;
+        }
+      });
+      
+      console.log(`Применен промокод ${promoCode} с ценой ${promoPrice}`);
+    } else {
+      console.warn(`Промокод ${promoCode} не найден в списке промокодов`);
+    }
+  } catch (error) {
+    console.error('Ошибка при парсинге данных промокодов:', error);
+  }
+}
+
+// Применяем промокод сразу после инициализации Webflow
+applyPromoCode();
 
 if (tarifForm && loader) {
   // Получаем промокод из URL
@@ -238,3 +305,4 @@ if (tarifForm && loader) {
       });
   });
 }
+});
