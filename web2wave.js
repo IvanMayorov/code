@@ -9,8 +9,10 @@
     function updateNavbarBlur() {
       if (window.scrollY === 0) {
         blurBlock.classList.remove('is-visible');
+        navbar.classList.remove('is-blurred');
       } else {
         blurBlock.classList.add('is-visible');
+        navbar.classList.add('is-blurred');
       }
     }
 
