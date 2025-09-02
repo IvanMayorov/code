@@ -241,6 +241,15 @@ function applyPromoCode() {
         if (element.tagName === 'INPUT' && element.type === 'hidden') {
           element.value = promoPrice;
         }
+
+         // Если элемент находится внутри label, обновляем value у input внутри этого label
+         const label = element.closest('label');
+         if (label) {
+           const inputInLabel = label.querySelector('input');
+           if (inputInLabel) {
+             inputInLabel.value = promoPrice;
+           }
+         }
       });
       
       console.log(`Применен промокод ${promoCode} с ценой ${promoPrice}`);
