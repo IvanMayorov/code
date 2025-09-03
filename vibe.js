@@ -268,6 +268,42 @@ if (tarifForm && loader) {
   // Получаем промокод из URL
   const promoCode = getPromoCodeFromUrl();
 
+  // Добавляем обработчик с capture для перехвата события до Webflow
+  tarifForm.addEventListener('submit', function (e) {
+    // Email validation
+    const emailInput = tarifForm.querySelector('input[type="email"], input[name="email"], input[name="Email"]');
+    if (emailInput) {
+      const value = emailInput.value;
+      const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+      if (!re.test(value)) {
+        e.preventDefault(); // блокируем отправку
+        e.stopPropagation(); // останавливаем всплытие события
+        e.stopImmediatePropagation(); // останавливаем все остальные обработчики
+        emailInput.setCustomValidity("Введите корректный email-адрес");
+        emailInput.reportValidity(); // показываем системное сообщение
+        return false; // дополнительная защита
+      } else {
+        emailInput.setCustomValidity(""); // очищаем ошибку
+      }
+    }
+  }, true); // capture: true - перехватываем событие до Webflow
+
+  // Добавляем валидацию в реальном времени для поля email
+  const emailInput = tarifForm.querySelector('input[type="email"], input[name="email"], input[name="Email"]');
+  if (emailInput) {
+    emailInput.addEventListener('input', function() {
+      const value = this.value;
+      const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      
+      if (!re.test(value)) {
+        this.setCustomValidity("Введите корректный email-адрес");
+      } else {
+        this.setCustomValidity("");
+      }
+    });
+  }
+
   tarifForm.addEventListener('submit', function (e) {
     e.preventDefault();
 
