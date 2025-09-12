@@ -43,7 +43,6 @@ function initMultistepForm() {
   submitButton = multistepForm.querySelector(FORM_SELECTORS.submitBtn);
   progressIndicator = multistepForm.querySelector(FORM_SELECTORS.progressIndicator);
   progressBar = multistepForm.querySelector(FORM_SELECTORS.progress);
-
   
   // Скрываем все шаги кроме первого
   steps.forEach((step, index) => {
@@ -122,6 +121,18 @@ function validateCurrentStep() {
 function updateButtonStates() {
   const isValid = validateCurrentStep();
   const isLastStep = currentStep === totalSteps - 1;
+  const isFirstStep = currentStep === 0;
+  
+  // Обновляем состояние кнопок "Назад" (скрываем на первом шаге)
+  backButtons.forEach(button => {
+    if (isFirstStep) {
+      button.style.display = 'none';
+      button.classList.add('hidden');
+    } else {
+      button.style.display = 'block';
+      button.classList.remove('hidden');
+    }
+  });
   
   // Обновляем состояние кнопок "Далее" (скрываем на последнем шаге)
   nextButtons.forEach(button => {
@@ -154,7 +165,7 @@ function updateButtonStates() {
     }
   }
   
-  console.log(`Обновлено состояние кнопок: шаг ${currentStep + 1}/${totalSteps}, валиден: ${isValid}, последний шаг: ${isLastStep}`);
+  console.log(`Обновлено состояние кнопок: шаг ${currentStep + 1}/${totalSteps}, валиден: ${isValid}, первый шаг: ${isFirstStep}, последний шаг: ${isLastStep}`);
 }
 
 // Обновление индикатора прогресса
