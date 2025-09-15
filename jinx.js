@@ -65,6 +65,16 @@ window.addEventListener("mousemove", e => {
   yTo(e.clientY);
 });
 
+// Скрываем курсор при уходе с сайта
+document.addEventListener("mouseleave", () => {
+  gsap.set(".cursor_follower", { opacity: 0 });
+});
+
+// Показываем курсор при возвращении на сайт
+document.addEventListener("mouseenter", () => {
+  gsap.set(".cursor_follower", { opacity: 1 });
+});
+
 // Кешируем элементы, которые точно по одному на странице
 const links = document.querySelectorAll('a, button, [role="button"], input[type="submit"], .custom-hover, .process_card, .projects_section .bigtitle_row, .pointer');
 const cursorImgDefault = document.querySelector('.cursor_img.is-default');
