@@ -1,3 +1,5 @@
+
+
 // Селекторы для элементов формы
 const FORM_SELECTORS = {
   multistep: '[data-form="multistep"]',
@@ -261,6 +263,11 @@ function handleNext(e) {
   }
   
   if (currentStep < totalSteps - 1) {
+    // Если переходим на последний шаг, собираем данные из всех предыдущих шагов
+    if (currentStep + 1 === totalSteps - 1) {
+      collectDataFromAllSteps();
+    }
+    
     // Переходим к следующему шагу
     currentStep++;
     showStep(currentStep);
@@ -331,5 +338,71 @@ window.debugProgress = {
   getCurrentStep: () => currentStep,
   getTotalSteps: () => totalSteps
 };
+
+// Конфигурация для сбора данных из разных шагов
+const STEP_DATA_CONFIG = {
+  1: { // Второй шаг (индекс 1)
+    inputName: 'Contract types',
+    stepName: 'типы контрактов'
+  },
+  2: { // Третий шаг (индекс 2)
+    inputName: 'AI-features',
+    stepName: 'AI-функции'
+  },
+  3: { // Четвертый шаг (индекс 3)
+    inputName: 'Possible integrations',
+    stepName: 'возможные интеграции'
+  }
+};
+
+// Сбор данных из всех шагов
+function collectDataFromAllSteps() {
+  Object.keys(STEP_DATA_CONFIG).forEach(stepIndex => {
+    collectCheckboxDataFromStep(parseInt(stepIndex));
+  });
+}
+
+// Универсальная функция для сбора выбранных чекбоксов из любого шага
+function collectCheckboxDataFromStep(stepIndex) {
+  const config = STEP_DATA_CONFIG[stepIndex];
+  if (!config) {
+    console.log(`Конфигурация для шага ${stepIndex} не найдена`);
+    return;
+  }
+  
+  // Проверяем, что шаг существует
+  if (steps.length <= stepIndex) {
+    console.log(`Шаг ${stepIndex + 1} не найден`);
+    return;
+  }
+  
+  const step = steps[stepIndex];
+  const checkboxes = step.querySelectorAll('input[type="checkbox"]:checked');
+  
+  // Собираем значения выбранных чекбоксов
+  const selectedValues = Array.from(checkboxes).map(checkbox => {
+    return getCheckboxValue(checkbox);
+  });
+  
+  // Находим инпут на последнем шаге
+  const lastStep = steps[totalSteps - 1];
+  const targetInput = lastStep.querySelector(`input[data-name="${config.inputName}"]`);
+  
+  if (targetInput) {
+    // Записываем выбранные значения в инпут
+    targetInput.value = selectedValues.join(', ');
+    console.log(`Записаны ${config.stepName} на последнем шаге:`, selectedValues.join(', '));
+  } else {
+    console.log(`Инпут с data-name="${config.inputName}" не найден на последнем шаге`);
+  }
+}
+
+// Получение значения чекбокса с приоритетом
+function getCheckboxValue(checkbox) {
+  return checkbox.name || 
+         checkbox.getAttribute('data-name') || 
+         checkbox.nextElementSibling?.textContent?.trim() || 
+         'Выбранный элемент';
+}
 
 
