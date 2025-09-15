@@ -54,6 +54,114 @@
 //   objectFit: 'cover',
 // };
 
+
+// gsap.set(".cursor_follower", {xPercent: -50, yPercent: -50});
+
+let xTo = gsap.quickTo(".cursor_follower", "x", {duration: 0.01, ease: "none"}),
+    yTo = gsap.quickTo(".cursor_follower", "y", {duration: 0.01, ease: "none"});
+
+window.addEventListener("mousemove", e => {
+  xTo(e.clientX);
+  yTo(e.clientY);
+});
+
+// Кешируем элементы, которые точно по одному на странице
+const links = document.querySelectorAll('a, button, [role="button"], input[type="submit"], .custom-hover, .process_card, .projects_section .bigtitle_row, .pointer');
+const cursorImgDefault = document.querySelector('.cursor_img.is-default');
+const cursorImgHover = document.querySelector('.cursor_img.is-hover');
+const cursorImgClick = document.querySelector('.cursor_img.is-click');
+
+// Функция для показа курсора-клика (делает display: block только .cursor_img.is-click)
+function showClickCursor() {
+  if (cursorImgClick) cursorImgClick.style.display = 'block';
+  if (cursorImgDefault) cursorImgDefault.style.display = 'none';
+  if (cursorImgHover) cursorImgHover.style.display = 'none';
+}
+
+// Функция для скрытия курсора-клика и возврата к нужному состоянию
+function hideClickCursor() {
+  if (cursorImgClick) cursorImgClick.style.display = 'none';
+  // Если курсор сейчас над ссылкой, показываем hover, иначе default
+  // Проверяем, есть ли элемент под курсором с нужным селектором
+  const hovered = document.querySelector(':hover');
+  if (hovered && hovered.closest('a, .link, [role="link"], button, .button, .custom-hover, [data-cursor-hover]')) {
+    if (cursorImgHover) cursorImgHover.style.display = 'block';
+    if (cursorImgDefault) cursorImgDefault.style.display = 'none';
+  } else {
+    if (cursorImgHover) cursorImgHover.style.display = 'none';
+    if (cursorImgDefault) cursorImgDefault.style.display = 'block';
+  }
+}
+
+// При нажатии мыши по документу показываем курсор-клика
+document.addEventListener('mousedown', () => {
+  showClickCursor();
+});
+// При отпускании мыши по документу скрываем курсор-клика
+document.addEventListener('mouseup', () => {
+  hideClickCursor();
+});
+
+links.forEach(link => {
+  link.addEventListener('mouseenter', () => {
+    // Скрываем .cursor_img.is-default (кешированный)
+    if (cursorImgDefault) {
+      cursorImgDefault.style.display = 'none';
+    }
+    // Показываем .cursor_img.is-hover (кешированный)
+    if (cursorImgHover) {
+      cursorImgHover.style.display = 'block';
+    }
+    // Скрываем .cursor_img.is-click, если был показан ранее
+    if (cursorImgClick) {
+      cursorImgClick.style.display = 'none';
+    }
+  });
+
+  link.addEventListener('mouseleave', () => {
+    // Скрываем .cursor_img.is-hover и .cursor_img.is-click (кешированные)
+    if (cursorImgHover) {
+      cursorImgHover.style.display = 'none';
+    }
+    if (cursorImgClick) {
+      cursorImgClick.style.display = 'none';
+    }
+    // Показываем .cursor_img.is-default (кешированный)
+    if (cursorImgDefault) {
+      cursorImgDefault.style.display = 'block';
+    }
+  });
+
+  link.addEventListener('mousedown', () => {
+    // Показываем .cursor_img.is-click
+    if (cursorImgClick) {
+      cursorImgClick.style.display = 'block';
+    }
+    // Скрываем остальные
+    if (cursorImgHover) {
+      cursorImgHover.style.display = 'none';
+    }
+    if (cursorImgDefault) {
+      cursorImgDefault.style.display = 'none';
+    }
+  });
+
+  link.addEventListener('mouseup', () => {
+    // После клика возвращаемся к hover-стилю, если курсор все еще над элементом
+    if (cursorImgHover) {
+      cursorImgHover.style.display = 'block';
+    }
+    if (cursorImgClick) {
+      cursorImgClick.style.display = 'none';
+    }
+    if (cursorImgDefault) {
+      cursorImgDefault.style.display = 'none';
+    }
+  });
+});
+
+
+
 // const sequence = new FastImageSequence(document.querySelector('.flames'), options);
 function addWillChange(targets, props = ['transform']) {
   gsap.utils.toArray(targets).forEach(el => {
