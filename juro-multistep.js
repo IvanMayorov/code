@@ -1,5 +1,54 @@
 
 
+// Получаем данные из формы с id wf-form-quiz и заполняем ChiliPiper.submit при отправке
+
+document.addEventListener('DOMContentLoaded', function() {
+  var quizForm = document.getElementById('wf-form-quiz');
+  if (!quizForm) return;
+
+  quizForm.addEventListener('submit', function(e) {
+    // Можно не отменять отправку, если ChiliPiper не мешает стандартному submit
+    // e.preventDefault();
+
+    // Получаем значения по data-name
+    function getInputValue(name) {
+      var el = quizForm.querySelector('[data-name="' + name + '"]');
+      return el ? el.value : '';
+    }
+
+    var firstName = getInputValue('First Name');
+    var lastName = getInputValue('Last Name');
+    var email = getInputValue('Work Email');
+    var company = getInputValue('Company Name');
+    var companySize = getInputValue('Company Size');
+    var phone = getInputValue('phone number');
+    
+    console.log('Отправка данных в ChiliPiper:', {
+        firstName,
+        lastName,
+        email,
+        company,
+        companySize,
+        phone
+      });
+      
+    // Отправляем данные в ChiliPiper
+    ChiliPiper.submit("juro-com", "inbound_router", {
+      trigger: 'ThirdPartyForm',
+      lead: {
+        "firstname": firstName,
+        "lastname": lastName,
+        "email": email,
+        "phone": phone,
+        "company": company,
+        "number_of_employees": companySize
+      }
+    });
+  });
+});
+
+
+
 // Селекторы для элементов формы
 const FORM_SELECTORS = {
   multistep: '[data-form="multistep"]',
@@ -31,7 +80,6 @@ function initMultistepForm() {
   // Находим форму
   multistepForm = document.querySelector(FORM_SELECTORS.multistep);
   if (!multistepForm) {
-    console.log('Форма не найдена');
     return;
   }
   
@@ -166,8 +214,6 @@ function updateButtonStates() {
       submitButton.classList.add('hidden');
     }
   }
-  
-  console.log(`Обновлено состояние кнопок: шаг ${currentStep + 1}/${totalSteps}, валиден: ${isValid}, первый шаг: ${isFirstStep}, последний шаг: ${isLastStep}`);
 }
 
 // Обновление индикатора прогресса
@@ -176,27 +222,22 @@ function updateProgressIndicator() {
   
   const progressPercent = ((currentStep + 1) / totalSteps) * 100;
   
-  console.log(`Обновление прогресса: ${progressPercent}% (шаг ${currentStep + 1} из ${totalSteps})`);
-  
   // Обновляем текст индикатора (если это текстовый элемент)
   if (progressIndicator) {
     const progressText = `${currentStep + 1} из ${totalSteps}`;
     progressIndicator.textContent = progressText;
-    console.log('Обновлен текст индикатора:', progressText);
   }
   
   // Обновляем ширину полосы прогресса
   if (progressBar) {
     progressBar.style.width = `${progressPercent}%`;
     progressBar.style.transition = 'width 0.3s ease';
-    console.log('Обновлена ширина progressBar:', `${progressPercent}%`);
   }
   
   // Если progressIndicator сам является полосой прогресса
   if (progressIndicator && progressIndicator.classList.contains('progress-bar')) {
     progressIndicator.style.width = `${progressPercent}%`;
     progressIndicator.style.transition = 'width 0.3s ease';
-    console.log('Обновлена ширина progressIndicator:', `${progressPercent}%`);
   }
   
   // Дополнительная проверка: ищем любые элементы с классом progress-bar
@@ -204,7 +245,6 @@ function updateProgressIndicator() {
   allProgressBars.forEach(bar => {
     bar.style.width = `${progressPercent}%`;
     bar.style.transition = 'width 0.3s ease';
-    console.log('Обновлена ширина найденного progress-bar:', `${progressPercent}%`);
   });
   
   // Еще одна проверка: ищем элементы с атрибутом data-form="progress"
@@ -213,7 +253,6 @@ function updateProgressIndicator() {
     element.style.width = `${progressPercent}%`;
     element.style.transition = 'width 0.3s ease';
     element.style.display = 'block'; // Убеждаемся, что элемент видим
-    console.log('Обновлена ширина элемента [data-form="progress"]:', `${progressPercent}%`);
   });
 }
 
@@ -258,7 +297,6 @@ function handleNext(e) {
   
   // Проверяем валидность перед переходом
   if (!validateCurrentStep()) {
-    console.log('Шаг не прошел валидацию');
     return;
   }
   
@@ -303,7 +341,6 @@ function showStep(stepIndex) {
 
 // Принудительное обновление прогресса (для отладки)
 function forceUpdateProgress() {
-  console.log('Принудительное обновление прогресса');
   updateProgressIndicator();
 }
 
@@ -366,13 +403,11 @@ function collectDataFromAllSteps() {
 function collectCheckboxDataFromStep(stepIndex) {
   const config = STEP_DATA_CONFIG[stepIndex];
   if (!config) {
-    console.log(`Конфигурация для шага ${stepIndex} не найдена`);
     return;
   }
   
   // Проверяем, что шаг существует
   if (steps.length <= stepIndex) {
-    console.log(`Шаг ${stepIndex + 1} не найден`);
     return;
   }
   
@@ -391,9 +426,6 @@ function collectCheckboxDataFromStep(stepIndex) {
   if (targetInput) {
     // Записываем выбранные значения в инпут
     targetInput.value = selectedValues.join(', ');
-    console.log(`Записаны ${config.stepName} на последнем шаге:`, selectedValues.join(', '));
-  } else {
-    console.log(`Инпут с data-name="${config.inputName}" не найден на последнем шаге`);
   }
 }
 
