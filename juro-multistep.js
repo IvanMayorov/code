@@ -1,53 +1,5 @@
 
 
-// Получаем данные из формы с id wf-form-quiz и заполняем ChiliPiper.submit при отправке
-
-document.addEventListener('DOMContentLoaded', function() {
-  var quizForm = document.getElementById('wf-form-quiz');
-  if (!quizForm) return;
-
-  quizForm.addEventListener('submit', function(e) {
-    // Можно не отменять отправку, если ChiliPiper не мешает стандартному submit
-    // e.preventDefault();
-
-    // Получаем значения по data-name
-    function getInputValue(name) {
-      var el = quizForm.querySelector('[data-name="' + name + '"]');
-      return el ? el.value : '';
-    }
-
-    var firstName = getInputValue('First Name');
-    var lastName = getInputValue('Last Name');
-    var email = getInputValue('Work Email');
-    var company = getInputValue('Company Name');
-    var companySize = getInputValue('Company Size');
-    var phone = getInputValue('phone number');
-    
-    console.log('Отправка данных в ChiliPiper:', {
-        firstName,
-        lastName,
-        email,
-        company,
-        companySize,
-        phone
-      });
-      
-    // Отправляем данные в ChiliPiper
-    ChiliPiper.submit("juro-com", "inbound_router", {
-      trigger: 'ThirdPartyForm',
-      lead: {
-        "firstname": firstName,
-        "lastname": lastName,
-        "email": email,
-        "phone": phone,
-        "company": company,
-        "number_of_employees": companySize
-      }
-    });
-  });
-});
-
-
 
 // Селекторы для элементов формы
 const FORM_SELECTORS = {
@@ -364,6 +316,50 @@ function waitForWebflow() {
 
 waitForWebflow().then(() => {
   initMultistepForm();
+
+
+var quizForm = document.getElementById('wf-form-quiz');
+if (!quizForm) return;
+
+quizForm.addEventListener('submit', function(e) {
+  // Можно не отменять отправку, если ChiliPiper не мешает стандартному submit
+  // e.preventDefault();
+
+  // Получаем значения по data-name
+  function getInputValue(name) {
+    var el = quizForm.querySelector('[data-name="' + name + '"]');
+    return el ? el.value : '';
+  }
+
+  var firstName = getInputValue('First Name');
+  var lastName = getInputValue('Last Name');
+  var email = getInputValue('Work Email');
+  var company = getInputValue('Company Name');
+  var companySize = getInputValue('Company Size');
+  var phone = getInputValue('phone number');
+  
+  console.log('Отправка данных в ChiliPiper:', {
+      firstName,
+      lastName,
+      email,
+      company,
+      companySize,
+      phone
+    });
+    
+  // Отправляем данные в ChiliPiper
+  ChiliPiper.submit("juro-com", "inbound_router", {
+    trigger: 'ThirdPartyForm',
+    lead: {
+      "firstname": firstName,
+      "lastname": lastName,
+      "email": email,
+      "phone": phone,
+      "company": company,
+      "number_of_employees": companySize
+    }
+  });
+});
 });
 
 // Экспорт для отладки
