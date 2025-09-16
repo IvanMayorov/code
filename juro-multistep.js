@@ -318,8 +318,31 @@ waitForWebflow().then(() => {
   initMultistepForm();
 
 
+  // При клике на элемент с классом 'quiz_input_label' выводим в консоль номер телефона из iti
+  document.querySelectorAll('.quiz_input_label').forEach(label => {
+    label.addEventListener('click', function() {
+      if (typeof iti !== 'undefined' && iti.getNumber) {
+        console.log(iti.getNumber());
+      }
+    });
+  });
+  const input = document.querySelector("#phone-number");
+  const iti = window.intlTelInput(input, {
+  initialCountry: "auto",
+  separateDialCode: true,
+  geoIpLookup: callback => {
+    fetch("https://ipapi.co/json")
+      .then(res => res.json())
+      .then(data => callback(data.country_code))
+      .catch(() => callback("us"));
+  },
+  loadUtils: () => import("https://cdn.jsdelivr.net/npm/intl-tel-input@25.10.8/build/js/utils.js"),
+//   loadUtils: () => import("/intl-tel-input/js/utils.js?1757946786640") // for formatting/placeholders etc
+  
+});
+  
+
 var quizForm = document.getElementById('wf-form-quiz');
-if (!quizForm) return;
 
 quizForm.addEventListener('submit', function(e) {
   // Можно не отменять отправку, если ChiliPiper не мешает стандартному submit
@@ -336,7 +359,7 @@ quizForm.addEventListener('submit', function(e) {
   var email = getInputValue('Work Email');
   var company = getInputValue('Company Name');
   var companySize = getInputValue('Company Size');
-  var phone = getInputValue('phone number');
+  var phone = iti.getNumber();
   
   console.log('Отправка данных в ChiliPiper:', {
       firstName,
@@ -360,6 +383,7 @@ quizForm.addEventListener('submit', function(e) {
     }
   });
 });
+
 });
 
 // Экспорт для отладки
