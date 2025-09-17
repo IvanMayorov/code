@@ -336,7 +336,7 @@ waitForWebflow().then(() => {
       .then(data => callback(data.country_code))
       .catch(() => callback("us"));
   },
-  loadUtils: () => import("https://cdn.jsdelivr.net/npm/intl-tel-input@25.10.8/build/js/utils.js"),
+      loadUtils: () => import("https://cdn.jsdelivr.net/npm/intl-tel-input@25.10.8/build/js/utils.js"),
 //   loadUtils: () => import("/intl-tel-input/js/utils.js?1757946786640") // for formatting/placeholders etc
   
 });
@@ -360,6 +360,15 @@ quizForm.addEventListener('submit', function(e) {
   var company = getInputValue('Company Name');
   var companySize = getInputValue('Company Size');
   var phone = iti.getNumber();
+  
+
+  
+  // Записываем номер телефона в input #fullphone
+  var fullPhoneInput = document.querySelector('#fullphone');
+  if (fullPhoneInput) {
+    fullPhoneInput.value = phone;
+    console.log('fullPhoneInput', fullPhoneInput.value);
+  }
   
   console.log('Отправка данных в ChiliPiper:', {
       firstName,
