@@ -26,12 +26,22 @@ function toggleBodyScroll(enable = true) {
   if (enable) {
     // Блокируем скролл
     modalState.scrollY = window.scrollY;
+    
+    // Вычисляем ширину скроллбара
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    
     elements.body.classList.add('modal-open');
     elements.body.style.top = `-${modalState.scrollY}px`;
+    
+    // Компенсируем исчезновение скроллбара
+    elements.body.style.paddingRight = `${scrollbarWidth}px`;
+    
   } else {
     // Восстанавливаем скролл
     elements.body.classList.remove('modal-open');
     elements.body.style.top = '';
+    elements.body.style.paddingRight = '';
+    
     window.scrollTo(0, modalState.scrollY);
     modalState.scrollY = 0;
   }
@@ -135,7 +145,7 @@ function closeModalById(modalId) {
 // Единый обработчик событий с делегированием
 function handleModalEvents(event) {
   const target = event.target;
-
+  console.log('target', target);
   // Обработка кликов по кнопкам открытия
   if (target.matches(SELECTORS.MODAL_TARGET)) {
     event.preventDefault();
@@ -145,9 +155,13 @@ function handleModalEvents(event) {
   }
 
   // Обработка кликов по кнопкам закрытия
-  if (target.matches(SELECTORS.MODAL_CLOSE)) {
+  if (target.matches(SELECTORS.MODAL_CLOSE) || target.closest(SELECTORS.MODAL_CLOSE)) {
     event.preventDefault();
-    const overlay = target.closest(SELECTORS.MODAL_OVERLAY);
+    const closeButton = target.matches(SELECTORS.MODAL_CLOSE) 
+      ? target 
+      : target.closest(SELECTORS.MODAL_CLOSE);
+    
+    const overlay = closeButton.closest(SELECTORS.MODAL_OVERLAY);
     if (overlay) {
       const modal = overlay.querySelector('[data-modal-content]') || overlay.children[0];
       closeModal(modal, overlay);
@@ -157,7 +171,9 @@ function handleModalEvents(event) {
 
   // Обработка кликов по overlay для закрытия
   if (target.matches(SELECTORS.MODAL_OVERLAY)) {
+
     const modal = target.querySelector('[data-modal-content]') || target.children[0];
+   
     if (modal) {
       closeModal(modal, target);
     }
@@ -195,7 +211,12 @@ if (document.readyState === 'loading') {
   initModal();
 }
 
+
+
+
+
 /*
+
 
 
 
