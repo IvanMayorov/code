@@ -206,6 +206,24 @@ if (window.innerWidth >= 480) {
   gsap.ticker.add((time) => {
     lenis.raf(time * 1000); // Convert time from seconds to milliseconds
   });
+
+// Отключение Lenis при клике на элементы с data-disable-scroll
+document.querySelectorAll('[data-disable-scroll]').forEach(el => {
+  el.addEventListener('click', () => {
+    if (lenis) {
+      lenis.stop();
+    }
+  });
+});
+
+// Включение Lenis при клике на элементы с data-enable-scroll
+document.querySelectorAll('[data-enable-scroll]').forEach(el => {
+  el.addEventListener('click', () => {
+    if (lenis) {
+      lenis.start();
+    }
+  });
+});
 }
 
 // Disable lag smoothing in GSAP to prevent any delay in scroll animations
@@ -739,13 +757,13 @@ cookieIcon.addEventListener("mouseleave", () => {
   const deadTitleHeight =
     document.querySelector(".benefits_title_box")?.offsetHeight / 2 || 0;
   const firstBenefitColHeight =
-    document.querySelector(".benefits_col:first-child")?.offsetHeight / 2 || 0;
+    document.querySelector(".benefits_col:first-of-type")?.offsetHeight / 2 || 0;
   const lastBenefitColHeight =
     document.querySelector(".benefits_col:last-child")?.offsetHeight / 2 || 0;
   const bSquare =
     document.querySelector(".benefits_square_wrap")?.offsetHeight / 2 || 0;
 
-  gsap.set(".benefits_col:first-child", {
+  gsap.set(".benefits_col:first-of-type", {
     y: `${firstBenefitColHeight - deadTitleHeight}px`,
   });
   gsap.set(".benefits_col:last-child", {
@@ -972,7 +990,7 @@ cookieIcon.addEventListener("mouseleave", () => {
     //   // Create a new Lottie animation when we reach the benefits section
     //   benefitsLottie.play();
     // }, "benefits")
-    .to(".benefits_col:first-child", {
+    .to(".benefits_col:first-of-type", {
       y: `-${firstBenefitColHeight - bSquare}px`,
       ease: "none",
       duration: 1,
