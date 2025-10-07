@@ -23,11 +23,8 @@ function hideAnimatedElements() {
 // Ждем готовности Webflow и загрузки шрифтов, потом создаем SplitText и запускаем анимацию
 // Скрываем элементы сразу при загрузке DOM
 hideAnimatedElements();
+waitForFontsAndAnimate();
 
-// Не ждем Webflow, сразу запускаем анимацию после загрузки страницы
-window.addEventListener('load', () => {
-  waitForFontsAndAnimate();
-});
 
 // Функция ожидания шрифтов, создания SplitText и запуска анимации
 function waitForFontsAndAnimate() {
