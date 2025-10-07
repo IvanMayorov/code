@@ -23,23 +23,25 @@ function hideAnimatedElements() {
 // Ждем готовности Webflow и загрузки шрифтов, потом создаем SplitText и запускаем анимацию
 // Скрываем элементы сразу при загрузке DOM
 hideAnimatedElements();
-waitForFontsAndAnimate();
+createSplitTextAndAnimate();
+
+// waitForFontsAndAnimate();
 
 
-// Функция ожидания шрифтов, создания SplitText и запуска анимации
-function waitForFontsAndAnimate() {
-  // Ждем загрузки шрифтов
-  if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(() => {
-      createSplitTextAndAnimate();
-    });
-  } else {
-    // Fallback если Font Loading API не поддерживается
-    setTimeout(() => {
-      createSplitTextAndAnimate();
-    }, 100);
-  }
-}
+// // Функция ожидания шрифтов, создания SplitText и запуска анимации
+// function waitForFontsAndAnimate() {
+//   // Ждем загрузки шрифтов
+//   if (document.fonts && document.fonts.ready) {
+//     document.fonts.ready.then(() => {
+//       createSplitTextAndAnimate();
+//     });
+//   } else {
+//     // Fallback если Font Loading API не поддерживается
+//     setTimeout(() => {
+//       createSplitTextAndAnimate();
+//     }, 100);
+//   }
+// }
 
 // Функция создания SplitText и запуска анимации
 function createSplitTextAndAnimate() {
