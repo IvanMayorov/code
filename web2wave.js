@@ -36,7 +36,7 @@
 
   // Create the TOC
   const createTOC = () => {
-    const headings = article.querySelectorAll("h2, h3, h4");
+    const headings = article.querySelectorAll("h2");
     const tocFragment = document.createDocumentFragment();
 
     headings.forEach((heading) => {
@@ -64,7 +64,7 @@
   }
 
   var tocItems = document.querySelectorAll('#toc a');
-  var titleElements = document.querySelectorAll('.content [id]');
+  var titleElements = document.querySelectorAll('.content h2[id]');
 
   function setActiveItem(targetId) {
     tocItems.forEach(function(item) {
@@ -104,8 +104,8 @@
     });
   }, { rootMargin: '0px 0px -50% 0px' });
 
-  if ("h2,h3,h4" !== "") {
-    document.getElementById("single-article").querySelectorAll("h2, h3, h4").forEach(function(heading) {
+  if ("h2" !== "") {
+    document.getElementById("single-article").querySelectorAll("h2").forEach(function(heading) {
       observer.observe(heading);
     });
   }
