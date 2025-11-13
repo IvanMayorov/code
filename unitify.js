@@ -1,0 +1,140 @@
+
+(function(){
+  function readyLibs(){ return window.gsap && window.Swiper }
+  function q(s, r=document){ return r.querySelector(s) }
+  function qa(s, r=document){ return Array.from(r.querySelectorAll(s)) }
+
+  function initSwitch(root){
+    const buttons = qa('[data-framer-name="button"]', root)
+    const switchEl = q('[data-framer-name="switch"]', root)
+    if (!switchEl || switchEl.dataset.inited) return
+
+    const monthPrices = qa('[data-framer-name="month price"]', root)
+    const annualPrices = qa('[data-framer-name="annual price"]', root)
+    
+    // При загрузке показываем "annual price", скрываем "month price"
+    if (monthPrices.length || annualPrices.length) {
+      monthPrices.forEach(el => { el.style.display = 'none' })
+      annualPrices.forEach(el => { el.style.display = '' })
+    }
+
+    buttons.forEach((btn, idx) => {
+      if (btn.dataset.bound) return
+      btn.dataset.bound = '1'
+      btn.addEventListener('click', () => {
+        const br = btn.getBoundingClientRect()
+        const pr = btn.offsetParent ? btn.offsetParent.getBoundingClientRect() : {left:0, top:0}
+        const left = br.left - pr.left
+        const width = br.width
+        switchEl.style.left = left + 'px'
+        switchEl.style.width = width + 'px'
+        switchEl.style.transition = 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
+
+        // Переключение цен по кнопке
+        if (btn.textContent.toLowerCase().includes('annual')) {
+          annualPrices.forEach(el => { el.style.display = '' })
+          monthPrices.forEach(el => { el.style.display = 'none' })
+        } else {
+          annualPrices.forEach(el => { el.style.display = 'none' })
+          monthPrices.forEach(el => { el.style.display = '' })
+        }
+      })
+    })
+    switchEl.dataset.inited = '1'
+  }
+
+  function activateTab(tab, tabs){
+    tabs.forEach(other=>{
+      other.classList.remove('global-shadow-mini')
+      other.style.paddingTop = ''
+      other.style.paddingBottom = ''
+      const t = q('[data-framer-name="tab title"] p', other)
+      if (t) t.classList.remove('red-text')
+      const tx = q('[data-framer-name="tab text"]', other)
+      if (tx) {
+        gsap.to(tx,{height:0,autoAlpha:0,scale:0.97,duration:0.3,ease:'power2.in',overwrite:'auto',onStart:()=>{tx.style.overflow='hidden'},onComplete:()=>{tx.style.display='none'}})
+      }
+    })
+    tab.classList.add('global-shadow-mini')
+    tab.style.paddingTop = '20px'
+    tab.style.paddingBottom = '20px'
+    const at = q('[data-framer-name="tab title"] p', tab)
+    if (at) at.classList.add('red-text')
+    const txt = q('[data-framer-name="tab text"]', tab)
+    if (txt){
+      gsap.set(txt,{display:'block'})
+      gsap.fromTo(txt,{height:0,autoAlpha:0,scale:0.97,overflow:'hidden'},{height:'auto',autoAlpha:1,scale:1,duration:0.4,ease:'power2.out',overwrite:'auto',onComplete:()=>{txt.style.overflow='';txt.style.height=''}})
+    }
+  }
+
+  function initTabs(root){
+    if (!window.gsap) return
+    const tabs = qa('[data-framer-name="tab"]', root)
+    if (!tabs.length) return
+    
+    const tabTexts = qa('[data-framer-name="tab text"]', root)
+    
+    // Инициализируем стили переходов
+    tabs.forEach(t=>{ 
+      t.style.transition='padding-top 0.3s cubic-bezier(0.4,0,0.2,1), padding-bottom 0.3s cubic-bezier(0.4,0,0.2,1)' 
+    })
+    
+    // Устанавливаем начальное состояние текстов табов
+    tabTexts.forEach((el,i)=>{
+      if (i===0) gsap.set(el,{autoAlpha:1,height:'auto',display:'block',overflow:'',scale:1})
+      else gsap.set(el,{autoAlpha:0,height:0,display:'none',overflow:'hidden',scale:0.97})
+    })
+    
+    // Привязываем обработчики клика
+    tabs.forEach(t=>{
+      if (t.dataset.bound) return
+      t.dataset.bound='1'
+      t.addEventListener('click',()=>activateTab(t,tabs))
+    })
+    
+    // Активируем первый таб, если он еще не активирован
+    if (!tabs[0].classList.contains('global-shadow-mini')) {
+      activateTab(tabs[0],tabs)
+    }
+  }
+
+  function initSwiper(root){
+    if (!window.Swiper) return
+    const el = q('[data-framer-name=slider-wrapper]', root)
+    if (!el || el.dataset.swiperInited) return
+    const wrapper = q('[data-framer-name=slider]', el)
+    if (!wrapper) return
+    wrapper.classList.add('swiper-wrapper')
+    qa('[data-framer-name=slide]', el).forEach(s=>s.classList.add('swiper-slide'))
+    el.__swiper && el.__swiper.destroy(true,true)
+    el.__swiper = new Swiper(el,{
+        // loop:true,
+    // Add navigation for next slide button with data-framer-name="next"
+    navigation: {
+      nextEl: '[data-framer-name="next"]',
+      prevEl: '[data-framer-name="prev"]'
+    },
+    })
+    el.dataset.swiperInited='1'
+  }
+
+  function init(){
+    initSwitch(document)
+    initTabs(document)
+    initSwiper(document)
+  }
+
+  function resilientInit(start=performance.now()){
+    if (!(window.gsap || window.Swiper)){
+      if (performance.now()-start<5000) return void setTimeout(()=>resilientInit(start),100)
+    }
+    init()
+  }
+
+  const mo = new MutationObserver(()=>resilientInit())
+  mo.observe(document.documentElement,{childList:true,subtree:true})
+
+  document.addEventListener('DOMContentLoaded', resilientInit)
+//   window.addEventListener('framerPageChange', resilientInit)
+//   window.addEventListener('pageshow', resilientInit)
+})();
