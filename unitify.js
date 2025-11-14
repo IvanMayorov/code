@@ -101,9 +101,39 @@
   function initSwiper(root){
     if (!window.Swiper) return
     const el = q('[data-framer-name=slider-wrapper]', root)
-    if (!el || el.dataset.swiperInited) return
+    if (!el) return
     const wrapper = q('[data-framer-name=slider]', el)
     if (!wrapper) return
+    
+    // Добавляем обработчик изменения размера окна (если еще не добавлен)
+    if (!el.__resizeHandler) {
+      let resizeTimeout
+      el.__resizeHandler = () => {
+        clearTimeout(resizeTimeout)
+        resizeTimeout = setTimeout(() => {
+          el.dataset.swiperInited = ''
+          initSwiper(root)
+        }, 150)
+      }
+      window.addEventListener('resize', el.__resizeHandler)
+    }
+    
+    const windowWidth = window.innerWidth
+    
+    // Если ширина <= 1180, уничтожаем свайпер если он существует
+    if (windowWidth <= 1180) {
+      if (el.__swiper) {
+        el.__swiper.destroy(true, true)
+        el.__swiper = null
+        el.dataset.swiperInited = ''
+        wrapper.classList.remove('swiper-wrapper')
+        qa('[data-framer-name=slide]', el).forEach(s=>s.classList.remove('swiper-slide'))
+      }
+      return
+    }
+    
+    // Если ширина > 1180, инициализируем свайпер
+    if (el.dataset.swiperInited) return
     wrapper.classList.add('swiper-wrapper')
     qa('[data-framer-name=slide]', el).forEach(s=>s.classList.add('swiper-slide'))
     el.__swiper && el.__swiper.destroy(true,true)
