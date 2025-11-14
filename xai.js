@@ -1,22 +1,45 @@
-let swiper;
-function initSwiperIfWide() {
+let swiperBuild;
+let swiperWorks;
+
+function handleSwipers() {
+  // For sec_build, only swiper when width > 480
   if (window.innerWidth > 480) {
-    if (!swiper) {
-      swiper = new Swiper('.sec_build', {
+    if (!swiperBuild) {
+      swiperBuild = new Swiper('.sec_build', {
         slidesPerView: 'auto',
         spaceBetween: 16,
       });
     }
+    // Destroy works swiper on wide screens
+    if (swiperWorks) {
+      swiperWorks.destroy(true, true);
+      swiperWorks = null;
+    }
   } else {
-    if (swiper) {
-      swiper.destroy(true, true);
-      swiper = null;
+    // Destroy sec_build swiper on small screens
+    if (swiperBuild) {
+      swiperBuild.destroy(true, true);
+      swiperBuild = null;
+    }
+    // For works_container, only swiper when width <= 480
+    if (!swiperWorks) {
+      swiperWorks = new Swiper('.works_container .swiper-container', {
+        slidesPerView: 'auto',
+        spaceBetween: 12,
+        navigation: {
+          nextEl: '.arrow_box.next',
+          prevEl: '.arrow_box.prev',
+        },
+        // Optionally, you may want freeMode or scrollbar if needed, depending on design
+        // freeMode: true,
+        // scrollbar: { el: '.swiper-scrollbar', draggable: true },
+      });
     }
   }
 }
 
-initSwiperIfWide();
-window.addEventListener('resize', initSwiperIfWide);
+handleSwipers();
+window.addEventListener('resize', handleSwipers);
 
 // Initialize Lottie animation
 Webflow.push(function() {
