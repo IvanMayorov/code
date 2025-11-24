@@ -148,12 +148,152 @@
     el.dataset.swiperInited='1'
   }
 
+  function initFixedMenu(root){
+    if (!window.gsap) return
+    
+    const fixedMenu = q('[data-framer-name="Fixed menu"]', root)
+    const devices = q('[data-framer-name="devices"]', root)
+    if (!fixedMenu || !devices) return
+    
+    // Изначально опускаем меню на 100px вниз
+    gsap.set(fixedMenu, { y: 100 })
+    
+    // Функция для показа/скрытия фиксированного меню через GSAP
+    function showFixedMenu(show) {
+      if (show) {
+        // Сначала делаем видимым для кликов и видимости, затем анимируем прозрачность и поднимаем
+        fixedMenu.style.pointerEvents = ''
+        fixedMenu.style.visibility = ''
+        gsap.to(fixedMenu, { 
+          opacity: 1,
+          y: 0,
+          duration: 0.3, 
+          ease: "power1.out",
+          onStart: () => {
+            fixedMenu.style.pointerEvents = ''
+            fixedMenu.style.visibility = ''
+          }
+        })
+      } else {
+        // Анимируем прозрачность, опускаем вниз и скрываем по завершении
+        gsap.to(fixedMenu, { 
+          opacity: 0,
+          y: 100,
+          duration: 0.3, 
+          ease: "power1.in",
+          onComplete: () => {
+            fixedMenu.style.pointerEvents = 'none'
+            fixedMenu.style.visibility = 'hidden'
+          }
+        })
+      }
+    }
+
+    // Используем IntersectionObserver, чтобы отследить уход из зоны видимости devices
+    let hasBeenVisible = null
+    function onVisibilityChange(isVisible) {
+      if (hasBeenVisible === isVisible) return
+      hasBeenVisible = isVisible
+      showFixedMenu(!isVisible)
+    }
+
+    const observer = new window.IntersectionObserver(
+      ([entry]) => {
+        onVisibilityChange(entry.isIntersecting)
+      },
+      {
+        threshold: 0.01,
+      }
+    )
+    observer.observe(devices)
+  }
+
   function init(){
     initSwitch(document)
     initTabs(document)
     initSwiper(document)
+    initDropdowns(document)
+    initFixedMenu(document)
   }
 
+  function initDropdowns(root) {
+    const windowWidth = window.innerWidth
+    
+    // Если ширина <= 800, не создаем дропдауны
+    if (windowWidth <= 800) {
+      // Если дропдауны были инициализированы, закрываем их и сбрасываем флаги
+      const dropdowns = document.querySelectorAll('[data-framer-name="Dropdown"]')
+      dropdowns.forEach(d => {
+        if (d.dataset.dropdownInited) {
+          d.classList.remove('is-active')
+          const dropdownContent = d.lastElementChild
+          if (dropdownContent) {
+            dropdownContent.classList.remove('is-active')
+            gsap.to(dropdownContent, { 
+              height: 0, 
+              opacity: 0,
+              duration: 0.3, 
+              ease: "power1.in"
+            })
+          }
+          d.dataset.dropdownInited = ''
+        }
+      })
+      return
+    }
+    
+    // Добавляем обработчик изменения размера окна (если еще не добавлен)
+    if (!window.__dropdownResizeHandler) {
+      let resizeTimeout
+      window.__dropdownResizeHandler = () => {
+        clearTimeout(resizeTimeout)
+        resizeTimeout = setTimeout(() => {
+          document.querySelectorAll('[data-framer-name="Dropdown"]').forEach(d => {
+            d.dataset.dropdownInited = ''
+          })
+          initDropdowns(root)
+        }, 150)
+      }
+      window.addEventListener('resize', window.__dropdownResizeHandler)
+    }
+    
+    const dropdowns = document.querySelectorAll('[data-framer-name="Dropdown"]')
+
+    dropdowns.forEach(d => {
+      // Пропускаем если уже инициализирован
+      if (d.dataset.dropdownInited) return
+      d.dataset.dropdownInited = '1'
+      
+      const dropdownItem = d.firstElementChild
+      const dropdownContent = d.lastElementChild
+
+      dropdownContent.style.overflow = 'hidden'
+      gsap.set(dropdownContent, { height: 0 })
+
+      dropdownItem.addEventListener('click', () => {
+        const isActive = d.classList.toggle('is-active')
+        dropdownContent.classList.toggle('is-active')
+        if (isActive) {
+          // Открытие: анимируем до полной высоты контента
+          gsap.to(dropdownContent, { 
+            height: 'auto', 
+            opacity: 1,
+            duration: 0.3, 
+            ease: "power1.out",
+
+          });
+        } else {
+          // Закрытие: анимируем высоту до 0
+          gsap.to(dropdownContent, { 
+            height: 0, 
+            opacity: 0,
+            duration: 0.3, 
+            ease: "power1.in"
+          });
+        }
+      })
+    })
+  }
   function resilientInit(start=performance.now()){
     if (!(window.gsap || window.Swiper)){
       if (performance.now()-start<5000) return void setTimeout(()=>resilientInit(start),100)
