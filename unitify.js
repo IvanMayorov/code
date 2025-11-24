@@ -155,48 +155,69 @@
     const devices = q('[data-framer-name="devices"]', root)
     if (!fixedMenu || !devices) return
     
-    // Изначально опускаем меню на 100px вниз
-    gsap.set(fixedMenu, { y: 100 })
-    
     // Функция для показа/скрытия фиксированного меню через GSAP
-    function showFixedMenu(show) {
+    let isInitialized = false
+    function showFixedMenu(show, immediate = false) {
       if (show) {
         // Сначала делаем видимым для кликов и видимости, затем анимируем прозрачность и поднимаем
         fixedMenu.style.pointerEvents = ''
         fixedMenu.style.visibility = ''
-        gsap.to(fixedMenu, { 
-          opacity: 1,
-          y: 0,
-          duration: 0.3, 
-          ease: "power1.out",
-          onStart: () => {
-            fixedMenu.style.pointerEvents = ''
-            fixedMenu.style.visibility = ''
-          }
-        })
+        if (immediate) {
+          gsap.set(fixedMenu, { opacity: 1, y: 0 })
+        } else {
+          gsap.to(fixedMenu, { 
+            opacity: 1,
+            y: 0,
+            duration: 0.3, 
+            ease: "power1.out",
+            onStart: () => {
+              fixedMenu.style.pointerEvents = ''
+              fixedMenu.style.visibility = ''
+            }
+          })
+        }
       } else {
-        // Анимируем прозрачность, опускаем вниз и скрываем по завершении
-        gsap.to(fixedMenu, { 
-          opacity: 0,
-          y: 100,
-          duration: 0.3, 
-          ease: "power1.in",
-          onComplete: () => {
-            fixedMenu.style.pointerEvents = 'none'
-            fixedMenu.style.visibility = 'hidden'
-          }
-        })
+        if (immediate) {
+          gsap.set(fixedMenu, { opacity: 0, y: 100 })
+          fixedMenu.style.pointerEvents = 'none'
+          fixedMenu.style.visibility = 'hidden'
+        } else {
+          // Анимируем прозрачность, опускаем вниз и скрываем по завершении
+          gsap.to(fixedMenu, { 
+            opacity: 0,
+            y: 100,
+            duration: 0.3, 
+            ease: "power1.in",
+            onComplete: () => {
+              fixedMenu.style.pointerEvents = 'none'
+              fixedMenu.style.visibility = 'hidden'
+            }
+          })
+        }
       }
     }
 
     // Используем IntersectionObserver, чтобы отследить уход из зоны видимости devices
     let hasBeenVisible = null
+    let isFirstCheck = true
     function onVisibilityChange(isVisible) {
       if (hasBeenVisible === isVisible) return
       hasBeenVisible = isVisible
-      showFixedMenu(!isVisible)
+      // При первой проверке устанавливаем состояние без анимации
+      showFixedMenu(!isVisible, isFirstCheck)
+      if (isFirstCheck) {
+        isFirstCheck = false
+        isInitialized = true
+      }
     }
 
+    // Синхронная проверка начального состояния для избежания мигания
+    const rect = devices.getBoundingClientRect()
+    const viewportHeight = window.innerHeight
+    const isInitiallyVisible = rect.top < viewportHeight && rect.bottom > 0
+    // Устанавливаем начальное состояние сразу, без анимации
+    onVisibilityChange(isInitiallyVisible)
+    
     const observer = new window.IntersectionObserver(
       ([entry]) => {
         onVisibilityChange(entry.isIntersecting)
@@ -212,7 +233,9 @@
     initSwitch(document)
     initTabs(document)
     initSwiper(document)
-    initDropdowns(document)
+    if (window.innerWidth > 800) {
+      initDropdowns(document)
+    }
     initFixedMenu(document)
   }
 
