@@ -18,9 +18,7 @@ const modalState = {
   isOpen: false,
   currentModal: null,
   currentOverlay: null,
-  scrollY: 0,
-  closeCallback: null,
-  globalCloseCallbacks: []
+  scrollY: 0
 };
 
 // Функция для управления блокировкой скролла
@@ -49,6 +47,19 @@ function toggleBodyScroll(enable = true) {
   }
 }
 
+// Функция для диспетчеризации событий (как в Remodal)
+function dispatchModalEvent(overlay, eventName, detail = {}) {
+  if (!overlay) return;
+  
+  const event = new CustomEvent(eventName, {
+    bubbles: true,
+    cancelable: true,
+    detail: detail
+  });
+  
+  overlay.dispatchEvent(event);
+}
+
 // Функция для показа/скрытия элементов с анимацией
 function toggleElementVisibility(element, show = true, className = '') {
   if (!element) return;
@@ -75,7 +86,7 @@ function toggleElementVisibility(element, show = true, className = '') {
 }
 
 // Основная функция открытия модального окна
-function openModal(overlay, closeCallback = null) {
+function openModal(overlay) {
   if (!overlay || modalState.isOpen) return;
 
   if (!overlay.classList.contains('s-modal')) {
@@ -89,11 +100,13 @@ function openModal(overlay, closeCallback = null) {
     return;
   }
 
+  // Диспетчеризуем событие 'open' (как в Remodal)
+  dispatchModalEvent(overlay, 'open', { modal, overlay });
+
   // Обновляем состояние
   modalState.isOpen = true;
   modalState.currentModal = modal;
   modalState.currentOverlay = overlay;
-  modalState.closeCallback = closeCallback;
 
   // Блокируем скролл
   toggleBodyScroll(true);
@@ -101,56 +114,47 @@ function openModal(overlay, closeCallback = null) {
   // Показываем модальное окно
   toggleElementVisibility(modal, true, 'modal-content-hidden');
   toggleElementVisibility(overlay, true, 'modal-overlay-hidden');
+
+  // Диспетчеризуем событие 'opened' после завершения анимации (как в Remodal)
+  setTimeout(() => {
+    dispatchModalEvent(overlay, 'opened', { modal, overlay });
+  }, 300);
 }
 
 // Основная функция закрытия модального окна
 function closeModal(modal = modalState.currentModal, overlay = modalState.currentOverlay) {
   if (!modal || !overlay || !modalState.isOpen) return;
 
-  // Сохраняем данные для колбеков
-  const modalId = overlay.getAttribute('data-modal-id');
-  const closeCallback = modalState.closeCallback;
+  // Диспетчеризуем событие 'close' (как в Remodal)
+  dispatchModalEvent(overlay, 'close', { modal, overlay });
 
   // Скрываем модальное окно
   toggleElementVisibility(modal, false, 'modal-content-hidden');
   toggleElementVisibility(overlay, false, 'modal-overlay-hidden');
 
-  // Вызываем колбеки после начала анимации закрытия
-  setTimeout(() => {
-    // Вызываем локальный колбек, если он был передан
-    if (closeCallback && typeof closeCallback === 'function') {
-      try {
-        closeCallback(modal, overlay, modalId);
-      } catch (error) {
-        console.error('Error in modal close callback:', error);
-      }
-    }
-
-    // Вызываем все глобальные колбеки
-    modalState.globalCloseCallbacks.forEach(callback => {
-      try {
-        callback(modal, overlay, modalId);
-      } catch (error) {
-        console.error('Error in global modal close callback:', error);
-      }
-    });
-  }, 0);
+  // Сохраняем ссылки для события 'closed'
+  const savedModal = modal;
+  const savedOverlay = overlay;
 
   // Сбрасываем состояние
   modalState.isOpen = false;
   modalState.currentModal = null;
   modalState.currentOverlay = null;
-  modalState.closeCallback = null;
 
   // Восстанавливаем скролл
   toggleBodyScroll(false);
+
+  // Диспетчеризуем событие 'closed' после завершения анимации (как в Remodal)
+  setTimeout(() => {
+    dispatchModalEvent(savedOverlay, 'closed', { modal: savedModal, overlay: savedOverlay });
+  }, 300);
 }
 
 // Функция открытия модального окна по ID
-function openModalById(modalId, closeCallback = null) {
+function openModalById(modalId) {
   const overlay = document.querySelector(`.s-modal[data-modal-id="${modalId}"]`);
   if (overlay) {
-    openModal(overlay, closeCallback);
+    openModal(overlay);
     return true;
   }
   console.warn(`Modal with ID "${modalId}" not found`);
@@ -216,22 +220,6 @@ function handleKeydown(event) {
   }
 }
 
-// Функции для управления глобальными колбеками закрытия
-function onClose(callback) {
-  if (typeof callback === 'function') {
-    modalState.globalCloseCallbacks.push(callback);
-  } else {
-    console.warn('onClose expects a function');
-  }
-}
-
-function offClose(callback) {
-  const index = modalState.globalCloseCallbacks.indexOf(callback);
-  if (index > -1) {
-    modalState.globalCloseCallbacks.splice(index, 1);
-  }
-}
-
 // Инициализация
 function initModal() {
   // Добавляем обработчики событий с делегированием
@@ -245,9 +233,7 @@ window.SimpleModal = {
   openById: openModalById,
   close: closeModal,
   closeById: closeModalById,
-  isOpen: () => modalState.isOpen,
-  onClose: onClose,
-  offClose: offClose
+  isOpen: () => modalState.isOpen
 };
 
 // Инициализируем при загрузке DOM
