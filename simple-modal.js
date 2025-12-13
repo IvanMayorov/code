@@ -18,7 +18,9 @@ const modalState = {
   isOpen: false,
   currentModal: null,
   currentOverlay: null,
-  scrollY: 0
+  scrollY: 0,
+  closeCallback: null,
+  globalCloseCallbacks: []
 };
 
 // Функция для управления блокировкой скролла
@@ -73,7 +75,7 @@ function toggleElementVisibility(element, show = true, className = '') {
 }
 
 // Основная функция открытия модального окна
-function openModal(overlay) {
+function openModal(overlay, closeCallback = null) {
   if (!overlay || modalState.isOpen) return;
 
   if (!overlay.classList.contains('s-modal')) {
@@ -91,6 +93,7 @@ function openModal(overlay) {
   modalState.isOpen = true;
   modalState.currentModal = modal;
   modalState.currentOverlay = overlay;
+  modalState.closeCallback = closeCallback;
 
   // Блокируем скролл
   toggleBodyScroll(true);
@@ -104,24 +107,50 @@ function openModal(overlay) {
 function closeModal(modal = modalState.currentModal, overlay = modalState.currentOverlay) {
   if (!modal || !overlay || !modalState.isOpen) return;
 
+  // Сохраняем данные для колбеков
+  const modalId = overlay.getAttribute('data-modal-id');
+  const closeCallback = modalState.closeCallback;
+
   // Скрываем модальное окно
   toggleElementVisibility(modal, false, 'modal-content-hidden');
   toggleElementVisibility(overlay, false, 'modal-overlay-hidden');
+
+  // Вызываем колбеки после начала анимации закрытия
+  setTimeout(() => {
+    // Вызываем локальный колбек, если он был передан
+    if (closeCallback && typeof closeCallback === 'function') {
+      try {
+        closeCallback(modal, overlay, modalId);
+      } catch (error) {
+        console.error('Error in modal close callback:', error);
+      }
+    }
+
+    // Вызываем все глобальные колбеки
+    modalState.globalCloseCallbacks.forEach(callback => {
+      try {
+        callback(modal, overlay, modalId);
+      } catch (error) {
+        console.error('Error in global modal close callback:', error);
+      }
+    });
+  }, 0);
 
   // Сбрасываем состояние
   modalState.isOpen = false;
   modalState.currentModal = null;
   modalState.currentOverlay = null;
+  modalState.closeCallback = null;
 
   // Восстанавливаем скролл
   toggleBodyScroll(false);
 }
 
 // Функция открытия модального окна по ID
-function openModalById(modalId) {
+function openModalById(modalId, closeCallback = null) {
   const overlay = document.querySelector(`.s-modal[data-modal-id="${modalId}"]`);
   if (overlay) {
-    openModal(overlay);
+    openModal(overlay, closeCallback);
     return true;
   }
   console.warn(`Modal with ID "${modalId}" not found`);
@@ -145,7 +174,6 @@ function closeModalById(modalId) {
 // Единый обработчик событий с делегированием
 function handleModalEvents(event) {
   const target = event.target;
-  console.log('target', target);
   // Обработка кликов по кнопкам открытия
   if (target.matches(SELECTORS.MODAL_TARGET)) {
     event.preventDefault();
@@ -188,6 +216,22 @@ function handleKeydown(event) {
   }
 }
 
+// Функции для управления глобальными колбеками закрытия
+function onClose(callback) {
+  if (typeof callback === 'function') {
+    modalState.globalCloseCallbacks.push(callback);
+  } else {
+    console.warn('onClose expects a function');
+  }
+}
+
+function offClose(callback) {
+  const index = modalState.globalCloseCallbacks.indexOf(callback);
+  if (index > -1) {
+    modalState.globalCloseCallbacks.splice(index, 1);
+  }
+}
+
 // Инициализация
 function initModal() {
   // Добавляем обработчики событий с делегированием
@@ -201,7 +245,9 @@ window.SimpleModal = {
   openById: openModalById,
   close: closeModal,
   closeById: closeModalById,
-  isOpen: () => modalState.isOpen
+  isOpen: () => modalState.isOpen,
+  onClose: onClose,
+  offClose: offClose
 };
 
 // Инициализируем при загрузке DOM
