@@ -37,3 +37,9 @@ if (firstNavBtn && navToggleSlider) {
     }
   });
 }
+
+
+window.intercomSettings = {
+    app_id: "kjgg1p33",
+    custom_launcher_selector:'.open-intercom'
+  };
