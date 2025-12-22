@@ -52,7 +52,11 @@
       if (t) t.classList.remove('red-text')
       const tx = q('[data-framer-name="tab text"]', other)
       if (tx) {
-        gsap.to(tx,{height:0,autoAlpha:0,scale:0.97,duration:0.3,ease:'power2.in',overwrite:'auto',onStart:()=>{tx.style.overflow='hidden'},onComplete:()=>{tx.style.display='none'}})
+        tx.style.height = '0';
+        tx.style.opacity = '0';
+        tx.style.transform = 'scale(0.97)';
+        tx.style.display = 'none';
+        tx.style.overflow = 'hidden';
       }
     })
     tab.classList.add('global-shadow-mini')
@@ -62,8 +66,11 @@
     if (at) at.classList.add('red-text')
     const txt = q('[data-framer-name="tab text"]', tab)
     if (txt){
-      gsap.set(txt,{display:'block'})
-      gsap.fromTo(txt,{height:0,autoAlpha:0,scale:0.97,overflow:'hidden'},{height:'auto',autoAlpha:1,scale:1,duration:0.4,ease:'power2.out',overwrite:'auto',onComplete:()=>{txt.style.overflow='';txt.style.height=''}})
+      txt.style.display = 'block';
+      txt.style.height = 'auto';
+      txt.style.opacity = '1';
+      txt.style.overflow = '';
+      txt.style.transform = 'scale(1)';
     }
   }
 
@@ -75,16 +82,26 @@
     const tabTexts = qa('[data-framer-name="tab text"]', root)
     
     // Инициализируем стили переходов
-    tabs.forEach(t=>{ 
-      t.style.transition='padding-top 0.3s cubic-bezier(0.4,0,0.2,1), padding-bottom 0.3s cubic-bezier(0.4,0,0.2,1)' 
-    })
+    // tabs.forEach(t=>{ 
+    //   t.style.transition='padding-top 0.3s cubic-bezier(0.4,0,0.2,1), padding-bottom 0.3s cubic-bezier(0.4,0,0.2,1)' 
+    // })
     
     // Устанавливаем начальное состояние текстов табов
-    tabTexts.forEach((el,i)=>{
-      if (i===0) gsap.set(el,{autoAlpha:1,height:'auto',display:'block',overflow:'',scale:1})
-      else gsap.set(el,{autoAlpha:0,height:0,display:'none',overflow:'hidden',scale:0.97})
-    })
-    
+    tabTexts.forEach((el, i) => {
+      if (i === 0) {
+        el.style.opacity = '1';
+        el.style.height = 'auto';
+        el.style.display = 'block';
+        el.style.overflow = '';
+        el.style.transform = 'scale(1)';
+      } else {
+        el.style.opacity = '0';
+        el.style.height = '0';
+        el.style.display = 'none';
+        el.style.overflow = 'hidden';
+        el.style.transform = 'scale(0.97)';
+      }
+    });
     // Привязываем обработчики клика
     tabs.forEach(t=>{
       if (t.dataset.bound) return
