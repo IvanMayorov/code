@@ -34,3 +34,20 @@ var mainSwiper = new Swiper('.main-swiper', {
       }
     }, 500);
   });
+
+  // Simulate click on cookie banner when clicking on X prefs button
+$('#cookies-prefs-close').on('click', function(){
+  $('#cookies-banner-button').click()
+});
+
+  var typed = new Typed(".typed-block", {
+  strings: ["CRM","health needs","goals","tastes","labs","budget"],
+  typeSpeed: 70,
+  backSpeed: 70,
+  backDelay: 800,
+  startDelay: 500,
+  loop: true,
+  showCursor: false,
+  cursorChar: "|",
+  attr: null,
+});
