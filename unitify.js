@@ -43,7 +43,11 @@
     switchEl.dataset.inited = '1'
   }
 
-  function activateTab(tab, tabs){
+  //#region TABS ______________________________________________________________________
+  function activateTab(tab, tabs, root = document){
+    const tabIndex = tabs.indexOf(tab)
+    const slides = qa('[data-framer-name="Slide"]', root)
+    
     tabs.forEach(other=>{
       other.classList.remove('global-shadow-mini')
       other.style.paddingTop = ''
@@ -59,6 +63,17 @@
         tx.style.overflow = 'hidden';
       }
     })
+    
+    // Скрываем все слайды
+    slides.forEach(slide => {
+      slide.style.display = 'none'
+    })
+    
+    // Показываем соответствующий слайд по порядковому номеру
+    if (slides[tabIndex]) {
+      slides[tabIndex].style.display = ''
+    }
+    
     tab.classList.add('global-shadow-mini')
     tab.style.paddingTop = '20px'
     tab.style.paddingBottom = '20px'
@@ -73,7 +88,9 @@
       txt.style.transform = 'scale(1)';
     }
   }
+  //#endregion TABS
 
+  //#region SWIPER______________________________________________________________________
   function initTabs(root){
     if (!window.gsap) return
     const tabs = qa('[data-framer-name="tab"]', root)
@@ -114,7 +131,9 @@
       activateTab(tabs[0],tabs)
     }
   }
+  //#endregion SWIPER
 
+  //#region FIXED MENU______________________________________________________________________
   function initSwiper(root){
     if (!window.Swiper) return
     const el = q('[data-framer-name=slider-wrapper]', root)
@@ -245,7 +264,9 @@
     )
     observer.observe(devices)
   }
+  //#endregion FIXED MENU
 
+  //#region INIT 
   function init(){
     initSwitch(document)
     initTabs(document)
