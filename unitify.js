@@ -46,7 +46,13 @@
   //#region TABS ______________________________________________________________________
   function activateTab(tab, tabs, root = document){
     const tabIndex = tabs.indexOf(tab)
-    const slides = qa('[data-framer-name="Slide"]', root)
+    // Исключаем слайды, которые находятся внутри свайпера
+    const swiperWrapper = q('[data-framer-name="slider-wrapper"]', root)
+    const allSlides = qa('[data-framer-name="Slide"]', root)
+    const slides = allSlides.filter(slide => {
+      // Пропускаем слайды, которые находятся внутри свайпера
+      return !swiperWrapper || !swiperWrapper.contains(slide)
+    })
     
     tabs.forEach(other=>{
       other.classList.remove('global-shadow-mini')
@@ -64,7 +70,7 @@
       }
     })
     
-    // Скрываем все слайды
+    // Скрываем все слайды (только те, что не в свайпере)
     slides.forEach(slide => {
       slide.style.display = 'none'
     })
@@ -90,7 +96,7 @@
   }
   //#endregion TABS
 
-  //#region SWIPER______________________________________________________________________
+
   function initTabs(root){
     if (!window.gsap) return
     const tabs = qa('[data-framer-name="tab"]', root)
@@ -123,17 +129,33 @@
     tabs.forEach(t=>{
       if (t.dataset.bound) return
       t.dataset.bound='1'
-      t.addEventListener('click',()=>activateTab(t,tabs))
+      t.addEventListener('click',()=>activateTab(t,tabs,root))
+    })
+    
+    // Инициализируем первый слайд при загрузке
+    const slides = qa('[data-framer-name="Slide"]', root)
+    // Исключаем слайды свайпера
+    const swiperWrapper = q('[data-framer-name="slider-wrapper"]', root)
+    const tabSlides = slides.filter(slide => {
+      return !swiperWrapper || !swiperWrapper.contains(slide)
+    })
+    // Скрываем все слайды табов
+    tabSlides.forEach((slide, i) => {
+      if (i === 0) {
+        slide.style.display = ''
+      } else {
+        slide.style.display = 'none'
+      }
     })
     
     // Активируем первый таб, если он еще не активирован
     if (!tabs[0].classList.contains('global-shadow-mini')) {
-      activateTab(tabs[0],tabs)
+      activateTab(tabs[0],tabs,root)
     }
   }
-  //#endregion SWIPER
+ 
 
-  //#region FIXED MENU______________________________________________________________________
+   //#region SWIPER______________________________________________________________________
   function initSwiper(root){
     if (!window.Swiper) return
     const el = q('[data-framer-name=slider-wrapper]', root)
@@ -183,7 +205,9 @@
     })
     el.dataset.swiperInited='1'
   }
+  //#endregion SWIPER
 
+  //#region FIXED MENU______________________________________________________________________
   function initFixedMenu(root){
     if (!window.gsap) return
     
