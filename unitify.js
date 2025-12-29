@@ -54,20 +54,25 @@
       return !swiperWrapper || !swiperWrapper.contains(slide)
     })
     
+    // Находим Bottom bar и тексты внутри него
+    const bottomBar = q('[data-framer-name="Bottom bar"]', root)
+    const bottomBarTexts = bottomBar ? qa('[data-framer-name="tab text"]', bottomBar) : []
+    
     tabs.forEach(other=>{
       other.classList.remove('global-shadow-mini')
       other.style.paddingTop = ''
       other.style.paddingBottom = ''
       const t = q('[data-framer-name="tab title"] p', other)
       if (t) t.classList.remove('red-text')
-      const tx = q('[data-framer-name="tab text"]', other)
-      if (tx) {
-        tx.style.height = '0';
-        tx.style.opacity = '0';
-        tx.style.transform = 'scale(0.97)';
-        tx.style.display = 'none';
-        tx.style.overflow = 'hidden';
-      }
+    })
+    
+    // Скрываем все тексты в Bottom bar
+    bottomBarTexts.forEach(tx => {
+      tx.style.height = '0';
+      tx.style.opacity = '0';
+      tx.style.transform = 'scale(0.97)';
+      tx.style.display = 'none';
+      tx.style.overflow = 'hidden';
     })
     
     // Скрываем все слайды (только те, что не в свайпере)
@@ -80,37 +85,43 @@
       slides[tabIndex].style.display = ''
     }
     
-    tab.classList.add('global-shadow-mini')
-    tab.style.paddingTop = '20px'
-    tab.style.paddingBottom = '20px'
-    const at = q('[data-framer-name="tab title"] p', tab)
-    if (at) at.classList.add('red-text')
-    const txt = q('[data-framer-name="tab text"]', tab)
-    if (txt){
+    // Показываем соответствующий текст в Bottom bar
+    if (bottomBarTexts[tabIndex]) {
+      const txt = bottomBarTexts[tabIndex]
       txt.style.display = 'block';
       txt.style.height = 'auto';
       txt.style.opacity = '1';
       txt.style.overflow = '';
       txt.style.transform = 'scale(1)';
     }
+    
+    tab.classList.add('global-shadow-mini')
+    tab.style.paddingTop = '20px'
+    tab.style.paddingBottom = '20px'
+    const at = q('[data-framer-name="tab title"] p', tab)
+    if (at) at.classList.add('red-text')
   }
   //#endregion TABS
 
 
   function initTabs(root){
     if (!window.gsap) return
-    const tabs = qa('[data-framer-name="tab"]', root)
+    const mainBar = q('[data-framer-name="Main bar"]', root)
+    if (!mainBar) return
+    const tabs = qa('[data-framer-name="tab"]', mainBar)
     if (!tabs.length) return
     
-    const tabTexts = qa('[data-framer-name="tab text"]', root)
+    // Находим Bottom bar и тексты внутри него
+    const bottomBar = q('[data-framer-name="Bottom bar"]', root)
+    const bottomBarTexts = bottomBar ? qa('[data-framer-name="tab text"]', bottomBar) : []
     
     // Инициализируем стили переходов
     // tabs.forEach(t=>{ 
     //   t.style.transition='padding-top 0.3s cubic-bezier(0.4,0,0.2,1), padding-bottom 0.3s cubic-bezier(0.4,0,0.2,1)' 
     // })
     
-    // Устанавливаем начальное состояние текстов табов
-    tabTexts.forEach((el, i) => {
+    // Устанавливаем начальное состояние текстов в Bottom bar
+    bottomBarTexts.forEach((el, i) => {
       if (i === 0) {
         el.style.opacity = '1';
         el.style.height = 'auto';
