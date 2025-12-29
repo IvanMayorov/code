@@ -64,6 +64,15 @@
       other.style.paddingBottom = ''
       const t = q('[data-framer-name="tab title"] p', other)
       if (t) t.classList.remove('red-text')
+      // Скрываем текст внутри таба
+      const tx = q('[data-framer-name="tab text"]', other)
+      if (tx) {
+        tx.style.height = '0';
+        tx.style.opacity = '0';
+        tx.style.transform = 'scale(0.97)';
+        tx.style.display = 'none';
+        tx.style.overflow = 'hidden';
+      }
     })
     
     // Скрываем все тексты в Bottom bar
@@ -100,6 +109,15 @@
     tab.style.paddingBottom = '20px'
     const at = q('[data-framer-name="tab title"] p', tab)
     if (at) at.classList.add('red-text')
+    // Показываем текст внутри активного таба
+    const txt = q('[data-framer-name="tab text"]', tab)
+    if (txt){
+      txt.style.display = 'block';
+      txt.style.height = 'auto';
+      txt.style.opacity = '1';
+      txt.style.overflow = '';
+      txt.style.transform = 'scale(1)';
+    }
   }
   //#endregion TABS
 
@@ -134,6 +152,26 @@
         el.style.display = 'none';
         el.style.overflow = 'hidden';
         el.style.transform = 'scale(0.97)';
+      }
+    });
+    
+    // Устанавливаем начальное состояние текстов внутри табов в Main bar
+    tabs.forEach((tab, i) => {
+      const tabText = q('[data-framer-name="tab text"]', tab)
+      if (tabText) {
+        if (i === 0) {
+          tabText.style.opacity = '1';
+          tabText.style.height = 'auto';
+          tabText.style.display = 'block';
+          tabText.style.overflow = '';
+          tabText.style.transform = 'scale(1)';
+        } else {
+          tabText.style.opacity = '0';
+          tabText.style.height = '0';
+          tabText.style.display = 'none';
+          tabText.style.overflow = 'hidden';
+          tabText.style.transform = 'scale(0.97)';
+        }
       }
     });
     // Привязываем обработчики клика
