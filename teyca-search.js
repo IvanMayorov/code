@@ -4,6 +4,8 @@ const searchClearIcon = document.querySelector('.search_clear_icon');
 const searchButton = document.querySelector('.search_button');
 const searchSection = document.querySelector('[data-search-section]');
 const blogSection = document.querySelector('[data-blog-section]');
+const searchEmptyBox = document.querySelector('.search_empty_box');
+const searchBar = document.querySelector('.search_bar');
 
 // Функция для показа/скрытия иконки очистки
 const toggleClearIcon = () => {
@@ -61,3 +63,44 @@ if (searchButton) {
 
 // При загрузке скрываем секцию поиска
 showBlogSection();
+
+// Функция для проверки видимости элемента
+const isElementVisible = (element) => {
+    if (!element) return false;
+    const style = window.getComputedStyle(element);
+    return style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
+};
+
+// Функция для обновления видимости search_bar в зависимости от search_empty_box
+const updateSearchBarVisibility = () => {
+    if (!searchBar) return;
+    
+    const isEmptyBoxVisible = isElementVisible(searchEmptyBox);
+    searchBar.style.display = isEmptyBoxVisible ? 'none' : '';
+};
+
+// Обсервер для отслеживания изменений видимости search_empty_box
+if (searchEmptyBox && searchBar) {
+    // Устанавливаем начальное состояние
+    updateSearchBarVisibility();
+
+    // Создаем MutationObserver для отслеживания изменений стилей
+    const observer = new MutationObserver(() => {
+        updateSearchBarVisibility();
+    });
+
+    // Наблюдаем за изменениями атрибутов style и класса
+    observer.observe(searchEmptyBox, {
+        attributes: true,
+        attributeFilter: ['style', 'class'],
+        subtree: false
+    });
+
+    // Также отслеживаем изменения через ResizeObserver для случаев изменения размеров
+    if (window.ResizeObserver) {
+        const resizeObserver = new ResizeObserver(() => {
+            updateSearchBarVisibility();
+        });
+        resizeObserver.observe(searchEmptyBox);
+    }
+}
