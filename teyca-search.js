@@ -136,11 +136,13 @@ sortButtons.forEach(sortButton => {
             animatedSortingBoxes.forEach(box => {
                 box.classList.add('is-opened');
             });
+            sortButton.classList.add('is-opened');
             opened = true;
         } else {
             animatedSortingBoxes.forEach(box => {
                 box.classList.remove('is-opened');
             });
+            sortButton.classList.remove('is-opened');
             opened = false;
         }
     });
