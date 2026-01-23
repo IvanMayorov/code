@@ -6,6 +6,7 @@ const searchSection = document.querySelector('[data-search-section]');
 const blogSection = document.querySelector('[data-blog-section]');
 const searchEmptyBox = document.querySelector('.search_empty_box');
 const searchBar = document.querySelector('.search_bar');
+const searchForm = document.querySelector('.search_form');
 
 // Функция для показа/скрытия иконки очистки
 const toggleClearIcon = () => {
@@ -59,6 +60,23 @@ if (searchClearIcon && searchInput) {
 // Обработка кнопки поиска
 if (searchButton) {
     searchButton.addEventListener('click', showSearchSection);
+}
+
+// Запрещаем отправку формы при нажатии Enter
+if (searchForm) {
+    searchForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+    });
+}
+
+// Обработка нажатия Enter в поле поиска
+if (searchInput) {
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && document.activeElement === searchInput) {
+            e.preventDefault();
+            showSearchSection();
+        }
+    });
 }
 
 // При загрузке скрываем секцию поиска
