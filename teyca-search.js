@@ -13,7 +13,7 @@ const toggleClearIcon = () => {
     if (!searchClearIcon || !searchInput) return;
     
     const hasValue = searchInput.value.trim() !== '';
-    searchClearIcon.style.display = hasValue ? '' : 'none';
+    searchClearIcon.style.display = hasValue ? 'block' : 'none';
 };
 
 // Функция для показа секции поиска и скрытия блога
