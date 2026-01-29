@@ -133,25 +133,25 @@ if (searchEmptyBox && searchBar) {
     }
 }
 
-window.addEventListener('load', () => {
-    const sortingBoxes = document.querySelectorAll('.sorting_box');
-    sortingBoxes.forEach(sortingBox => {
-        const clickEvent = new MouseEvent('click', {
-            bubbles: true,
-            cancelable: true,
-            view: window
-        });
-        sortingBox.dispatchEvent(clickEvent);
-        console.log('Клик по sortingBox:', sortingBox);
-    });
+// window.addEventListener('load', () => {
+//     const sortingBoxes = document.querySelectorAll('.sorting_box');
+//     sortingBoxes.forEach(sortingBox => {
+//         const clickEvent = new MouseEvent('click', {
+//             bubbles: true,
+//             cancelable: true,
+//             view: window
+//         });
+//         sortingBox.dispatchEvent(clickEvent);
+//         console.log('Клик по sortingBox:', sortingBox);
+//     });
     
-    // Через 500ms добавляем класс для второго элемента
-    setTimeout(() => {
-        if (sortingBoxes.length > 1) {
-            sortingBoxes[1].classList.add('is-list-asc');
-        }
-    }, 500);
-});
+//     // Через 500ms добавляем класс для второго элемента
+//     setTimeout(() => {
+//         if (sortingBoxes.length > 1) {
+//             sortingBoxes[1].classList.add('is-list-asc');
+//         }
+//     }, 500);
+// });
 
 
 
