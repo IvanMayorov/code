@@ -36,24 +36,34 @@ const showBlogSection = () => {
     }
 };
 
+// Действия при пустом инпуте (как при клике по крестику)
+const onInputCleared = () => {
+    toggleClearIcon();
+    showBlogSection();
+    if (searchButton) {
+        searchButton.style.display = '';
+    }
+};
+
 // Обработка иконки очистки
 if (searchClearIcon && searchInput) {
     // Устанавливаем начальное состояние
     toggleClearIcon();
 
-    // Обновляем иконку при вводе
-    searchInput.addEventListener('input', toggleClearIcon);
+    // Обновляем иконку при вводе; при пустом инпуте — как при клике по крестику
+    searchInput.addEventListener('input', () => {
+        toggleClearIcon();
+        if (searchInput.value.trim() === '') {
+            onInputCleared();
+        }
+    });
 
     // Очистка по клику
     searchClearIcon.addEventListener('click', () => {
         searchInput.value = '';
         toggleClearIcon();
         searchInput.focus();
-        showBlogSection();
-        // Показываем кнопку поиска
-        if (searchButton) {
-            searchButton.style.display = '';
-        }
+        onInputCleared();
     });
 }
 
