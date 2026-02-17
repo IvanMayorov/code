@@ -374,21 +374,30 @@ function initFormHandler() {
       return; // Прерываем отправку
     }
 
-    // Отправляем данные на указанный вебхук
-    console.log('Отправляем запрос на вебхук...');
+    // Отправляем данные на оба вебхука
+    console.log('Отправляем запрос на вебхуки...');
     
-    // Создаем AbortController для таймаута
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 секунд таймаут
+    const webhooks = [
+      'https://n8n.item.team/webhook/7ffe1370-043c-44be-a35b-c4f4a51f22cd',
+      'https://n8n.rocket.red/webhook-test/cd301caf-51f1-4f62-abd5-35d08da9a4e2'
+    ];
     
-    fetch('https://n8n.item.team/webhook/7ffe1370-043c-44be-a35b-c4f4a51f22cd', {
+    const fetchOptions = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(data),
-      signal: controller.signal
-    })
+      body: JSON.stringify(data)
+    };
+    
+    // Создаем AbortController для таймаута основного запроса
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 50000); // 50 секунд таймаут
+    
+    const mainFetch = fetch(webhooks[0], { ...fetchOptions, signal: controller.signal });
+    const testFetch = fetch(webhooks[1], fetchOptions); // второй хук без таймаута
+    
+    mainFetch
     .then(response => {
       clearTimeout(timeoutId); // Очищаем таймаут при успешном ответе
       console.log('Получен ответ от вебхука:', response.status);
