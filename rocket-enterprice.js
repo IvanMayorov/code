@@ -379,7 +379,7 @@ function initFormHandler() {
     
     const webhooks = [
       'https://n8n.item.team/webhook/7ffe1370-043c-44be-a35b-c4f4a51f22cd',
-      'https://n8n.rocket.red/webhook-test/cd301caf-51f1-4f62-abd5-35d08da9a4e2'
+      'https://n8n.rocket.red/webhook/cd301caf-51f1-4f62-abd5-35d08da9a4e2'
     ];
     
     const fetchOptions = {
